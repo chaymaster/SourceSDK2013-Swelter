@@ -1,0 +1,101 @@
+﻿Build started 25.01.2022 13:59:46.
+     1>Project "C:\Ultimate SSDK v3\testmod\project_heat_src\tier1\tier1.vcxproj" on node 4 (Rebuild target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\lib\public\.\tier1.lib ( for /f "delims=" %%A in ('attrib "..\lib\public\.\tier1.lib"') do set valveTmpIsReadOnly="%%A"
+         ) else ( if not EXIST ..\lib\public\. mkdir ..\lib\public\. )
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" (
+             attrib -r ..\lib\public\.\tier1.lib
+             ..\devtools\bin\gnu\touch.exe -d "1999-01-01" ..\lib\public\.\tier1.lib
+             attrib +r ..\lib\public\.\tier1.lib
+         )
+         if exist "..\devtools\bin\vpc.exe" "..\devtools\bin\vpc.exe" -crc2 "tier1.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Running VPC CRC Check - tier1.vpc
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\common /I..\public /I..\public\tier0 /I..\public\tier1 /Z7 /nologo /W4 /WX /MP /O2 /Ob2 /Oi /Ot /Oy- /D VPC /D RAD_TELEMETRY_DISABLED /D WIN32 /D _WIN32 /D NDEBUG /D _LIB /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _ALLOW_RUNTIME_LIBRARY_MISMATCH /D _ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH /D _ALLOW_MSC_VER_MISMATCH /D _USING_V110_SDK71_ /D _MBCS /D COMPILER_MSVC32 /D COMPILER_MSVC32 /D COMPILER_MSVC /D _DLL_EXT=.dll /D LIBNAME=tier1 /D BINK_VIDEO /D AVI_VIDEO /D WMV_VIDEO /D DEV_BUILD /D FRAME_POINTER_OMISSION_DISABLED /D TIER1_STATIC_LIB /D _EXTERNAL_DLL_EXT=.dll /D VPCGAMECAPS=VALVE /D "PROJECTDIR=C:\Ultimate SSDK v3\testmod\src\tier1" /D _DLL_EXT=.dll /D VPCGAME=valve /D SOURCE1=1 /GF /Gm- /MT /GS /Gy /arch:SSE /fp:fast /Zc:wchar_t /Zc:forScope /GR /openmp- /Fo".\Release\.\/" /Fd".\Release\.\/vc120.pdb" /Gd /TP /wd4316 /analyze- /FC /errorReport:prompt /d2Zi+ /Gw bitbuf.cpp byteswap.cpp characterset.cpp checksum_crc.cpp checksum_md5.cpp checksum_sha1.cpp commandbuffer.cpp convar.cpp datamanager.cpp diff.cpp generichash.cpp ilocalize.cpp interface.cpp KeyValues.cpp kvpacker.cpp lzmaDecoder.cpp mempool.cpp memstack.cpp NetAdr.cpp newbitbuf.cpp rangecheckedvar.cpp reliabletimer.cpp "snappy-sinksource.cpp" "snappy-stubs-internal.cpp" snappy.cpp sparsematrix.cpp splitstring.cpp stringpool.cpp strtools.cpp tier1.cpp tokenreader.cpp uniqueid.cpp utlbuffer.cpp utlbufferutil.cpp utlstring.cpp utlsymbol.cpp
+         bitbuf.cpp
+         byteswap.cpp
+         characterset.cpp
+         checksum_crc.cpp
+         checksum_md5.cpp
+         checksum_sha1.cpp
+         commandbuffer.cpp
+         convar.cpp
+         datamanager.cpp
+         diff.cpp
+         generichash.cpp
+         ilocalize.cpp
+         interface.cpp
+         KeyValues.cpp
+         kvpacker.cpp
+         lzmaDecoder.cpp
+         mempool.cpp
+         memstack.cpp
+         NetAdr.cpp
+         newbitbuf.cpp
+         rangecheckedvar.cpp
+         reliabletimer.cpp
+         snappy-sinksource.cpp
+         snappy-stubs-internal.cpp
+         snappy.cpp
+         sparsematrix.cpp
+         splitstring.cpp
+         stringpool.cpp
+         strtools.cpp
+         tier1.cpp
+         tokenreader.cpp
+         uniqueid.cpp
+         utlbuffer.cpp
+         utlbufferutil.cpp
+         utlstring.cpp
+         utlsymbol.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\common /I..\public /I..\public\tier0 /I..\public\tier1 /Z7 /nologo /W4 /WX /MP /O2 /Ob2 /Oi /Ot /Oy- /D VPC /D RAD_TELEMETRY_DISABLED /D WIN32 /D _WIN32 /D NDEBUG /D _LIB /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _ALLOW_RUNTIME_LIBRARY_MISMATCH /D _ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH /D _ALLOW_MSC_VER_MISMATCH /D _USING_V110_SDK71_ /D _MBCS /D COMPILER_MSVC32 /D COMPILER_MSVC32 /D COMPILER_MSVC /D _DLL_EXT=.dll /D LIBNAME=tier1 /D BINK_VIDEO /D AVI_VIDEO /D WMV_VIDEO /D DEV_BUILD /D FRAME_POINTER_OMISSION_DISABLED /D TIER1_STATIC_LIB /D _EXTERNAL_DLL_EXT=.dll /D VPCGAMECAPS=VALVE /D "PROJECTDIR=C:\Ultimate SSDK v3\testmod\src\tier1" /D _DLL_EXT=.dll /D VPCGAME=valve /D SOURCE1=1 /GF /Gm- /EHsc /MT /GS /Gy /arch:SSE /fp:fast /Zc:wchar_t /Zc:forScope /GR /openmp- /Fo".\Release\.\/" /Fd".\Release\.\/vc120.pdb" /Gd /TP /wd4316 /analyze- /FC /errorReport:prompt /d2Zi+ /Gw processor_detect.cpp
+         processor_detect.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"..\lib\public\.\tier1.lib" Rpcrt4.lib /NOLOGO  /ignore:4221 .\Release\.\/bitbuf.obj
+         .\Release\.\/byteswap.obj
+         .\Release\.\/characterset.obj
+         .\Release\.\/checksum_crc.obj
+         .\Release\.\/checksum_md5.obj
+         .\Release\.\/checksum_sha1.obj
+         .\Release\.\/commandbuffer.obj
+         .\Release\.\/convar.obj
+         .\Release\.\/datamanager.obj
+         .\Release\.\/diff.obj
+         .\Release\.\/generichash.obj
+         .\Release\.\/ilocalize.obj
+         .\Release\.\/interface.obj
+         .\Release\.\/KeyValues.obj
+         .\Release\.\/kvpacker.obj
+         .\Release\.\/lzmaDecoder.obj
+         .\Release\.\/mempool.obj
+         .\Release\.\/memstack.obj
+         .\Release\.\/NetAdr.obj
+         .\Release\.\/newbitbuf.obj
+         .\Release\.\/processor_detect.obj
+         .\Release\.\/rangecheckedvar.obj
+         .\Release\.\/reliabletimer.obj
+         ".\Release\.\/snappy-sinksource.obj"
+         ".\Release\.\/snappy-stubs-internal.obj"
+         .\Release\.\/snappy.obj
+         .\Release\.\/sparsematrix.obj
+         .\Release\.\/splitstring.obj
+         .\Release\.\/stringpool.obj
+         .\Release\.\/strtools.obj
+         .\Release\.\/tier1.obj
+         .\Release\.\/tokenreader.obj
+         .\Release\.\/uniqueid.obj
+         .\Release\.\/utlbuffer.obj
+         .\Release\.\/utlbufferutil.obj
+         .\Release\.\/utlstring.obj
+         .\Release\.\/utlsymbol.obj
+         tier1.vcxproj -> C:\Ultimate SSDK v3\testmod\project_heat_src\tier1\..\lib\public\.\tier1.lib
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\project_heat_src\tier1\tier1.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:47.46

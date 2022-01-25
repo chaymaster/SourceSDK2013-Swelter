@@ -1,0 +1,155 @@
+﻿Build started 24.07.2019 11:07:18.
+     1>Project "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\vbsp.vcxproj" on node 6 (Build target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\..\..\game\bin\.\vbsp.exe for /f "delims=" %%A in ('attrib "..\..\..\game\bin\.\vbsp.exe"') do set valveTmpIsReadOnly="%%A"
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" del /q "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\Debug\"vbsp.exe
+         if exist "..\..\devtools\bin\vpc.exe" "..\..\devtools\bin\vpc.exe" -crc2 "vbsp.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Compiling pointeroverride.asm
+         Microsoft (R) Macro Assembler Version 12.00.30501.0
+         Copyright (C) Microsoft Corporation.  All rights reserved.
+         
+          Assembling: C:\Ultimate SSDK v3\testmod\src\public\tier0\pointeroverride.asm
+         Running VPC CRC Check - vbsp.vpc
+         Отказано в доступе.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\common /I..\..\public /I..\..\public\tier0 /I..\..\public\tier1 /I..\common /I..\vmpi /ZI /nologo /W4 /WX /MP /Od /Oy- /D VPC /D RAD_TELEMETRY_DISABLED /D _HAS_ITERATOR_DEBUGGING=0 /D WIN32 /D _WIN32 /D _DEBUG /D DEBUG /D _WINDOWS /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _ALLOW_RUNTIME_LIBRARY_MISMATCH /D _ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH /D _ALLOW_MSC_VER_MISMATCH /D _USING_V110_SDK71_ /D _MBCS /D COMPILER_MSVC32 /D COMPILER_MSVC32 /D COMPILER_MSVC /D EXENAME=vbsp /D _DLL_EXT=.dll /D DEV_BUILD /D FRAME_POINTER_OMISSION_DISABLED /D MACRO_MATHLIB /D PROTECTED_THINGS_DISABLE /D _EXTERNAL_DLL_EXT=.dll /D VPCGAMECAPS=VALVE /D "PROJECTDIR=C:\Ultimate SSDK v3\testmod\src\utils\vbsp" /D _DLL_EXT=.dll /D VPCGAME=valve /D SOURCE1=1 /GF /Gm- /MTd /GS /arch:SSE /fp:fast /Zc:wchar_t /Zc:forScope /GR /openmp- /Fo".\Debug\.\/" /Fd".\Debug\.\/vc120.pdb" /Gd /TP /wd4316 /analyze- /FC /errorReport:prompt  /Gw boundbox.cpp brushbsp.cpp ..\..\public\CollisionUtils.cpp csg.cpp cubemap.cpp detail.cpp detailObjects.cpp ..\..\public\disp_common.cpp disp_ivp.cpp ..\..\public\disp_powerinfo.cpp disp_vbsp.cpp faces.cpp glfile.cpp ivp.cpp leakfile.cpp ..\..\public\loadcmdline.cpp ..\..\public\lumpfiles.cpp manifest.cpp map.cpp materialpatch.cpp materialsub.cpp ..\..\public\tier0\memoverride.cpp ..\common\mstristrip.cpp nodraw.cpp normals.cpp overlay.cpp ..\common\physdll.cpp portals.cpp prtfile.cpp ..\..\public\ScratchPad3D.cpp ..\common\scratchpad_helpers.cpp StaticProp.cpp textures.cpp tree.cpp ..\common\utilmatlib.cpp vbsp.cpp worldvertextransitionfixup.cpp writebsp.cpp ..\..\public\zip_utils.cpp ..\common\bsplib.cpp ..\..\public\builddisp.cpp ..\..\public\ChunkFile.cpp ..\common\cmdlib.cpp ..\..\public\filesystem_helpers.cpp ..\..\public\filesystem_init.cpp ..\common\filesystem_tools.cpp ..\common\map_shared.cpp ..\common\pacifier.cpp ..\common\polylib.cpp ..\common\scriplib.cpp ..\common\threads.cpp ..\common\tools_minidump.cpp
+         boundbox.cpp
+         brushbsp.cpp
+         CollisionUtils.cpp
+         csg.cpp
+         cubemap.cpp
+         detail.cpp
+         detailObjects.cpp
+         disp_common.cpp
+         disp_ivp.cpp
+         disp_powerinfo.cpp
+         disp_vbsp.cpp
+         faces.cpp
+         glfile.cpp
+         ivp.cpp
+         leakfile.cpp
+         loadcmdline.cpp
+         lumpfiles.cpp
+         manifest.cpp
+         map.cpp
+         materialpatch.cpp
+         materialsub.cpp
+         memoverride.cpp
+         mstristrip.cpp
+         nodraw.cpp
+         normals.cpp
+         overlay.cpp
+         physdll.cpp
+         portals.cpp
+         prtfile.cpp
+         ScratchPad3D.cpp
+         scratchpad_helpers.cpp
+         StaticProp.cpp
+         textures.cpp
+         tree.cpp
+         utilmatlib.cpp
+         vbsp.cpp
+         worldvertextransitionfixup.cpp
+         writebsp.cpp
+         zip_utils.cpp
+         bsplib.cpp
+         builddisp.cpp
+         ChunkFile.cpp
+         cmdlib.cpp
+         filesystem_helpers.cpp
+         filesystem_init.cpp
+         filesystem_tools.cpp
+         map_shared.cpp
+         pacifier.cpp
+         polylib.cpp
+         scriplib.cpp
+         threads.cpp
+         tools_minidump.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug\.\\vbsp.exe" /INCREMENTAL /NOLOGO shell32.lib user32.lib advapi32.lib gdi32.lib comdlg32.lib ole32.lib ws2_32.lib odbc32.lib odbccp32.lib winmm.lib /NODEFAULTLIB:libc /NODEFAULTLIB:libcd /NODEFAULTLIB:libcmt /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:".\Debug\.\/vbsp.pdb" /SUBSYSTEM:CONSOLE,"5.01" /TLBID:1 /DYNAMICBASE:NO /NXCOMPAT /IMPLIB:".\Debug\.\vbsp.lib" /MACHINE:X86 /SAFESEH:NO /NXCOMPAT /ignore:4221 .\Debug\.\\pointeroverride.obj
+         .\Debug\.\/boundbox.obj
+         .\Debug\.\/brushbsp.obj
+         .\Debug\.\/CollisionUtils.obj
+         .\Debug\.\/csg.obj
+         .\Debug\.\/cubemap.obj
+         .\Debug\.\/detail.obj
+         .\Debug\.\/detailObjects.obj
+         .\Debug\.\/disp_common.obj
+         .\Debug\.\/disp_ivp.obj
+         .\Debug\.\/disp_powerinfo.obj
+         .\Debug\.\/disp_vbsp.obj
+         .\Debug\.\/faces.obj
+         .\Debug\.\/glfile.obj
+         .\Debug\.\/ivp.obj
+         .\Debug\.\/leakfile.obj
+         .\Debug\.\/loadcmdline.obj
+         .\Debug\.\/lumpfiles.obj
+         .\Debug\.\/manifest.obj
+         .\Debug\.\/map.obj
+         .\Debug\.\/materialpatch.obj
+         .\Debug\.\/materialsub.obj
+         .\Debug\.\/memoverride.obj
+         .\Debug\.\/mstristrip.obj
+         .\Debug\.\/nodraw.obj
+         .\Debug\.\/normals.obj
+         .\Debug\.\/overlay.obj
+         .\Debug\.\/physdll.obj
+         .\Debug\.\/portals.obj
+         .\Debug\.\/prtfile.obj
+         .\Debug\.\/ScratchPad3D.obj
+         .\Debug\.\/scratchpad_helpers.obj
+         .\Debug\.\/StaticProp.obj
+         .\Debug\.\/textures.obj
+         .\Debug\.\/tree.obj
+         .\Debug\.\/utilmatlib.obj
+         .\Debug\.\/vbsp.obj
+         .\Debug\.\/worldvertextransitionfixup.obj
+         .\Debug\.\/writebsp.obj
+         .\Debug\.\/zip_utils.obj
+         .\Debug\.\/bsplib.obj
+         .\Debug\.\/builddisp.obj
+         .\Debug\.\/ChunkFile.obj
+         .\Debug\.\/cmdlib.obj
+         .\Debug\.\/filesystem_helpers.obj
+         .\Debug\.\/filesystem_init.obj
+         .\Debug\.\/filesystem_tools.obj
+         .\Debug\.\/map_shared.obj
+         .\Debug\.\/pacifier.obj
+         .\Debug\.\/polylib.obj
+         .\Debug\.\/scriplib.obj
+         .\Debug\.\/threads.obj
+         .\Debug\.\/tools_minidump.obj
+         ..\..\lib\public\bitmap.lib
+         ..\..\lib\public\fgdlib.lib
+         ..\..\lib\public\mathlib.lib
+         ..\..\lib\public\tier0.lib
+         ..\..\lib\public\tier1.lib
+         ..\..\lib\public\tier2.lib
+         ..\..\lib\public\vstdlib.lib
+         ..\..\lib\public\vtf.lib
+            Creating library .\Debug\.\vbsp.lib and object .\Debug\.\vbsp.exp
+         vbsp.vcxproj -> C:\Ultimate SSDK v3\testmod\src\utils\vbsp\.\Debug\.\vbsp.exe
+       PostBuildEvent:
+         copy "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\Debug\"vbsp.exe ..\..\..\game\bin\.\vbsp.exe >nul
+         if ERRORLEVEL 1 goto BuildEventFailed
+         if exist "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\Debug\"vbsp.map copy "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\Debug\"vbsp.map ..\..\..\game\bin\.\vbsp.map >nul
+         copy "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\Debug\"vbsp.pdb ..\..\..\game\bin\.\vbsp.pdb >nul
+         if ERRORLEVEL 1 goto BuildEventFailed
+         goto BuildEventOK
+         :BuildEventFailed
+         echo *** ERROR! PostBuildStep FAILED for Vbsp! EXE or DLL is probably running. ***
+         del /q "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\Debug\"vbsp.exe
+         exit 1
+         :BuildEventOK
+         
+         :VCEnd
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\src\utils\vbsp\vbsp.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:03:00.42

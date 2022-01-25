@@ -1,0 +1,24 @@
+﻿Build started 09.05.2021 18:48:01.
+     1>Project "C:\Ultimate SSDK v3\testmod\project_heat_src\tier1\tier1.vcxproj" on node 5 (Build target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\lib\public\.\tier1.lib ( for /f "delims=" %%A in ('attrib "..\lib\public\.\tier1.lib"') do set valveTmpIsReadOnly="%%A"
+         ) else ( if not EXIST ..\lib\public\. mkdir ..\lib\public\. )
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" (
+             attrib -r ..\lib\public\.\tier1.lib
+             ..\devtools\bin\gnu\touch.exe -d "1999-01-01" ..\lib\public\.\tier1.lib
+             attrib +r ..\lib\public\.\tier1.lib
+         )
+         if exist "..\devtools\bin\vpc.exe" "..\devtools\bin\vpc.exe" -crc2 "tier1.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Running VPC CRC Check - tier1.vpc
+       Lib:
+         tier1.vcxproj -> C:\Ultimate SSDK v3\testmod\project_heat_src\tier1\..\lib\public\.\tier1.lib
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\project_heat_src\tier1\tier1.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.41

@@ -1,0 +1,60 @@
+﻿Build started 24.07.2019 11:07:26.
+     1>Project "C:\Ultimate SSDK v3\testmod\src\utils\vice\vice.vcxproj" on node 8 (Build target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\..\..\game\bin\.\vice.exe for /f "delims=" %%A in ('attrib "..\..\..\game\bin\.\vice.exe"') do set valveTmpIsReadOnly="%%A"
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" del /q "C:\Ultimate SSDK v3\testmod\src\utils\vice\Debug\"vice.exe
+         if exist "..\..\devtools\bin\vpc.exe" "..\..\devtools\bin\vpc.exe" -crc2 "vice.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Compiling pointeroverride.asm
+          Assembling: C:\Ultimate SSDK v3\testmod\src\public\tier0\pointeroverride.asm
+         Microsoft (R) Macro Assembler Version 12.00.30501.0
+         Copyright (C) Microsoft Corporation.  All rights reserved.
+         
+         Running VPC CRC Check - vice.vpc
+         Отказано в доступе.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\common /I..\..\public /I..\..\public\tier0 /I..\..\public\tier1 /I..\common /ZI /nologo /W4 /WX /MP /Od /Oy- /D VPC /D RAD_TELEMETRY_DISABLED /D _HAS_ITERATOR_DEBUGGING=0 /D WIN32 /D _WIN32 /D _DEBUG /D DEBUG /D _WINDOWS /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _ALLOW_RUNTIME_LIBRARY_MISMATCH /D _ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH /D _ALLOW_MSC_VER_MISMATCH /D _USING_V110_SDK71_ /D _MBCS /D COMPILER_MSVC32 /D COMPILER_MSVC32 /D COMPILER_MSVC /D EXENAME=vice /D _DLL_EXT=.dll /D DEV_BUILD /D FRAME_POINTER_OMISSION_DISABLED /D _EXTERNAL_DLL_EXT=.dll /D VPCGAMECAPS=VALVE /D "PROJECTDIR=C:\Ultimate SSDK v3\testmod\src\utils\vice" /D _DLL_EXT=.dll /D SOURCE1=1 /D VPCGAME=valve /GF /Gm- /MTd /GS /arch:SSE /fp:fast /Zc:wchar_t /Zc:forScope /GR /openmp- /Fo".\Debug\.\/" /Fd".\Debug\.\/vc120.pdb" /Gd /TP /wd4316 /analyze- /FC /errorReport:prompt  /Gw ..\common\cmdlib.cpp ..\..\public\filesystem_helpers.cpp ..\..\public\filesystem_init.cpp ..\common\filesystem_tools.cpp ..\..\public\tier0\memoverride.cpp vice.cpp
+         cmdlib.cpp
+         filesystem_helpers.cpp
+         filesystem_init.cpp
+         filesystem_tools.cpp
+         memoverride.cpp
+         vice.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug\.\\vice.exe" /INCREMENTAL /NOLOGO shell32.lib user32.lib advapi32.lib gdi32.lib comdlg32.lib ole32.lib /NODEFAULTLIB:libc /NODEFAULTLIB:libcd /NODEFAULTLIB:libcmt /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:".\Debug\.\/vice.pdb" /SUBSYSTEM:CONSOLE,"5.01" /TLBID:1 /DYNAMICBASE:NO /NXCOMPAT /IMPLIB:".\Debug\.\vice.lib" /MACHINE:X86 /SAFESEH:NO /NXCOMPAT /ignore:4221 .\Debug\.\\pointeroverride.obj
+         .\Debug\.\/cmdlib.obj
+         .\Debug\.\/filesystem_helpers.obj
+         .\Debug\.\/filesystem_init.obj
+         .\Debug\.\/filesystem_tools.obj
+         .\Debug\.\/memoverride.obj
+         .\Debug\.\/vice.obj
+         ..\..\lib\public\mathlib.lib
+         ..\..\lib\public\tier0.lib
+         ..\..\lib\public\tier1.lib
+         ..\..\lib\public\tier2.lib
+         ..\..\lib\public\vstdlib.lib
+            Creating library .\Debug\.\vice.lib and object .\Debug\.\vice.exp
+         vice.vcxproj -> C:\Ultimate SSDK v3\testmod\src\utils\vice\.\Debug\.\vice.exe
+       PostBuildEvent:
+         copy "C:\Ultimate SSDK v3\testmod\src\utils\vice\Debug\"vice.exe ..\..\..\game\bin\.\vice.exe >nul
+         if ERRORLEVEL 1 goto BuildEventFailed
+         if exist "C:\Ultimate SSDK v3\testmod\src\utils\vice\Debug\"vice.map copy "C:\Ultimate SSDK v3\testmod\src\utils\vice\Debug\"vice.map ..\..\..\game\bin\.\vice.map >nul
+         copy "C:\Ultimate SSDK v3\testmod\src\utils\vice\Debug\"vice.pdb ..\..\..\game\bin\.\vice.pdb >nul
+         if ERRORLEVEL 1 goto BuildEventFailed
+         goto BuildEventOK
+         :BuildEventFailed
+         echo *** ERROR! PostBuildStep FAILED for Vice! EXE or DLL is probably running. ***
+         del /q "C:\Ultimate SSDK v3\testmod\src\utils\vice\Debug\"vice.exe
+         exit 1
+         :BuildEventOK
+         
+         :VCEnd
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\src\utils\vice\vice.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:18.99

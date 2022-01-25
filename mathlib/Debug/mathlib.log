@@ -1,0 +1,24 @@
+﻿Build started 09.05.2021 18:48:01.
+     1>Project "C:\Ultimate SSDK v3\testmod\project_heat_src\mathlib\mathlib.vcxproj" on node 4 (Build target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\lib\public\.\mathlib.lib ( for /f "delims=" %%A in ('attrib "..\lib\public\.\mathlib.lib"') do set valveTmpIsReadOnly="%%A"
+         ) else ( if not EXIST ..\lib\public\. mkdir ..\lib\public\. )
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" (
+             attrib -r ..\lib\public\.\mathlib.lib
+             ..\devtools\bin\gnu\touch.exe -d "1999-01-01" ..\lib\public\.\mathlib.lib
+             attrib +r ..\lib\public\.\mathlib.lib
+         )
+         if exist "..\devtools\bin\vpc.exe" "..\devtools\bin\vpc.exe" -crc2 "mathlib.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Running VPC CRC Check - mathlib.vpc
+       Lib:
+         mathlib.vcxproj -> C:\Ultimate SSDK v3\testmod\project_heat_src\mathlib\..\lib\public\.\mathlib.lib
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\project_heat_src\mathlib\mathlib.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.35

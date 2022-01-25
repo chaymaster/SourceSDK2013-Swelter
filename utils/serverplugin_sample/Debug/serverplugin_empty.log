@@ -1,0 +1,57 @@
+﻿Build started 24.07.2019 11:07:11.
+     1>Project "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\serverplugin_empty.vcxproj" on node 7 (Build target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\..\..\game\bin\.\serverplugin_empty.dll for /f "delims=" %%A in ('attrib "..\..\..\game\bin\.\serverplugin_empty.dll"') do set valveTmpIsReadOnly="%%A"
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" del /q "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\Debug\"serverplugin_empty.dll
+         if exist "..\..\devtools\bin\vpc.exe" "..\..\devtools\bin\vpc.exe" -crc2 "serverplugin_empty.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Compiling pointeroverride.asm
+          Assembling: C:\Ultimate SSDK v3\testmod\src\public\tier0\pointeroverride.asm
+         Microsoft (R) Macro Assembler Version 12.00.30501.0
+         Copyright (C) Microsoft Corporation.  All rights reserved.
+         
+         Running VPC CRC Check - serverplugin_empty.vpc
+         Отказано в доступе.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\common /I..\..\public /I..\..\public\tier0 /I..\..\public\tier1 /I..\..\game\server /I..\..\game\shared /ZI /nologo /W4 /WX /MP /Od /Oy- /D VPC /D RAD_TELEMETRY_DISABLED /D _HAS_ITERATOR_DEBUGGING=0 /D WIN32 /D _WIN32 /D _DEBUG /D DEBUG /D _WINDOWS /D _USRDLL /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _ALLOW_RUNTIME_LIBRARY_MISMATCH /D _ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH /D _ALLOW_MSC_VER_MISMATCH /D _USING_V110_SDK71_ /D _WINDLL /D _MBCS /D COMPILER_MSVC32 /D COMPILER_MSVC32 /D COMPILER_MSVC /D _DLL_EXT=.dll /D DLLNAME=serverplugin_empty /D BINK_VIDEO /D AVI_VIDEO /D WMV_VIDEO /D DEV_BUILD /D FRAME_POINTER_OMISSION_DISABLED /D serverplugin_emptyONLY /D _MBCS /D _EXTERNAL_DLL_EXT=.dll /D VPCGAMECAPS=VALVE /D "PROJECTDIR=C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample" /D _DLL_EXT=.dll /D SOURCE1=1 /D VPCGAME=valve /GF /Gm- /MTd /GS /arch:SSE /fp:fast /Zc:wchar_t /Zc:forScope /GR /Fo".\Debug\.\/" /Fd".\Debug\.\/vc120.pdb" /Gd /TP /wd4316 /analyze- /FC /errorReport:prompt /Zm200 /Gw ..\..\public\tier0\memoverride.cpp serverplugin_bot.cpp serverplugin_empty.cpp
+         memoverride.cpp
+         serverplugin_bot.cpp
+         serverplugin_empty.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Debug\.\\serverplugin_empty.dll" /INCREMENTAL /NOLOGO /LIBPATH:..\..\lib\common\. /LIBPATH:..\..\lib\public\. shell32.lib user32.lib advapi32.lib gdi32.lib comdlg32.lib ole32.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libc /NODEFAULTLIB:libcd /NODEFAULTLIB:libcmt /MANIFEST:NO /DEBUG /PDB:".\Debug\.\/serverplugin_empty.pdb" /SUBSYSTEM:WINDOWS,"5.01" /TLBID:1 /DYNAMICBASE:NO /NXCOMPAT /IMPLIB:".\Debug\.\serverplugin_empty.lib" /MACHINE:X86 /SAFESEH:NO  /ignore:4221 /DLL .\Debug\.\\pointeroverride.obj
+         .\Debug\.\/memoverride.obj
+         .\Debug\.\/serverplugin_bot.obj
+         .\Debug\.\/serverplugin_empty.obj
+         ..\..\lib\public\mathlib.lib
+         ..\..\lib\public\tier0.lib
+         ..\..\lib\public\tier1.lib
+         ..\..\lib\public\tier2.lib
+         ..\..\lib\public\vstdlib.lib
+            Creating library .\Debug\.\serverplugin_empty.lib and object .\Debug\.\serverplugin_empty.exp
+         serverplugin_empty.vcxproj -> C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\.\Debug\.\serverplugin_empty.dll
+       PostBuildEvent:
+         if not exist "..\..\..\game\bin\." mkdir "..\..\..\game\bin\."
+         copy "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\Debug\serverplugin_empty.dll" "..\..\..\game\bin\.\serverplugin_empty.dll"
+         if ERRORLEVEL 1 goto BuildEventFailed
+         if exist "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\Debug\serverplugin_empty.map" copy "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\Debug\serverplugin_empty.map" ..\..\..\game\bin\.\serverplugin_empty.map
+         copy "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\Debug\serverplugin_empty.pdb" ..\..\..\game\bin\.\serverplugin_empty.pdb
+         if ERRORLEVEL 1 goto BuildEventFailed
+         goto BuildEventOK
+         :BuildEventFailed
+         echo *** ERROR! PostBuildStep FAILED for Serverplugin_empty! EXE or DLL is probably running. ***
+         del /q "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\Debug\serverplugin_empty.dll"
+         exit 1
+         :BuildEventOK
+         
+         :VCEnd
+         Скопировано файлов:         1.
+         Скопировано файлов:         1.
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\src\utils\serverplugin_sample\serverplugin_empty.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:19.65

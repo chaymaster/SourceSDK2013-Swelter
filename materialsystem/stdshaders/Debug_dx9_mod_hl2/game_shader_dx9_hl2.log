@@ -1,0 +1,63 @@
+﻿Build started 24.07.2019 11:06:33.
+     1>Project "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\game_shader_dx9_hl2.vcxproj" on node 5 (Build target(s)).
+     1>PreBuildEvent:
+         if EXIST ..\..\..\game\mod_hl2\bin\.\game_shader_dx9.dll for /f "delims=" %%A in ('attrib "..\..\..\game\mod_hl2\bin\.\game_shader_dx9.dll"') do set valveTmpIsReadOnly="%%A"
+         set valveTmpIsReadOnlyLetter=%valveTmpIsReadOnly:~6,1%
+         if "%valveTmpIsReadOnlyLetter%"=="R" del /q "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\"game_shader_dx9.dll
+         if exist "..\..\devtools\bin\vpc.exe" "..\..\devtools\bin\vpc.exe" -crc2 "game_shader_dx9_hl2.vcxproj"
+         if ERRORLEVEL 1 exit /b 1
+         
+         :VCEnd
+       CustomBuild:
+         Compiling pointeroverride.asm
+         Microsoft (R) Macro Assembler Version 12.00.30501.0
+         Copyright (C) Microsoft Corporation.  All rights reserved.
+         
+          Assembling: C:\Ultimate SSDK v3\testmod\src\public\tier0\pointeroverride.asm
+         Running VPC CRC Check - game_shader_dx9_hl2.vpc
+         Отказано в доступе.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\common /I..\..\public /I..\..\public\tier0 /I..\..\public\tier1 /Ifxctmp9 /Ivshtmp9 /ZI /nologo /W4 /WX /MP /Od /Oy- /D VPC /D RAD_TELEMETRY_DISABLED /D _HAS_ITERATOR_DEBUGGING=0 /D WIN32 /D _WIN32 /D _DEBUG /D DEBUG /D _WINDOWS /D _USRDLL /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _ALLOW_RUNTIME_LIBRARY_MISMATCH /D _ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH /D _ALLOW_MSC_VER_MISMATCH /D _USING_V110_SDK71_ /D _WINDLL /D _MBCS /D COMPILER_MSVC32 /D COMPILER_MSVC32 /D COMPILER_MSVC /D _DLL_EXT=.dll /D DLLNAME=game_shader_dx9 /D BINK_VIDEO /D AVI_VIDEO /D WMV_VIDEO /D DEV_BUILD /D FRAME_POINTER_OMISSION_DISABLED /D STDSHADER_DX9_DLL_EXPORT /D FAST_MATERIALVAR_ACCESS /D GAME_SHADER_DLL /D USE_ACTUAL_DX /D _EXTERNAL_DLL_EXT=.dll /D VPCGAMECAPS=VALVE /D "PROJECTDIR=C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders" /D _DLL_EXT=.dll /D SOURCE1=1 /D VPCGAME=valve /GF /Gm- /MTd /GS /arch:SSE /fp:fast /Zc:wchar_t /Zc:forScope /GR /Fo"Debug_dx9_mod_hl2\/" /Fd"Debug_dx9_mod_hl2\/vc120.pdb" /Gd /TP /wd4316 /analyze- /FC /errorReport:prompt /Zm200 /Gw BaseVSShader.cpp Bloom.cpp example_model_dx9.cpp example_model_dx9_helper.cpp ..\..\public\tier0\memoverride.cpp screenspace_general.cpp
+         BaseVSShader.cpp
+         Bloom.cpp
+         example_model_dx9.cpp
+         example_model_dx9_helper.cpp
+         memoverride.cpp
+         screenspace_general.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Debug_dx9_mod_hl2\\game_shader_dx9.dll" /INCREMENTAL /NOLOGO /LIBPATH:..\..\lib\common\. /LIBPATH:..\..\lib\public\. shell32.lib user32.lib advapi32.lib gdi32.lib comdlg32.lib ole32.lib version.lib winmm.lib /NODEFAULTLIB:libc /NODEFAULTLIB:libcd /NODEFAULTLIB:libcmt /MANIFEST:NO /DEBUG /PDB:"Debug_dx9_mod_hl2\/game_shader_dx9.pdb" /SUBSYSTEM:WINDOWS,"5.01" /TLBID:1 /DYNAMICBASE:NO /NXCOMPAT /IMPLIB:"Debug_dx9_mod_hl2\game_shader_dx9.lib" /MACHINE:X86 /SAFESEH:NO  /ignore:4221 /DLL Debug_dx9_mod_hl2\\pointeroverride.obj
+         Debug_dx9_mod_hl2\/BaseVSShader.obj
+         Debug_dx9_mod_hl2\/Bloom.obj
+         Debug_dx9_mod_hl2\/example_model_dx9.obj
+         Debug_dx9_mod_hl2\/example_model_dx9_helper.obj
+         Debug_dx9_mod_hl2\/memoverride.obj
+         Debug_dx9_mod_hl2\/screenspace_general.obj
+         ..\..\lib\public\mathlib.lib
+         ..\..\lib\public\shaderlib.lib
+         ..\..\lib\public\tier0.lib
+         ..\..\lib\public\tier1.lib
+         ..\..\lib\public\vstdlib.lib
+            Creating library Debug_dx9_mod_hl2\game_shader_dx9.lib and object Debug_dx9_mod_hl2\game_shader_dx9.exp
+         game_shader_dx9_hl2.vcxproj -> C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\game_shader_dx9.dll
+       PostBuildEvent:
+         if not exist "..\..\..\game\mod_hl2\bin\." mkdir "..\..\..\game\mod_hl2\bin\."
+         copy "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\game_shader_dx9.dll" "..\..\..\game\mod_hl2\bin\.\game_shader_dx9.dll"
+         if ERRORLEVEL 1 goto BuildEventFailed
+         if exist "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\game_shader_dx9.map" copy "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\game_shader_dx9.map" ..\..\..\game\mod_hl2\bin\.\game_shader_dx9.map
+         copy "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\game_shader_dx9.pdb" ..\..\..\game\mod_hl2\bin\.\game_shader_dx9.pdb
+         if ERRORLEVEL 1 goto BuildEventFailed
+         goto BuildEventOK
+         :BuildEventFailed
+         echo *** ERROR! PostBuildStep FAILED for Shaders (HL2)! EXE or DLL is probably running. ***
+         del /q "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\Debug_dx9_mod_hl2\game_shader_dx9.dll"
+         exit 1
+         :BuildEventOK
+         
+         :VCEnd
+         Скопировано файлов:         1.
+         Скопировано файлов:         1.
+     1>Done Building Project "C:\Ultimate SSDK v3\testmod\src\materialsystem\stdshaders\game_shader_dx9_hl2.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:34.61
