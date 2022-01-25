@@ -1511,30 +1511,6 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="plasma.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="smoke_trail.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="smokestack.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="steamjet.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="te.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="te_basebeam.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="te_particlesystem.h">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClInclude>
-    <ClInclude Include="toolframework_server.h">
-      <Filter>Tools Framework</Filter>
-    </ClInclude>
     <ClInclude Include="hl2\ai_behavior_actbusy.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
@@ -1586,7 +1562,7 @@
     <ClInclude Include="hl2\basehlcombatweapon.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\basehlcombatweapon_shared.h">
+    <ClInclude Include="..\..\game\shared\hl2\basehlcombatweapon_shared.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\cbasehelicopter.h">
@@ -1595,7 +1571,7 @@
     <ClInclude Include="hl2\cbasespriteprojectile.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\citadel_effects_shared.h">
+    <ClInclude Include="..\..\game\shared\hl2\citadel_effects_shared.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\combine_mine.h">
@@ -1604,10 +1580,10 @@
     <ClInclude Include="hl2\energy_wave.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\env_alyxemp_shared.h">
+    <ClInclude Include="..\..\game\shared\hl2\env_alyxemp_shared.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\env_headcrabcanister_shared.h">
+    <ClInclude Include="..\..\game\shared\hl2\env_headcrabcanister_shared.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="episodic\ep1_gamestats.h">
@@ -1634,25 +1610,25 @@
     <ClInclude Include="hl2\grenade_spit.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\hl2_gamerules.h">
+    <ClInclude Include="..\..\game\shared\hl2\hl2_gamerules.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\hl2_player.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\hl2_player_shared.h">
+    <ClInclude Include="..\..\game\shared\hl2\hl2_player_shared.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\hl2_playerlocaldata.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\hl2_shareddefs.h">
+    <ClInclude Include="..\..\game\shared\hl2\hl2_shareddefs.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\hl_gamemovement.h">
+    <ClInclude Include="..\..\game\shared\hl2\hl_gamemovement.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\hl_movedata.h">
+    <ClInclude Include="..\..\game\shared\hl2\hl_movedata.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\info_darknessmode_lightsource.h">
@@ -1661,7 +1637,7 @@
     <ClInclude Include="hl2\item_dynamic_resupply.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\episodic\npc_advisor_shared.h">
+    <ClInclude Include="..\..\game\shared\episodic\npc_advisor_shared.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\npc_alyx_episodic.h">
@@ -1784,32 +1760,29 @@
     <ClInclude Include="hl2\weapon_flaregun.h">
       <Filter>Source Files\HL2 DLL\unused</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\npc_bullsquid.h">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClInclude Include="plasma.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\weapon_alyxgun_s.h">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClInclude Include="smoke_trail.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\hl2\lasersight.h">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClInclude Include="smokestack.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\weapon_wrench.h">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClInclude Include="steamjet.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\weapon_wrench2.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="te.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\npc_assassin.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="te_basebeam.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\weapon_pero.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="te_particlesystem.h">
+      <Filter>Source Files\temporary entities</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\weapon_kulak.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="hl2\weapon_kulak2.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="toolframework_server.h">
+      <Filter>Tools Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2911,184 +2884,13 @@
     <ClCompile Include="world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files\Precompiled Header</Filter>
-    </ClCompile>
-    <ClCompile Include="basetempentity.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="event_tempentity_tester.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="movie_explosion.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="particle_fire.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="particle_smokegrenade.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="plasma.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="smoke_trail.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="smokestack.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\SpriteTrail.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="steamjet.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_armorricochet.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_basebeam.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beamentpoint.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beaments.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beamfollow.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beamlaser.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beampoints.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beamring.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beamringpoint.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_beamspline.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_bloodsprite.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_bloodstream.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_breakmodel.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_bspdecal.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_bubbles.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_bubbletrail.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_clientprojectile.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_decal.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_dynamiclight.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_effect_dispatch.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_energysplash.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_explosion.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_fizz.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_footprintdecal.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="hl2\te_gaussexplosion.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_glassshatter.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_glowsprite.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_impact.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_killplayerattachments.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_largefunnel.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_muzzleflash.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_particlesystem.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_physicsprop.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_playerdecal.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_projecteddecal.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_showline.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_smoke.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_sparks.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_sprite.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_spritespray.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="te_worlddecal.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\usermessages.cpp">
-      <Filter>Source Files\temporary entities</Filter>
-    </ClCompile>
-    <ClCompile Include="entity_tools_server.cpp">
-      <Filter>Tools Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="toolframework_server.cpp">
-      <Filter>Tools Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="weapon_ar1.cpp">
+    <ClCompile Include="..\..\game\shared\episodic\achievements_ep1.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\episodic\achievements_ep1.cpp">
+    <ClCompile Include="..\..\game\shared\episodic\achievements_ep2.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\episodic\achievements_ep2.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\episodic\achievements_epx.cpp">
+    <ClCompile Include="..\..\game\shared\episodic\achievements_epx.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\ai_allymanager.cpp">
@@ -3142,7 +2944,7 @@
     <ClCompile Include="hl2\basehlcombatweapon.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2\basehlcombatweapon_shared.cpp">
+    <ClCompile Include="..\..\game\shared\hl2\basehlcombatweapon_shared.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\cbasehelicopter.cpp">
@@ -3163,7 +2965,7 @@
     <ClCompile Include="hl2\env_headcrabcanister.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2\env_headcrabcanister_shared.cpp">
+    <ClCompile Include="..\..\game\shared\hl2\env_headcrabcanister_shared.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\env_speaker.cpp">
@@ -3211,7 +3013,7 @@
     <ClCompile Include="hl2\hl2_eventlog.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2\hl2_gamerules.cpp">
+    <ClCompile Include="..\..\game\shared\hl2\hl2_gamerules.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\hl2_player.cpp">
@@ -3223,10 +3025,10 @@
     <ClCompile Include="hl2\hl2_triggers.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2\hl2_usermessages.cpp">
+    <ClCompile Include="..\..\game\shared\hl2\hl2_usermessages.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2\hl_gamemovement.cpp">
+    <ClCompile Include="..\..\game\shared\hl2\hl_gamemovement.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\hl_playermove.cpp">
@@ -3439,7 +3241,7 @@
     <ClCompile Include="hl2\script_intro.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\script_intro_shared.cpp">
+    <ClCompile Include="..\..\game\shared\script_intro_shared.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\vehicle_airboat.cpp">
@@ -3535,63 +3337,173 @@
     <ClCompile Include="hl2\weapon_flaregun.cpp">
       <Filter>Source Files\HL2 DLL\unused</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\npc_bullsquid.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files\Precompiled Header</Filter>
     </ClCompile>
-    <ClCompile Include="weapon_ar1m1.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="basetempentity.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_alyxgun_s.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="event_tempentity_tester.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2\lasersight.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="movie_explosion.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_pistol_m1.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="particle_fire.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_sos.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="particle_smokegrenade.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_wrench.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="plasma.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_wrench2.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="smoke_trail.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\npc_assassin.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="smokestack.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_bugbait2.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="..\..\game\shared\SpriteTrail.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_356.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="steamjet.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_pero.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="te.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_lopata.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="te_armorricochet.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_kulak.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="te_basebeam.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_kulak2.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="te_beamentpoint.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_glauncher.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="te_beaments.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_handgren.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="te_beamfollow.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_smg2.cpp">
-      <Filter>Source Files\HL2 DLL</Filter>
+    <ClCompile Include="te_beamlaser.cpp">
+      <Filter>Source Files\temporary entities</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\weapon_bugbottle.cpp" />
-    <ClCompile Include="weapon_adot.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="te_beampoints.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_beamring.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_beamringpoint.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_beamspline.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_bloodsprite.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_bloodstream.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_breakmodel.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_bspdecal.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_bubbles.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_bubbletrail.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_clientprojectile.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_decal.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_dynamiclight.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_effect_dispatch.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_energysplash.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_explosion.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_fizz.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_footprintdecal.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\te_gaussexplosion.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_glassshatter.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_glowsprite.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_impact.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_killplayerattachments.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_largefunnel.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_muzzleflash.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_particlesystem.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_physicsprop.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_playerdecal.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_projecteddecal.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_showline.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_smoke.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_sparks.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_sprite.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_spritespray.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="te_worlddecal.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\usermessages.cpp">
+      <Filter>Source Files\temporary entities</Filter>
+    </ClCompile>
+    <ClCompile Include="entity_tools_server.cpp">
+      <Filter>Tools Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="toolframework_server.cpp">
+      <Filter>Tools Framework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
