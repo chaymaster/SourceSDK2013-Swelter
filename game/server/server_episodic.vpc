@@ -299,5 +299,21 @@ $Project "Server (Episodic)"
 				$File	"hl2\weapon_flaregun.h"
 			}
 		}
+
+		$Folder	"Swelter"
+		{
+			$File	"weapon_adot.cpp"
+			$File	"weapon_ar1.cpp"
+			$File	"weapon_ar1m1.cpp"
+			$File	"hl2\npc_bullsquid.cpp"
+			$File	"hl2\npc_bullsquid.h"
+			$File	"hl2\weapon_356.cpp"
+			$File	"hl2\weapon_alyxgun_s.cpp"
+			$File	"hl2\weapon_bugbottle.cpp"
+			$File	"hl2\weapon_flaregun.cpp"
+			$File	"hl2\weapon_smg2.cpp"
+			$File	"hl2\weapon_wrench.cpp"
+			$File	"hl2\weapon_wrench2.cpp"
+		}
 	}
 }
