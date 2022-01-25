@@ -309,11 +309,16 @@ $Project "Server (Episodic)"
 			$File	"hl2\npc_bullsquid.h"
 			$File	"hl2\weapon_356.cpp"
 			$File	"hl2\weapon_alyxgun_s.cpp"
+			$File	"hl2\weapon_alyxgun_s.h"
 			$File	"hl2\weapon_bugbottle.cpp"
-			$File	"hl2\weapon_flaregun.cpp"
 			$File	"hl2\weapon_smg2.cpp"
 			$File	"hl2\weapon_wrench.cpp"
+			$File	"hl2\weapon_wrench.h"
 			$File	"hl2\weapon_wrench2.cpp"
+			$File	"hl2\weapon_wrench2.h"
+			$File	"hl2\weapon_sos.cpp"
+			$File	"hl2\weapon_glauncher.cpp"
+			$File	"hl2\weapon_handgren.cpp"
 		}
 	}
 }
