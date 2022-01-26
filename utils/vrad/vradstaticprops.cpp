@@ -1181,7 +1181,8 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 						
 						colorVerts[numVertexes].m_bValid = true;
 						colorVerts[numVertexes].m_Position = samplePosition;
-						VectorAdd( directColor, indirectColor, colorVerts[numVertexes].m_Color );
+						//VectorAdd( directColor, indirectColor, colorVerts[numVertexes].m_Color );
+						VectorAdd( Vector( 0.0f, 0.0f, 0.0f ), indirectColor, colorVerts[numVertexes].m_Color);
 					}
 					
 					numVertexes++;
@@ -1251,7 +1252,8 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 					// save results, not changing valid status
 					// to ensure this offset position is not considered as a viable candidate
 					colorVerts[badVerts[nBadVertex].m_ColorVertex].m_Position = bestPosition;
-					VectorAdd( directColor, indirectColor, colorVerts[badVerts[nBadVertex].m_ColorVertex].m_Color );
+					//VectorAdd( directColor, indirectColor, colorVerts[badVerts[nBadVertex].m_ColorVertex].m_Color );
+					VectorAdd( Vector( 0.0f, 0.0f, 0.0f ), indirectColor, colorVerts[badVerts[nBadVertex].m_ColorVertex].m_Color );
 				}
 			}
 			
