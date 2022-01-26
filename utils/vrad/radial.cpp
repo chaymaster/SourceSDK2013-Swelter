@@ -838,8 +838,14 @@ void FinalLightFace( int iThread, int facenum )
 				pdata[bumpSample][3] = 0;
 #else
 				// convert to a 4 byte r,g,b,signed exponent format
-				VectorToColorRGBExp32( Vector( lb[bumpSample].m_vecLighting.x, lb[bumpSample].m_vecLighting.y,
-											   lb[bumpSample].m_vecLighting.z ), *( ColorRGBExp32 *)pdata[bumpSample] );
+				//VectorToColorRGBExp32( Vector( lb[bumpSample].m_vecLighting.x, lb[bumpSample].m_vecLighting.y,
+				//							   lb[bumpSample].m_vecLighting.z ), *( ColorRGBExp32 *)pdata[bumpSample] );
+
+				VectorToColorRGBExp32( Vector( lb[bumpSample].m_vecLighting.x - lb[bumpSample].m_vecDirectSunLighting.x,
+											   lb[bumpSample].m_vecLighting.y - lb[bumpSample].m_vecDirectSunLighting.y,
+											   lb[bumpSample].m_vecLighting.z - lb[bumpSample].m_vecDirectSunLighting.z ),
+											   *( ColorRGBExp32 *)pdata[bumpSample] );
+
 #endif
 
 				pdata[bumpSample] += 4;

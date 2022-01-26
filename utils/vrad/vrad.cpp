@@ -2865,7 +2865,8 @@ void PrintUsage( int argc, char **argv )
 int RunVRAD( int argc, char **argv )
 {
 #if defined(_MSC_VER) && ( _MSC_VER >= 1310 )
-	Msg("Valve Software - vrad.exe SSE (" __DATE__ ")\n" );
+	Msg("Valve Software - vrad.exe SSE (" __DATE__ ")\n");
+	Msg("CHAY MASTER Inc. modification\n" );
 #else
 	Msg("Valve Software - vrad.exe (" __DATE__ ")\n" );
 #endif
