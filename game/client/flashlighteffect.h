@@ -1,6 +1,7 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
+// Other: Heavily edited by Team Gear for City17: Episode 1.
 //
 //=============================================================================//
 
@@ -12,33 +13,36 @@
 
 struct dlight_t;
 
-
 class CFlashlightEffect
 {
 public:
 
 	CFlashlightEffect(int nEntIndex = 0);
-	virtual ~CFlashlightEffect();
+	~CFlashlightEffect();
 
-	virtual void UpdateLight(const Vector &vecPos, const Vector &vecDir, const Vector &vecRight, const Vector &vecUp, int nDistance);
+	virtual void UpdateLight(const Vector &vecPos, const Vector &vecDir, const Vector &vecRight, const Vector &vecUp, int nDistance, bool bMuzzleFlash);
 	void TurnOn();
 	void TurnOff();
-	bool IsOn( void ) { return m_bIsOn;	}
+	//Allow anyone to execute this.
+	//void RefreshFlashlight( void );
+	bool IsOn(void) { return m_bIsOn; }
 
-	ClientShadowHandle_t GetFlashlightHandle( void ) { return m_FlashlightHandle; }
-	void SetFlashlightHandle( ClientShadowHandle_t Handle ) { m_FlashlightHandle = Handle;	}
-	
+	ClientShadowHandle_t GetFlashlightHandle(void) { return m_FlashlightHandle; }
+	void SetFlashlightHandle(ClientShadowHandle_t Handle) { m_FlashlightHandle = Handle; }
+
 protected:
 
 	void LightOff();
 	void LightOffOld();
 	void LightOffNew();
 
-	void UpdateLightNew(const Vector &vecPos, const Vector &vecDir, const Vector &vecRight, const Vector &vecUp);
+	void UpdateLightNew(const Vector &vecPos, const Vector &vecDir, const Vector &vecRight, const Vector &vecUp, bool bMuzzleFlash);
 	void UpdateLightOld(const Vector &vecPos, const Vector &vecDir, int nDistance);
 
 	bool m_bIsOn;
+	bool m_bUseShadows;
 	int m_nEntIndex;
+
 	ClientShadowHandle_t m_FlashlightHandle;
 
 	// Vehicle headlight dynamic light pointer
@@ -47,12 +51,14 @@ protected:
 
 	// Texture for flashlight
 	CTextureReference m_FlashlightTexture;
+	CTextureReference m_MuzzlelightTexture;
+	CTextureReference m_ARMuzzlelightTexture;
 };
 
 class CHeadlightEffect : public CFlashlightEffect
 {
 public:
-	
+
 	CHeadlightEffect();
 	~CHeadlightEffect();
 

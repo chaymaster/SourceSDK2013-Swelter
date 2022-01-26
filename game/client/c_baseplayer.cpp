@@ -70,6 +70,7 @@ int g_nKillCamTarget1 = 0;
 int g_nKillCamTarget2 = 0;
 
 extern ConVar mp_forcecamera; // in gamevars_shared.h
+extern void	FormatViewModelAttachment(Vector &vOrigin, bool bInverse);
 
 #define FLASHLIGHT_DISTANCE		1000
 #define MAX_VGUI_INPUT_MODE_SPEED 30
@@ -438,6 +439,8 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 	m_nForceVisionFilterFlags = 0;
 
 	ListenForGameEvent( "base_player_teleported" );
+
+	m_flMuzzleFlashTime = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -469,7 +472,8 @@ void C_BasePlayer::Spawn( void )
 
 	m_iFOV	= 0;	// init field of view.
 
-    SetModel( "models/player.mdl" );
+    //SetModel( "models/player.mdl" );
+	SetModel("models/humans/group03/male_09.mdl");
 
 	Precache();
 
@@ -1197,14 +1201,21 @@ void C_BasePlayer::TeamChange( int iNewTeam )
 	// Base class does nothing
 }
 
+bool C_BasePlayer::ShouldDisplayMuzzleLight()
+{
+	if (m_flMuzzleFlashTime > gpGlobals->curtime)
+		return true;
 
+	return false;
+}
 //-----------------------------------------------------------------------------
 // Purpose: Creates, destroys, and updates the flashlight effect as needed.
 //-----------------------------------------------------------------------------
 void C_BasePlayer::UpdateFlashlight()
 {
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	// The dim light is the flashlight.
-	if ( IsEffectActive( EF_DIMLIGHT ) )
+	if ((IsEffectActive(EF_DIMLIGHT) || ShouldDisplayMuzzleLight()) && (pPlayer))
 	{
 		if (!m_pFlashlight)
 		{
@@ -1217,11 +1228,51 @@ void C_BasePlayer::UpdateFlashlight()
 			m_pFlashlight->TurnOn();
 		}
 
-		Vector vecForward, vecRight, vecUp;
-		EyeVectors( &vecForward, &vecRight, &vecUp );
+		QAngle angLightDir;
+		Vector vecLightOrigin, vecForward, vecRight, vecUp;
 
-		// Update the light with the new position and direction.		
-		m_pFlashlight->UpdateLight( EyePosition(), vecForward, vecRight, vecUp, FLASHLIGHT_DISTANCE );
+		CBaseCombatWeapon *pWeapon = GetActiveWeapon();
+		if (pWeapon)
+		{
+			
+			if (true)
+			{
+
+				C_BaseViewModel  *pVM = pPlayer->GetViewModel();
+				if (pVM)
+				{
+					if (ShouldDisplayMuzzleLight())
+					{
+						pVM->GetAttachment(1, vecLightOrigin, angLightDir);
+						AngleVectors(angLightDir, &vecForward, &vecRight, &vecUp);
+					}
+					else
+					{
+						////If we have a flashlight attachment, use that.
+						//if (pVM->LookupAttachment(pWeapon->GetFlashlightAttachment()) != 0)
+						//{
+						//	pVM->GetAttachment(pVM->LookupAttachment(pWeapon->GetFlashlightAttachment()), vecLightOrigin, angLightDir);
+						//}
+						//else
+						//{
+						//	//Looks like we don't have a flashlight attachment. Let's settle with the muzzle.
+						//	pVM->GetAttachment(1, vecLightOrigin, angLightDir);
+						//}
+						EyeVectors(&vecForward, &vecRight, &vecUp);
+						vecLightOrigin = EyePosition();
+					}
+					::FormatViewModelAttachment(vecLightOrigin, true);
+				}
+				
+			}
+			else
+			{
+				EyeVectors(&vecForward, &vecRight, &vecUp);
+				vecLightOrigin = EyePosition();
+			}
+		}
+
+		m_pFlashlight->UpdateLight(vecLightOrigin, vecForward, vecRight, vecUp, FLASHLIGHT_DISTANCE, ShouldDisplayMuzzleLight());
 	}
 	else if (m_pFlashlight)
 	{
@@ -1231,6 +1282,13 @@ void C_BasePlayer::UpdateFlashlight()
 	}
 }
 
+
+
+
+void C_BasePlayer::DisplayMuzzleLight()
+{
+	m_flMuzzleFlashTime = gpGlobals->curtime + .03; //time
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Creates player flashlight if it's ative
