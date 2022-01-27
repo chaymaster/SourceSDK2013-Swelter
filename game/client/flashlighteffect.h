@@ -53,6 +53,8 @@ protected:
 	CTextureReference m_FlashlightTexture;
 	CTextureReference m_MuzzlelightTexture;
 	CTextureReference m_ARMuzzlelightTexture;
+	CTextureReference m_ShotgunMuzzlelightTexture;
+	CTextureReference m_PistolMuzzlelightTexture;
 };
 
 class CHeadlightEffect : public CFlashlightEffect

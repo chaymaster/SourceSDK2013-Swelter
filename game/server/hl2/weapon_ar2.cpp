@@ -347,7 +347,7 @@ void CWeaponAR2::PrimaryAttack(void)
 	SetSkin(0);
 	// player "shoot" animation
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
-
+	pPlayer->DoMuzzleFlash();
 	FireBulletsInfo_t info;
 	info.m_vecSrc = pPlayer->Weapon_ShootPosition();
 
@@ -397,7 +397,7 @@ void CWeaponAR2::PrimaryAttack(void)
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 	}
-
+	
 	SetSkin(1);
 
 	//Add our view kick in

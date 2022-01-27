@@ -92,7 +92,7 @@ CFlashlightEffect::CFlashlightEffect(int nEntIndex)
 		r_newflashlight.SetValue(0);
 	}
 
-	if (g_pMaterialSystemHardwareConfig->SupportsBorderColor())
+	if (false) // (g_pMaterialSystemHardwareConfig->SupportsBorderColor()
 	{
 		m_FlashlightTexture.Init("effects/flashlight_border", TEXTURE_GROUP_OTHER, true);
 		m_MuzzlelightTexture.Init("effects/muzzlelight_border", TEXTURE_GROUP_OTHER, true);
@@ -103,6 +103,8 @@ CFlashlightEffect::CFlashlightEffect(int nEntIndex)
 		m_FlashlightTexture.Init("effects/flashlight001", TEXTURE_GROUP_OTHER, true);
 		m_MuzzlelightTexture.Init("effects/muzzlelight001", TEXTURE_GROUP_OTHER, true);
 		m_ARMuzzlelightTexture.Init("effects/armuzzlelight001", TEXTURE_GROUP_OTHER, true);
+		m_ShotgunMuzzlelightTexture.Init("effects/shotgunmuzzlelight001", TEXTURE_GROUP_OTHER, true);
+		m_PistolMuzzlelightTexture.Init("effects/shotgunmuzzlelight001", TEXTURE_GROUP_OTHER, true);
 	}
 }
 
@@ -359,15 +361,66 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	state.m_fLinearAtten = r_flashlightlinear.GetFloat();
 
 	state.m_fConstantAtten = r_flashlightconstant.GetFloat();
+
+	bool weaponAr2 = false;
+	bool weaponShot = false;
+	bool weaponPistol = false;
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+	if (pPlayer)
+	{
+		CBaseCombatWeapon *pWeapon = GetActiveWeapon();
+		if (pWeapon)
+		{
+			
+			weaponAr2 = (strcmp(pWeapon->GetClassname(), "weapon_ar2") == 0);
+			weaponShot = (strcmp(pWeapon->GetClassname(), "weapon_shotgun") == 0);
+			weaponPistol = (strcmp(pWeapon->GetClassname(), "weapon_pistol") == 0);
+		}
+	}
+
 	if (DoMuzzle)
 	{
-		state.m_fHorizontalFOVDegrees = abs(flFov);
-		state.m_fVerticalFOVDegrees = abs(flFov);
-		state.m_Color[0] = 2.5f;
-		state.m_Color[1] = 2.5f;
-		state.m_Color[2] = 2.3f;
-		state.m_pSpotlightTexture = m_MuzzlelightTexture;
-		state.m_FarZ = r_flashlightfar.GetFloat();
+		if (weaponAr2)
+		{
+			state.m_fHorizontalFOVDegrees = abs(flFov);
+			state.m_fVerticalFOVDegrees = abs(flFov);
+			state.m_Color[0] = 2.5f;
+			state.m_Color[1] = 2.5f;
+			state.m_Color[2] = 2.3f;
+			state.m_pSpotlightTexture = m_ARMuzzlelightTexture;
+			state.m_FarZ = r_flashlightfar.GetFloat();
+		}
+		else if (weaponShot)
+		{
+			state.m_fHorizontalFOVDegrees = abs(flFov);
+			state.m_fVerticalFOVDegrees = abs(flFov);
+			state.m_Color[0] = 2.5f;
+			state.m_Color[1] = 2.5f;
+			state.m_Color[2] = 2.3f;
+			state.m_pSpotlightTexture = m_ShotgunMuzzlelightTexture;
+			state.m_FarZ = r_flashlightfar.GetFloat();
+		}
+		else if (weaponPistol)
+		{
+			state.m_fHorizontalFOVDegrees = abs(flFov);
+			state.m_fVerticalFOVDegrees = abs(flFov);
+			state.m_Color[0] = 2.5f;
+			state.m_Color[1] = 2.5f;
+			state.m_Color[2] = 2.3f;
+			state.m_pSpotlightTexture = m_PistolMuzzlelightTexture;
+			state.m_FarZ = r_flashlightfar.GetFloat();
+		}
+		else
+		{
+			state.m_fHorizontalFOVDegrees = abs(flFov);
+			state.m_fVerticalFOVDegrees = abs(flFov);
+			state.m_Color[0] = 2.5f;
+			state.m_Color[1] = 2.5f;
+			state.m_Color[2] = 2.3f;
+			state.m_pSpotlightTexture = m_MuzzlelightTexture;
+			state.m_FarZ = r_flashlightfar.GetFloat();
+		}
+
 	}
 	else
 	{
