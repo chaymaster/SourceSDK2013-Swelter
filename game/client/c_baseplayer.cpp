@@ -1234,10 +1234,8 @@ void C_BasePlayer::UpdateFlashlight()
 		CBaseCombatWeapon *pWeapon = GetActiveWeapon();
 		if (pWeapon)
 		{
-			
 			if (true)
 			{
-
 				C_BaseViewModel  *pVM = pPlayer->GetViewModel();
 				if (pVM)
 				{
@@ -1248,16 +1246,6 @@ void C_BasePlayer::UpdateFlashlight()
 					}
 					else
 					{
-						////If we have a flashlight attachment, use that.
-						//if (pVM->LookupAttachment(pWeapon->GetFlashlightAttachment()) != 0)
-						//{
-						//	pVM->GetAttachment(pVM->LookupAttachment(pWeapon->GetFlashlightAttachment()), vecLightOrigin, angLightDir);
-						//}
-						//else
-						//{
-						//	//Looks like we don't have a flashlight attachment. Let's settle with the muzzle.
-						//	pVM->GetAttachment(1, vecLightOrigin, angLightDir);
-						//}
 						EyeVectors(&vecForward, &vecRight, &vecUp);
 						vecLightOrigin = EyePosition();
 					}
@@ -1270,6 +1258,11 @@ void C_BasePlayer::UpdateFlashlight()
 				EyeVectors(&vecForward, &vecRight, &vecUp);
 				vecLightOrigin = EyePosition();
 			}
+		}
+		else
+		{
+			EyeVectors(&vecForward, &vecRight, &vecUp);
+			vecLightOrigin = EyePosition();
 		}
 
 		m_pFlashlight->UpdateLight(vecLightOrigin, vecForward, vecRight, vecUp, FLASHLIGHT_DISTANCE, ShouldDisplayMuzzleLight());

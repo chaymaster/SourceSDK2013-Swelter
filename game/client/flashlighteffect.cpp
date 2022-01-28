@@ -365,6 +365,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	bool weaponAr2 = false;
 	bool weaponShot = false;
 	bool weaponPistol = false;
+	bool weapon357 = false;
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	if (pPlayer)
 	{
@@ -375,6 +376,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			weaponAr2 = (strcmp(pWeapon->GetClassname(), "weapon_ar2") == 0);
 			weaponShot = (strcmp(pWeapon->GetClassname(), "weapon_shotgun") == 0);
 			weaponPistol = (strcmp(pWeapon->GetClassname(), "weapon_pistol") == 0);
+			weaponPistol = (strcmp(pWeapon->GetClassname(), "weapon_357") == 0);
 		}
 	}
 
@@ -390,7 +392,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			state.m_pSpotlightTexture = m_ARMuzzlelightTexture;
 			state.m_FarZ = r_flashlightfar.GetFloat();
 		}
-		else if (weaponShot)
+		else if (weaponShot || weapon357)
 		{
 			state.m_fHorizontalFOVDegrees = abs(flFov);
 			state.m_fVerticalFOVDegrees = abs(flFov);
