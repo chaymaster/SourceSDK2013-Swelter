@@ -51,11 +51,16 @@ $Project
 	{
 		$File	"BaseVSShader.cpp"
 
-		$File	"example_model_dx9.cpp"
-		$File	"example_model_dx9_helper.cpp"
+//		$File	"example_model_dx9.cpp"
+//		$File	"example_model_dx9_helper.cpp"
 
-		$File	"Bloom.cpp"
-		$File	"screenspace_general.cpp"
+//		$File	"Bloom.cpp"
+//		$File	"screenspace_general.cpp"
+//		$File	"lightmappedgeneric_dx9.cpp"
+//		$File	"lightmappedgeneric_dx9_helper.cpp"
+		$File	"shader_world.cpp"
+		$File	"shadowpass.cpp"
+		$File	"worldpass.cpp"
 	}
 
 	$Folder	"Header Files"
@@ -67,8 +72,9 @@ $Project
 		$File	"common_vertexlitgeneric_dx9.h"
 		$File	"common_vs_fxc.h"
 		$File	"shader_constant_register_map.h"
+//		$File	"lightmappedgeneric_dx9_helper.h"
 
-		$File	"example_model_dx9_helper.h"
+//		$File	"example_model_dx9_helper.h"
 	}
 
 	$Folder	"Link Libraries" [$WIN32]

@@ -8,3 +8,5 @@
 //
 
 // There are no examples of such shaders in the SDK, but add yours here.
+world_vs30.fxc
+world_ps30.fxc

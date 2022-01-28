@@ -1,0 +1,45 @@
+#include "common_vs_fxc.h"
+
+const float4x4 matViewProj				: register(c48);
+const float4x4 matViewProjLastFrame		: register(c52);
+
+struct VS_INPUT
+{
+	float4 Position					: POSITION0;
+	float2 Texcoord					: TEXCOORD0;
+	float2 LightmapTexcoord			: TEXCOORD1;
+	float2 LightmapTexcoordOffset	: TEXCOORD2;
+	float3 Normal					: NORMAL0;
+
+};
+
+struct VS_OUTPUT
+{
+	float4 Position					: POSITION0;
+	float4 ProjPosition				: TEXCOORD0;
+	float4 PrevPosition				: TEXCOORD1;
+	float4 WorldPos					: TEXCOORD2;
+	float4 Texcoord					: TEXCOORD3;	// Main texcoord and lightmap texcoord 3
+	float4 LightmapTexcoord			: TEXCOORD4;	// Lightmap texcoord 1 and 2
+	float3 Normal					: TEXCOORD5;
+
+};
+
+VS_OUTPUT main( const VS_INPUT Input )
+{
+	VS_OUTPUT Output = ( VS_OUTPUT )0;
+	Output.WorldPos = Input.Position;
+	
+	Output.Position = mul(float4(Output.WorldPos.xyz, 1), matViewProj);
+	Output.ProjPosition = Output.Position;
+	Output.PrevPosition = mul(float4(Output.WorldPos.xyz, 1), matViewProjLastFrame);
+
+	Output.Texcoord.xy = Input.Texcoord;
+	Output.LightmapTexcoord.xy = Input.LightmapTexcoord		+ Input.LightmapTexcoordOffset;
+	Output.LightmapTexcoord.zw = Output.LightmapTexcoord.xy	+ Input.LightmapTexcoordOffset;
+	Output.Texcoord.zw		   = Output.LightmapTexcoord.zw + Input.LightmapTexcoordOffset;
+	
+	Output.Normal = Input.Normal;
+
+	return Output;
+}
