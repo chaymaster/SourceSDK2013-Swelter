@@ -22,20 +22,20 @@ SHADER_INIT_PARAMS()
 
 SHADER_DRAW
 {
-	const int renderStage = pShaderAPI ? pShaderAPI->GetIntRenderingParameter(INT_RENDERPARM_RENDER_STAGE) : RENDER_STAGE_UNDEFINED;
+//	const int renderStage = pShaderAPI ? pShaderAPI->GetIntRenderingParameter(INT_RENDERPARM_RENDER_STAGE) : RENDER_STAGE_UNDEFINED;
 
-	if (pShaderShadow || renderStage == RENDER_STAGE_WORLDPASS)
-	{
+	//if (pShaderShadow || renderStage == RENDER_STAGE_WORLDPASS)
+//	{
 		DrawWorldPass_World(this, params, pShaderShadow, pShaderAPI, vertexCompression, pContextDataPtr);
-	}
-	else if (pShaderShadow || renderStage == RENDER_STAGE_SHADOWPASS)
-	{
-		DrawShadowPass_World(this, params, pShaderShadow, pShaderAPI, vertexCompression, pContextDataPtr);
-	}
-	else
-	{
-		Draw(false);
-	}
+//	}
+	//else if (pShaderShadow || renderStage == RENDER_STAGE_SHADOWPASS)
+	//{
+	//	DrawShadowPass_World(this, params, pShaderShadow, pShaderAPI, vertexCompression, pContextDataPtr);
+	//}
+	//else
+	//{
+	//	Draw(false);
+	//}
 }
 
 END_SHADER

@@ -1,17 +1,17 @@
 #include "shader_constant_register_map.h"
 
-const float4x4 matWorldToShadow[3]	: register(c0); // c4, c8
-const float4x4 matViewProjLastFrame : register(c12);
+//const float4x4 matWorldToShadow[3]	: register(c0); // c4, c8
+//const float4x4 matViewProjLastFrame : register(c12);
 const float4   LightmapScale		: register(c13);
 
-sampler ShadowDepthSampler[3] 		: register(s0); // s1, s2
+//sampler ShadowDepthSampler[3] 		: register(s0); // s1, s2
 sampler AlbedoSampler				: register(s3);
 sampler LightmapSampler				: register(s4);
 
 struct PS_INPUT
 {
 	float4 ProjPosition				: TEXCOORD0;
-	float4 PrevPosition				: TEXCOORD1;
+//	float4 PrevPosition				: TEXCOORD1;
 	float4 WorldPos					: TEXCOORD2;
 	float4 Texcoord					: TEXCOORD3;	// Main texcoord and lightmap texcoord 3
 	float4 LightmapTexcoord			: TEXCOORD4;	// Lightmap texcoord 1 and 2
@@ -22,11 +22,12 @@ struct PS_INPUT
 struct PS_OUTPUT
 {
 	float4 Color					: COLOR0;
-	float4 NormalDepth				: COLOR1;
-	float4 Velocity					: COLOR2;
+//	float4 NormalDepth				: COLOR1;
+//	float4 Velocity					: COLOR2;
 
 };
 
+/*
 float UVLerp(float2 coord, float scale)
 {
    float lerpX = saturate((length(1-coord.x * 2) - 1) * scale + 1);
@@ -42,17 +43,18 @@ float3 SampleShadow(int cascadeIndex, float3 worldPosition)
 		
 	return float3(tex2Dproj(ShadowDepthSampler[cascadeIndex], float4(ShadowCoord.xy, ShadowCoord.z - 0.0002, 1.0f)).x, ShadowCoord.xy);
 }
+*/
 
 PS_OUTPUT main(PS_INPUT Input)
 {
 	PS_OUTPUT Output;
 
-	float3 shadow0 = SampleShadow(0, Input.WorldPos.xyz);
-	float3 shadow1 = SampleShadow(1, Input.WorldPos.xyz);
-	float3 shadow2 = SampleShadow(2, Input.WorldPos.xyz);
-	float shadow = lerp(shadow0.x, shadow1.x, UVLerp(shadow0.yz, 8));
-	shadow = lerp(shadow, shadow2.x, UVLerp(shadow1.yz, 16));
-	shadow = lerp(shadow, 0.0f, UVLerp(shadow2.yz, 32));
+//	float3 shadow0 = SampleShadow(0, Input.WorldPos.xyz);
+//	float3 shadow1 = SampleShadow(1, Input.WorldPos.xyz);
+//	float3 shadow2 = SampleShadow(2, Input.WorldPos.xyz);
+//	float shadow = lerp(shadow0.x, shadow1.x, UVLerp(shadow0.yz, 8));
+//	shadow = lerp(shadow, shadow2.x, UVLerp(shadow1.yz, 16));
+//	shadow = lerp(shadow, 0.0f, UVLerp(shadow2.yz, 32));
 
 	float3 normalMap = float3(0, 0, 1);
 	float3 dp = saturate(float3(dot(normalMap, bumpBasis[0]), dot(normalMap, bumpBasis[1]), dot(normalMap, bumpBasis[2])));
@@ -66,12 +68,12 @@ PS_OUTPUT main(PS_INPUT Input)
 	float sum = dot(dp, float3( 1.0f, 1.0f, 1.0f));
 	diffuseLighting *= LightmapScale.rgb / sum;
 
-	Output.Color = (float4(diffuseLighting, 1.0f) + shadow) * tex2D(AlbedoSampler, Input.Texcoord.xy);
-	Output.NormalDepth = float4(Input.Normal, 1.0f);
+	Output.Color = float4(diffuseLighting, 1.0f) * tex2D(AlbedoSampler, Input.Texcoord.xy);
+//	Output.NormalDepth = float4(Input.Normal, 1.0f);
 
-	float2 a = (Input.ProjPosition.xy / Input.ProjPosition.w) * 0.5 + 0.5;
-    float2 b = (Input.PrevPosition.xy / Input.PrevPosition.w) * 0.5 + 0.5;
-    Output.Velocity = float4(a - b, 0, 1);
+//	float2 a = (Input.ProjPosition.xy / Input.ProjPosition.w) * 0.5 + 0.5;
+//  float2 b = (Input.PrevPosition.xy / Input.PrevPosition.w) * 0.5 + 0.5;
+//  Output.Velocity = float4(a - b, 0, 1);
 
 	return Output;
 }

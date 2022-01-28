@@ -1,3 +1,4 @@
+/*
 #include "BaseVSShader.h"
 
 #include "depth_vs30.inc"
@@ -24,3 +25,4 @@ void DrawShadowPass_World(CBaseShader* pShader, IMaterialVar **params, IShaderSh
 	}
 	pShader->Draw();
 }
+*/

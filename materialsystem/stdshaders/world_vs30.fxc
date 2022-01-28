@@ -17,7 +17,7 @@ struct VS_OUTPUT
 {
 	float4 Position					: POSITION0;
 	float4 ProjPosition				: TEXCOORD0;
-	float4 PrevPosition				: TEXCOORD1;
+//	float4 PrevPosition				: TEXCOORD1;
 	float4 WorldPos					: TEXCOORD2;
 	float4 Texcoord					: TEXCOORD3;	// Main texcoord and lightmap texcoord 3
 	float4 LightmapTexcoord			: TEXCOORD4;	// Lightmap texcoord 1 and 2
@@ -30,9 +30,9 @@ VS_OUTPUT main( const VS_INPUT Input )
 	VS_OUTPUT Output = ( VS_OUTPUT )0;
 	Output.WorldPos = Input.Position;
 	
-	Output.Position = mul(float4(Output.WorldPos.xyz, 1), matViewProj);
+	Output.Position = mul(float4(Output.WorldPos.xyz, 1), cModelViewProj);
 	Output.ProjPosition = Output.Position;
-	Output.PrevPosition = mul(float4(Output.WorldPos.xyz, 1), matViewProjLastFrame);
+	//Output.PrevPosition = mul(float4(Output.WorldPos.xyz, 1), matViewProjLastFrame);
 
 	Output.Texcoord.xy = Input.Texcoord;
 	Output.LightmapTexcoord.xy = Input.LightmapTexcoord		+ Input.LightmapTexcoordOffset;
