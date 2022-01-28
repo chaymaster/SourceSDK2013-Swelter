@@ -1,0 +1,15 @@
+fxctmp9/
+fxctmp9_tmp/
+Debug_dx9_mod_hl2/
+Debug_dx9_mod_episodic/
+Release_dx9_mod_hl2/
+Release_dx9_mod_episodic/
+shaders/
+
+filelist.txt
+filelistgen.txt
+filestocopy.txt
+inclist.txt
+uniquefilestocopy.txt
+vcslist.txt
+makefile*
