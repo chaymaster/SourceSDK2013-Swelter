@@ -2701,6 +2701,12 @@ void CBaseCombatWeapon::SetIronsightTime(void)
 
 
 #ifdef CLIENT_DLL
+
+char *CBaseCombatWeapon::GetFlashlightAttachment(void)
+{
+	return "0";
+}
+
 void CC_ToggleIronSights(void)
 {
 

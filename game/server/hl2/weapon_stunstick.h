@@ -44,6 +44,7 @@ public:
 	void		SecondaryAttack( void )	{}
 	void		SetStunState( bool state );
 	bool		GetStunState( void );
+	void		ItemPostFrame( void );
 	void		Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 	
 	float		GetDamageForActivity( Activity hitActivity );

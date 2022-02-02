@@ -251,6 +251,8 @@ void CWeaponPistol::PrimaryAttack( void )
 	m_flSoonestPrimaryAttack = gpGlobals->curtime + PISTOL_FASTEST_REFIRE_TIME;
 	CSoundEnt::InsertSound( SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner() );
 
+
+
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
 	if( pOwner )
@@ -260,6 +262,7 @@ void CWeaponPistol::PrimaryAttack( void )
 		// not be the ideal way to achieve this, but it's cheap and it works, which is
 		// great for a feature we're evaluating. (sjb)
 		pOwner->ViewPunchReset();
+		pOwner->DoMuzzleFlash();
 	}
 
 	BaseClass::PrimaryAttack();

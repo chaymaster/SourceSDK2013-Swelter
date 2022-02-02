@@ -11,6 +11,7 @@
 #include "weapon_stunstick.h"
 #include "IEffects.h"
 #include "beam_shared.h"
+#include "in_buttons.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -345,11 +346,43 @@ void CWeaponStunStick::SetStunState(bool state)
 //-----------------------------------------------------------------------------
 bool CWeaponStunStick::Deploy(void)
 {
-	SetStunState(true);
+	SetStunState(false);
 
 	return BaseClass::Deploy();
 }
 
+
+//------------------------------------------------------------------------------
+// Purpose : Update weapon
+//------------------------------------------------------------------------------
+void CWeaponStunStick::ItemPostFrame(void)
+{
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	SetStunState(true);
+
+	if (m_bIsIronsighted)
+	{
+		DisableIronsights();
+	}
+
+	if (pOwner == NULL)
+		return;
+	
+	if ((pOwner->m_nButtons & IN_ATTACK) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	{
+		PrimaryAttack();
+	}
+	else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_flNextSecondaryAttack <= gpGlobals->curtime))
+	{
+		SecondaryAttack();
+	}
+	else
+	{
+		WeaponIdle();
+		return;
+	}
+}
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
