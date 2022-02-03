@@ -581,6 +581,7 @@ CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), 1000, 0.2, GetOwner(), SOUN
 
 	// player "shoot" animation
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
+	pPlayer->DoMuzzleFlash();
 
 	FireBulletsInfo_t info;
 	info.m_vecSrc = pPlayer->Weapon_ShootPosition();

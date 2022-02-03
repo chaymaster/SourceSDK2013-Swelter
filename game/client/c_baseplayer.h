@@ -296,6 +296,8 @@ public:
 	// Is the player dead?
 	bool				IsPlayerDead();
 	bool				IsPoisoned( void ) { return m_Local.m_bPoisoned; }
+	bool				ShouldDisplayMuzzleLight();
+	void				DisplayMuzzleLight();
 
 	C_BaseEntity				*GetUseEntity();
 
@@ -500,6 +502,8 @@ private:
 	EHANDLE			m_hVehicle;
 	EHANDLE			m_hOldVehicle;
 	EHANDLE			m_hUseEntity;
+
+	float			m_flMuzzleFlashTime;
 	
 	float			m_flMaxspeed;
 
