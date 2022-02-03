@@ -144,6 +144,7 @@ static  kbutton_t   in_grenade1;
 static  kbutton_t   in_grenade2;
 static	kbutton_t	in_attack3;
 static	kbutton_t	in_ironsight;
+static	kbutton_t	in_throwgrenade;	//quick_frag
 kbutton_t	in_ducktoggle;
 
 /*
@@ -493,6 +494,8 @@ void IN_Attack3Down( const CCommand &args ) { KeyDown(&in_attack3, args[1] );}
 void IN_Attack3Up( const CCommand &args ) { KeyUp(&in_attack3, args[1] );}
 void IN_IronsightDown(const CCommand &args) { KeyDown(&in_ironsight, args[1] );}
 void IN_IronsightUp(const CCommand &args) { KeyUp(&in_ironsight, args[1] );}
+void IN_ThrowGrenadeDown(const CCommand &args) { KeyDown(&in_throwgrenade, args[1]); }	//quick_frag
+void IN_ThrowGrenadeUp(const CCommand &args) { KeyUp(&in_throwgrenade, args[1]); }	//quick_frag
 
 void IN_DuckToggle( const CCommand &args ) 
 { 
@@ -1473,6 +1476,7 @@ int CInput::GetButtonBits( int bResetState )
 	CalcButtonBits( bits, IN_GRENADE2, s_ClearInputState, &in_grenade2, bResetState );
 	CalcButtonBits( bits, IN_ATTACK3, s_ClearInputState, &in_attack3, bResetState );
 	CalcButtonBits( bits, IN_IRONSIGHT, s_ClearInputState, &in_ironsight, bResetState);
+	CalcButtonBits( bits, IN_THROWGRENADE, s_ClearInputState, &in_throwgrenade, bResetState);	//quick_frag
 
 	if ( KeyState(&in_ducktoggle) )
 	{
@@ -1632,6 +1636,8 @@ static ConCommand startattack3("+attack3", IN_Attack3Down);
 static ConCommand endattack3("-attack3", IN_Attack3Up);
 static ConCommand startironsight("+ironsight", IN_IronsightDown);
 static ConCommand endironsight("-ironsight", IN_IronsightUp);
+static ConCommand startgrenadethrow("+throwgrenade", IN_ThrowGrenadeDown);	//quick_frag
+static ConCommand endgrenadethrow("-throwgrenade", IN_ThrowGrenadeUp);		//quick_frag
 
 #ifdef TF_CLIENT_DLL
 static ConCommand toggle_duck( "toggle_duck", IN_DuckToggle );
