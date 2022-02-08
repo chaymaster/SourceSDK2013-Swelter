@@ -38,5 +38,6 @@
 #define IN_GRENADE2		(1 << 24)	// grenade 2
 #define	IN_ATTACK3		(1 << 25)
 #define IN_IRONSIGHT	(1 << 26)	// Ironsight
+#define IN_THROWGRENADE (1 << 27)	//quick_frag
 
 #endif // IN_BUTTONS_H

@@ -319,6 +319,8 @@ $Project "Server (Episodic)"
 			$File	"hl2\weapon_sos.cpp"
 			$File	"hl2\weapon_glauncher.cpp"
 			$File	"hl2\weapon_handgren.cpp"
+			$File	"hl2\npc_drone.cpp"
+			$File	"hl2\npc_drone.h"
 		}
 	}
 }

@@ -127,6 +127,10 @@ $Project "Client (Episodic)"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
 			$File	"episodic\c_npc_puppet.cpp"
 		}
+		$Folder	"Swelter"
+		{
+			$File	"hl2/c_npc_drone.cpp"
+		}
 	}
 	
 }
