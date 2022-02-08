@@ -359,6 +359,9 @@ void CWeaponStunStick::ItemPostFrame(void)
 {
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+
 	SetStunState(true);
 
 	if (m_bIsIronsighted)

@@ -3293,6 +3293,9 @@ void CWeaponPhysCannon::ItemPostFrame()
 		return;
 	}
 
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+
 	//Check for object in pickup range
 	if ( m_bActive == false )
 	{

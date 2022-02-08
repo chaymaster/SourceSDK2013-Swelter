@@ -8,7 +8,6 @@
 #include "basehlcombatweapon_shared.h"
 
 #include "hl2_player_shared.h"
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -24,6 +23,10 @@ BEGIN_NETWORK_TABLE( CBaseHLCombatWeapon , DT_BaseHLCombatWeapon )
 #endif
 END_NETWORK_TABLE()
 
+#ifndef CLIENT_DLL
+#include "in_buttons.h"
+#include "hl2_player.h"
+#endif
 
 #if !defined( CLIENT_DLL )
 
@@ -186,6 +189,7 @@ bool CBaseHLCombatWeapon::WeaponShouldBeLowered( void )
 //-----------------------------------------------------------------------------
 // Purpose: Allows the weapon to choose proper weapon idle animation
 //-----------------------------------------------------------------------------
+/*
 void CBaseHLCombatWeapon::WeaponIdle( void )
 {
 	//See if we should idle high or low
@@ -225,6 +229,74 @@ void CBaseHLCombatWeapon::WeaponIdle( void )
 		}
 	}
 }
+*/
+
+void CBaseHLCombatWeapon::WeaponIdle(void)
+{
+#ifndef CLIENT_DLL
+	CHL2_Player *player = dynamic_cast<CHL2_Player*>(GetOwner());
+#else
+	C_BasePlayer *player = dynamic_cast<C_BasePlayer*>(GetOwner());
+#endif
+
+	if (!player)
+		return;
+
+	float speed = player->GetLocalVelocity().Length2D();
+
+	if (speed >= 250 && !(player->GetWaterLevel() == 3) && (player->GetFlags() & FL_ONGROUND))
+	{
+		if (GetActivity() != ACT_VM_SPRINT && (GetActivity() == ACT_VM_IDLE || GetActivity() == ACT_VM_IDLE_LOWERED) || GetActivity() == ACT_VM_IDLE_TO_LOWERED || GetActivity() == ACT_VM_LOWERED_TO_IDLE)
+		{
+			SendWeaponAnim(ACT_VM_SPRINT);
+			DisableIronsights();
+		}
+		else if (HasWeaponIdleTimeElapsed())
+		{
+			DisableIronsights();
+			SendWeaponAnim(ACT_VM_SPRINT);
+		}
+	}
+	//See if we should idle high or low
+	else if (WeaponShouldBeLowered())
+	{
+#if !defined( CLIENT_DLL )
+		player->Weapon_Lower();
+#endif
+
+		// Move to lowered position if we're not there yet
+		if (GetActivity() != ACT_VM_IDLE_LOWERED && GetActivity() != ACT_VM_IDLE_TO_LOWERED
+			&& GetActivity() != ACT_TRANSITION)
+		{
+			SendWeaponAnim(ACT_VM_IDLE_LOWERED);
+		}
+		else if (HasWeaponIdleTimeElapsed())
+		{
+			// Keep idling low
+			SendWeaponAnim(ACT_VM_IDLE_LOWERED);
+		}
+	}
+	else
+	{
+		// See if we need to raise immediately
+		if (m_flRaiseTime < gpGlobals->curtime && GetActivity() == ACT_VM_IDLE_LOWERED)
+		{
+			SendWeaponAnim(ACT_VM_IDLE);
+		}
+		else if (speed <= 250 && GetActivity() == ACT_VM_SPRINT)
+		{
+			SendWeaponAnim(ACT_VM_IDLE);
+		}
+		else if (HasWeaponIdleTimeElapsed())
+		{
+			SendWeaponAnim(ACT_VM_IDLE);
+		}
+	}
+}
+
+
+
+
 
 float	g_lateralBob;
 float	g_verticalBob;
@@ -368,6 +440,12 @@ const WeaponProficiencyInfo_t *CBaseHLCombatWeapon::GetProficiencyValues()
 	return NULL;
 }
 
+bool CBaseHLCombatWeapon::CanSprint()
+{
+	if ( SelectWeightedSequence( ACT_VM_SPRINT ) == ACTIVITY_NOT_AVAILABLE )
+		return false;
+	return true;
+}
 #else
 
 // Server stubs

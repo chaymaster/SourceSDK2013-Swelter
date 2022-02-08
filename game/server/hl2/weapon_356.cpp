@@ -142,8 +142,8 @@ void CWeapon356::PrimaryAttack( void )
 	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.75;
-	m_flNextSecondaryAttack = gpGlobals->curtime + 0.75;
+	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //было 0,75
+	m_flNextSecondaryAttack = gpGlobals->curtime + 1.1;
 
 	m_iClip1--;
 

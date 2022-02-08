@@ -626,6 +626,10 @@ void CWeaponShotgun::ItemPostFrame(void)
 	{
 		return;
 	}
+
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+
 	DisplaySDEHudHint(); //added
 	if (m_bInReload)
 	{
