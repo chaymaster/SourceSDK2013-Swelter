@@ -634,6 +634,9 @@ void CWeapon357::ItemPostFrame(void)
 		return;
 	}
 	DisplaySDEHudHint(); //added
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+
 
 	if (pOwner->m_afButtonReleased & IN_IRONSIGHT)
 	{
