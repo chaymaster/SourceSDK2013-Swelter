@@ -1551,6 +1551,21 @@ bool				CHL2_Player::Get_AR1M1_GLL(void)
 	return m_HL2Local.m_bAR1M1_GL_Loaded;
 }
 
+
+void				CHL2_Player::AR2_GL_Load(void)
+{
+	m_HL2Local.m_bAR2_GL_Loaded = true;
+}
+void				CHL2_Player::AR2_GL_Unload(void)
+{
+	m_HL2Local.m_bAR2_GL_Loaded = false;
+}
+bool				CHL2_Player::Get_AR2_GLL(void)
+{
+	return m_HL2Local.m_bAR2_GL_Loaded;
+}
+
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHL2_Player::CommanderUpdate()

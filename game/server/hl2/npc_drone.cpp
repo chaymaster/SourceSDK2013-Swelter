@@ -78,9 +78,9 @@
 
 #define	DRONE_CHARGE_MIN_DIST	200
 
-ConVar	sk_drone_health( "sk_drone_health","0");
-extern ConVar	sk_drone_melee_dmg( "sk_drone_melee_dmg","0");
-extern ConVar	sk_drone_v2( "sk_drone_v2","1");
+ConVar	sk_drone_health("sk_drone_health", "0");
+extern ConVar	sk_drone_melee_dmg("sk_drone_melee_dmg", "0");
+extern ConVar	sk_drone_v2("sk_drone_v2", "1");
 
 extern void		SpawnBlood(Vector vecSpot, const Vector &vAttackDir, int bloodColor, float flDamage);
 extern float	GetFloorZ(const Vector &origin);
@@ -124,83 +124,83 @@ enum DroneTasks
 	TASK_DRONE_MOVEAT_SAVEPOSITION,
 };
 
-BEGIN_DATADESC( CNPC_Drone )
+BEGIN_DATADESC(CNPC_Drone)
 
-	DEFINE_FIELD( m_vForceVelocity,			FIELD_VECTOR),
+DEFINE_FIELD(m_vForceVelocity, FIELD_VECTOR),
 
-	DEFINE_FIELD( m_vTargetBanking,			FIELD_VECTOR),
-	DEFINE_FIELD( m_vForceMoveTarget,			FIELD_POSITION_VECTOR),
-	DEFINE_FIELD( m_fForceMoveTime,			FIELD_TIME),
-	DEFINE_FIELD( m_vSwarmMoveTarget,			FIELD_POSITION_VECTOR),
-	DEFINE_FIELD( m_fSwarmMoveTime,			FIELD_TIME),
-	DEFINE_FIELD( m_fEnginePowerScale,		FIELD_FLOAT),
+DEFINE_FIELD(m_vTargetBanking, FIELD_VECTOR),
+DEFINE_FIELD(m_vForceMoveTarget, FIELD_POSITION_VECTOR),
+DEFINE_FIELD(m_fForceMoveTime, FIELD_TIME),
+DEFINE_FIELD(m_vSwarmMoveTarget, FIELD_POSITION_VECTOR),
+DEFINE_FIELD(m_fSwarmMoveTime, FIELD_TIME),
+DEFINE_FIELD(m_fEnginePowerScale, FIELD_FLOAT),
 
-	DEFINE_FIELD( m_flNextEngineSoundTime,	FIELD_TIME),
-	DEFINE_FIELD( m_flEngineStallTime,		FIELD_TIME),
-	DEFINE_FIELD( m_flNextBurstTime,			FIELD_TIME ),
-	DEFINE_FIELD( m_flWaterSuspendTime,		FIELD_TIME),
-	DEFINE_FIELD( m_nLastSpinSound,			FIELD_INTEGER ),
+DEFINE_FIELD(m_flNextEngineSoundTime, FIELD_TIME),
+DEFINE_FIELD(m_flEngineStallTime, FIELD_TIME),
+DEFINE_FIELD(m_flNextBurstTime, FIELD_TIME),
+DEFINE_FIELD(m_flWaterSuspendTime, FIELD_TIME),
+DEFINE_FIELD(m_nLastSpinSound, FIELD_INTEGER),
 
-	// Death
-	DEFINE_FIELD( m_fSparkTime,				FIELD_TIME),
-	DEFINE_FIELD( m_fSmokeTime,				FIELD_TIME),
+// Death
+DEFINE_FIELD(m_fSparkTime, FIELD_TIME),
+DEFINE_FIELD(m_fSmokeTime, FIELD_TIME),
 
-	DEFINE_FIELD( m_bDirtyPitch,			FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_bGib,					FIELD_BOOLEAN),
-	DEFINE_FIELD( m_bHeld,					FIELD_BOOLEAN),
-	
-	DEFINE_FIELD( m_bHackedByAlyx,			FIELD_BOOLEAN),
-	DEFINE_FIELD( m_vecLoiterPosition,		FIELD_POSITION_VECTOR),
-	DEFINE_FIELD( m_fTimeNextLoiterPulse,	FIELD_TIME),
+DEFINE_FIELD(m_bDirtyPitch, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bGib, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bHeld, FIELD_BOOLEAN),
 
-	DEFINE_FIELD( m_flBumpSuppressTime,		FIELD_TIME ),
+DEFINE_FIELD(m_bHackedByAlyx, FIELD_BOOLEAN),
+DEFINE_FIELD(m_vecLoiterPosition, FIELD_POSITION_VECTOR),
+DEFINE_FIELD(m_fTimeNextLoiterPulse, FIELD_TIME),
 
-	DEFINE_FIELD( m_bBladesActive,			FIELD_BOOLEAN),
-	DEFINE_FIELD( m_flBladeSpeed,				FIELD_FLOAT),
-	DEFINE_KEYFIELD( m_bIgnoreClipbrushes,	FIELD_BOOLEAN, "ignoreclipbrushes" ),
-	DEFINE_FIELD( m_hSmokeTrail,				FIELD_EHANDLE),
+DEFINE_FIELD(m_flBumpSuppressTime, FIELD_TIME),
 
-	// DEFINE_FIELD( m_pLightGlow,				FIELD_CLASSPTR ),
-	// DEFINE_FIELD( m_pEyeGlow,					FIELD_CLASSPTR ),
+DEFINE_FIELD(m_bBladesActive, FIELD_BOOLEAN),
+DEFINE_FIELD(m_flBladeSpeed, FIELD_FLOAT),
+DEFINE_KEYFIELD(m_bIgnoreClipbrushes, FIELD_BOOLEAN, "ignoreclipbrushes"),
+DEFINE_FIELD(m_hSmokeTrail, FIELD_EHANDLE),
 
-	DEFINE_FIELD( m_iPanel1, FIELD_INTEGER ),
-	DEFINE_FIELD( m_iPanel2, FIELD_INTEGER ),
-	DEFINE_FIELD( m_iPanel3, FIELD_INTEGER ),
-	DEFINE_FIELD( m_iPanel4, FIELD_INTEGER ),
+// DEFINE_FIELD( m_pLightGlow,				FIELD_CLASSPTR ),
+// DEFINE_FIELD( m_pEyeGlow,					FIELD_CLASSPTR ),
 
-	DEFINE_FIELD( m_nLastWaterLevel,			FIELD_INTEGER ),
-	DEFINE_FIELD( m_bDoSwarmBehavior,			FIELD_BOOLEAN ),
+DEFINE_FIELD(m_iPanel1, FIELD_INTEGER),
+DEFINE_FIELD(m_iPanel2, FIELD_INTEGER),
+DEFINE_FIELD(m_iPanel3, FIELD_INTEGER),
+DEFINE_FIELD(m_iPanel4, FIELD_INTEGER),
 
-	DEFINE_FIELD( m_nEnginePitch1,				FIELD_INTEGER ),
-	DEFINE_FIELD( m_flEnginePitch1Time,			FIELD_TIME ),
-	DEFINE_FIELD( m_nEnginePitch2,				FIELD_INTEGER ),
-	DEFINE_FIELD( m_flEnginePitch2Time,			FIELD_TIME ),
+DEFINE_FIELD(m_nLastWaterLevel, FIELD_INTEGER),
+DEFINE_FIELD(m_bDoSwarmBehavior, FIELD_BOOLEAN),
 
-	// Physics Influence
-	DEFINE_FIELD( m_hPhysicsAttacker, FIELD_EHANDLE ),
-	DEFINE_FIELD( m_flLastPhysicsInfluenceTime, FIELD_TIME ),
+DEFINE_FIELD(m_nEnginePitch1, FIELD_INTEGER),
+DEFINE_FIELD(m_flEnginePitch1Time, FIELD_TIME),
+DEFINE_FIELD(m_nEnginePitch2, FIELD_INTEGER),
+DEFINE_FIELD(m_flEnginePitch2Time, FIELD_TIME),
 
-	DEFINE_FIELD( m_flBurstDuration,	FIELD_FLOAT ),
-	DEFINE_FIELD( m_vecBurstDirection,	FIELD_VECTOR ),
-	DEFINE_FIELD( m_bShowingHostile,	FIELD_BOOLEAN ),
+// Physics Influence
+DEFINE_FIELD(m_hPhysicsAttacker, FIELD_EHANDLE),
+DEFINE_FIELD(m_flLastPhysicsInfluenceTime, FIELD_TIME),
 
-	// Function Pointers
-	DEFINE_INPUTFUNC( FIELD_VOID,	"DisableSwarm", InputDisableSwarm ),
-	DEFINE_INPUTFUNC( FIELD_VOID,   "Unpack",		InputUnpack ),
+DEFINE_FIELD(m_flBurstDuration, FIELD_FLOAT),
+DEFINE_FIELD(m_vecBurstDirection, FIELD_VECTOR),
+DEFINE_FIELD(m_bShowingHostile, FIELD_BOOLEAN),
 
-	DEFINE_ENTITYFUNC( CrashTouch ),
+// Function Pointers
+DEFINE_INPUTFUNC(FIELD_VOID, "DisableSwarm", InputDisableSwarm),
+DEFINE_INPUTFUNC(FIELD_VOID, "Unpack", InputUnpack),
 
-	DEFINE_BASENPCINTERACTABLE_DATADESC(),
+DEFINE_ENTITYFUNC(CrashTouch),
+
+DEFINE_BASENPCINTERACTABLE_DATADESC(),
 
 END_DATADESC()
 
 
-LINK_ENTITY_TO_CLASS( npc_drone, CNPC_Drone );
+LINK_ENTITY_TO_CLASS(npc_drone, CNPC_Drone);
 
 IMPLEMENT_SERVERCLASS_ST(CNPC_Drone, DT_NPC_Drone)
-	SendPropIntWithMinusOneFlag	(SENDINFO(m_nEnginePitch1), 8 ),
-	SendPropFloat(SENDINFO(m_flEnginePitch1Time), 0, SPROP_NOSCALE),
-	SendPropIntWithMinusOneFlag(SENDINFO(m_nEnginePitch2), 8 )
+SendPropIntWithMinusOneFlag(SENDINFO(m_nEnginePitch1), 8),
+SendPropFloat(SENDINFO(m_flEnginePitch1Time), 0, SPROP_NOSCALE),
+SendPropIntWithMinusOneFlag(SENDINFO(m_nEnginePitch2), 8)
 END_SEND_TABLE()
 
 
@@ -240,7 +240,7 @@ CNPC_Drone::~CNPC_Drone()
 //-----------------------------------------------------------------------------
 Class_T	CNPC_Drone::Classify(void)
 {
-	return (m_bHeld||m_bHackedByAlyx) ? CLASS_PLAYER_ALLY : CLASS_DRONE; 
+	return (m_bHeld || m_bHackedByAlyx) ? CLASS_PLAYER_ALLY : CLASS_DRONE;
 }
 
 
@@ -262,7 +262,7 @@ void CNPC_Drone::GatherConditions()
 {
 	BaseClass::GatherConditions();
 
-	if( IsLoitering() && GetEnemy() )
+	if (IsLoitering() && GetEnemy())
 	{
 		StopLoitering();
 	}
@@ -273,13 +273,13 @@ void CNPC_Drone::GatherConditions()
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::PrescheduleThink( void )
+void CNPC_Drone::PrescheduleThink(void)
 {
 	BaseClass::PrescheduleThink();
 
 	UpdatePanels();
 
-	if( m_flWaterSuspendTime > gpGlobals->curtime )
+	if (m_flWaterSuspendTime > gpGlobals->curtime)
 	{
 		// Stuck in water!
 
@@ -290,17 +290,17 @@ void CNPC_Drone::PrescheduleThink( void )
 	// ----------------------------------------
 	//	Am I in water?
 	// ----------------------------------------
-	if ( GetWaterLevel() > 0 )
+	if (GetWaterLevel() > 0)
 	{
-		if( m_nLastWaterLevel == 0 )
+		if (m_nLastWaterLevel == 0)
 		{
-			Splash( WorldSpaceCenter() );
+			Splash(WorldSpaceCenter());
 		}
 
-		if( IsAlive() )
+		if (IsAlive())
 		{
 			// If I've been out of water for 2 seconds or more, I'm eligible to be stuck in water again.
-			if( gpGlobals->curtime - m_flWaterSuspendTime > 2.0 )
+			if (gpGlobals->curtime - m_flWaterSuspendTime > 2.0)
 			{
 				m_flWaterSuspendTime = gpGlobals->curtime + 1.0;
 			}
@@ -308,9 +308,9 @@ void CNPC_Drone::PrescheduleThink( void )
 	}
 	else
 	{
-		if( m_nLastWaterLevel != 0 )
+		if (m_nLastWaterLevel != 0)
 		{
-			Splash( WorldSpaceCenter() );
+			Splash(WorldSpaceCenter());
 		}
 	}
 
@@ -323,42 +323,42 @@ void CNPC_Drone::PrescheduleThink( void )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
+void CNPC_Drone::TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator)
 {
 	g_vecAttackDir = vecDir;
 
-	if ( info.GetDamageType() & DMG_BULLET)
+	if (info.GetDamageType() & DMG_BULLET)
 	{
-		g_pEffects->Ricochet(ptr->endpos,ptr->plane.normal);
+		g_pEffects->Ricochet(ptr->endpos, ptr->plane.normal);
 	}
 
-	if ( info.GetDamageType() & DMG_CLUB )
+	if (info.GetDamageType() & DMG_CLUB)
 	{
 		// Clubbed!
-//		UTIL_Smoke(GetAbsOrigin(), random->RandomInt(10, 15), 10);
-		g_pEffects->Sparks( ptr->endpos, 1, 1, &ptr->plane.normal );
+		//		UTIL_Smoke(GetAbsOrigin(), random->RandomInt(10, 15), 10);
+		g_pEffects->Sparks(ptr->endpos, 1, 1, &ptr->plane.normal);
 	}
 
-	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
+	BaseClass::TraceAttack(info, vecDir, ptr, pAccumulator);
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::DeathSound( const CTakeDamageInfo &info )
+void CNPC_Drone::DeathSound(const CTakeDamageInfo &info)
 {
 	StopSound("NPC_Drone.Stunned");
-	CPASAttenuationFilter filter2( this, "NPC_Drone.Die" );
-	EmitSound( filter2, entindex(), "NPC_Drone.Die" );
+	CPASAttenuationFilter filter2(this, "NPC_Drone.Die");
+	EmitSound(filter2, entindex(), "NPC_Drone.Die");
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Drone::ShouldGib( const CTakeDamageInfo &info )
+bool CNPC_Drone::ShouldGib(const CTakeDamageInfo &info)
 {
-	return ( m_bGib );
+	return (m_bGib);
 }
 
 //-----------------------------------------------------------------------------
@@ -366,26 +366,26 @@ bool CNPC_Drone::ShouldGib( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::Event_Killed( const CTakeDamageInfo &info )
+void CNPC_Drone::Event_Killed(const CTakeDamageInfo &info)
 {
 	// turn off the blur!
-	SetBodygroup( DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_OFF );
+	SetBodygroup(DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_OFF);
 
 	// Sparks
 	for (int i = 0; i < 3; i++)
 	{
 		Vector sparkPos = GetAbsOrigin();
-		sparkPos.x += random->RandomFloat(-12,12);
-		sparkPos.y += random->RandomFloat(-12,12);
-		sparkPos.z += random->RandomFloat(-12,12);
-		g_pEffects->Sparks( sparkPos, 2 );
+		sparkPos.x += random->RandomFloat(-12, 12);
+		sparkPos.y += random->RandomFloat(-12, 12);
+		sparkPos.z += random->RandomFloat(-12, 12);
+		g_pEffects->Sparks(sparkPos, 2);
 	}
 
 	// Light
 	CBroadcastRecipientFilter filter;
-	te->DynamicLight( filter, 0.0, &GetAbsOrigin(), 255, 180, 100, 0, 100, 0.1, 0 );
+	te->DynamicLight(filter, 0.0, &GetAbsOrigin(), 255, 180, 100, 0, 100, 0.1, 0);
 
-	if ( m_nEnginePitch1 < 0 )
+	if (m_nEnginePitch1 < 0)
 	{
 		// Probably this drone was killed immediately after spawning. Turn the sound
 		// on right now so that we can pitch it up for the crash!
@@ -393,29 +393,29 @@ void CNPC_Drone::Event_Killed( const CTakeDamageInfo &info )
 	}
 
 	// Always gib when clubbed or blasted or crushed, or just randomly
-	if ( ( info.GetDamageType() & (DMG_CLUB|DMG_CRUSH|DMG_BLAST) ) || ( random->RandomInt( 0, 1 ) ) )
+	if ((info.GetDamageType() & (DMG_CLUB | DMG_CRUSH | DMG_BLAST)) || (random->RandomInt(0, 1)))
 	{
 		m_bGib = true; // true
 	}
 	else
 	{
 		m_bGib = true; // false
-		
+
 		//FIXME: These don't stay with the ragdolls currently -- jdw
 		// Long fadeout on the sprites!!
-		KillSprites( 0.0f );
+		KillSprites(0.0f);
 	}
 
-	BaseClass::Event_Killed( info );
+	BaseClass::Event_Killed(info);
 }
 
-void CNPC_Drone::HitPhysicsObject( CBaseEntity *pOther )
+void CNPC_Drone::HitPhysicsObject(CBaseEntity *pOther)
 {
 	IPhysicsObject *pOtherPhysics = pOther->VPhysicsGetObject();
 	Vector pos, posOther;
 	// Put the force on the line between the drone origin and hit object origin
-	VPhysicsGetObject()->GetPosition( &pos, NULL );
-	pOtherPhysics->GetPosition( &posOther, NULL );
+	VPhysicsGetObject()->GetPosition(&pos, NULL);
+	pOtherPhysics->GetPosition(&posOther, NULL);
 	Vector dir = posOther - pos;
 	VectorNormalize(dir);
 	// size/2 is approx radius
@@ -425,10 +425,10 @@ void CNPC_Drone::HitPhysicsObject( CBaseEntity *pOther )
 	// UNDONE: Use actual drone up vector so the fake blade is
 	// in the right plane?
 	// Get a vector in the x/y plane in the direction of blade spin (clockwise)
-	CrossProduct( dir, Vector(0,0,1), cross );
-	VectorNormalize( cross );
+	CrossProduct(dir, Vector(0, 0, 1), cross);
+	VectorNormalize(cross);
 	// force is a 30kg object going 100 in/s
-	pOtherPhysics->ApplyForceOffset( cross * 30 * 100, pos );
+	pOtherPhysics->ApplyForceOffset(cross * 30 * 100, pos);
 }
 
 
@@ -436,86 +436,86 @@ void CNPC_Drone::HitPhysicsObject( CBaseEntity *pOther )
 // Take damage from being thrown by a physcannon 
 //-----------------------------------------------------------------------------
 #define DRONE_SMASH_SPEED 500.0	// How fast a drone must slam into something to take full damage
-void CNPC_Drone::TakeDamageFromPhyscannon( CBasePlayer *pPlayer )
+void CNPC_Drone::TakeDamageFromPhyscannon(CBasePlayer *pPlayer)
 {
 	CTakeDamageInfo info;
-	info.SetDamageType( DMG_GENERIC );
-	info.SetInflictor( this );
-	info.SetAttacker( pPlayer );
-	info.SetDamagePosition( GetAbsOrigin() );
-	info.SetDamageForce( Vector( 1.0, 1.0, 1.0 ) );
+	info.SetDamageType(DMG_GENERIC);
+	info.SetInflictor(this);
+	info.SetAttacker(pPlayer);
+	info.SetDamagePosition(GetAbsOrigin());
+	info.SetDamageForce(Vector(1.0, 1.0, 1.0));
 
 	// Convert velocity into damage.
 	Vector vel;
-	VPhysicsGetObject()->GetVelocity( &vel, NULL );
+	VPhysicsGetObject()->GetVelocity(&vel, NULL);
 	float flSpeed = vel.Length();
 
 	float flFactor = flSpeed / DRONE_SMASH_SPEED;
 
 	// Clamp. Don't inflict negative damage or massive damage!
-	flFactor = clamp( flFactor, 0.0f, 2.0f );
+	flFactor = clamp(flFactor, 0.0f, 2.0f);
 	float flDamage = m_iMaxHealth * flFactor;
 
 #if 0
-	Msg("Doing %f damage for %f speed!\n", flDamage, flSpeed );
+	Msg("Doing %f damage for %f speed!\n", flDamage, flSpeed);
 #endif
 
-	info.SetDamage( flDamage );
-	TakeDamage( info );
+	info.SetDamage(flDamage);
+	TakeDamage(info);
 }
 
 
 //-----------------------------------------------------------------------------
 // Take damage from a vehicle; it's like a really big crowbar 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::TakeDamageFromVehicle( int index, gamevcollisionevent_t *pEvent )
+void CNPC_Drone::TakeDamageFromVehicle(int index, gamevcollisionevent_t *pEvent)
 {
 	// Use the vehicle velocity to determine the damage
 	int otherIndex = !index;
 	CBaseEntity *pOther = pEvent->pEntities[otherIndex];
 
-	float flSpeed = pEvent->preVelocity[ otherIndex ].Length();
-	flSpeed = clamp( flSpeed, 300.0f, 600.0f );
-	float flDamage = SimpleSplineRemapVal( flSpeed, 300.0f, 600.0f, 0.0f, 1.0f );
-	if ( flDamage == 0.0f )
+	float flSpeed = pEvent->preVelocity[otherIndex].Length();
+	flSpeed = clamp(flSpeed, 300.0f, 600.0f);
+	float flDamage = SimpleSplineRemapVal(flSpeed, 300.0f, 600.0f, 0.0f, 1.0f);
+	if (flDamage == 0.0f)
 		return;
 
 	flDamage *= 20.0f;
 
 	Vector damagePos;
-	pEvent->pInternalData->GetContactPoint( damagePos );
+	pEvent->pInternalData->GetContactPoint(damagePos);
 
 	Vector damageForce = 2.0f * pEvent->postVelocity[index] * pEvent->pObjects[index]->GetMass();
-	if ( damageForce == vec3_origin )
+	if (damageForce == vec3_origin)
 	{
 		// This can happen if this entity is a func_breakable, and can't move.
 		// Use the velocity of the entity that hit us instead.
 		damageForce = 2.0f * pEvent->postVelocity[!index] * pEvent->pObjects[!index]->GetMass();
 	}
-	Assert( damageForce != vec3_origin );
-	CTakeDamageInfo dmgInfo( pOther, pOther, damageForce, damagePos, flDamage, DMG_CRUSH );
-	TakeDamage( dmgInfo );
+	Assert(damageForce != vec3_origin);
+	CTakeDamageInfo dmgInfo(pOther, pOther, damageForce, damagePos, flDamage, DMG_CRUSH);
+	TakeDamage(dmgInfo);
 }
 
 
 //-----------------------------------------------------------------------------
 // Take damage from combine ball
 //-----------------------------------------------------------------------------
-void CNPC_Drone::TakeDamageFromPhysicsImpact( int index, gamevcollisionevent_t *pEvent )
+void CNPC_Drone::TakeDamageFromPhysicsImpact(int index, gamevcollisionevent_t *pEvent)
 {
 	CBaseEntity *pHitEntity = pEvent->pEntities[!index];
 
 	// NOTE: Bypass the normal impact energy scale here.
 	float flDamageScale = PlayerHasMegaPhysCannon() ? 10.0f : 1.0f;
 	int damageType = 0;
-	float damage = CalculateDefaultPhysicsDamage( index, pEvent, flDamageScale, true, damageType );
-	if ( damage == 0 )
+	float damage = CalculateDefaultPhysicsDamage(index, pEvent, flDamageScale, true, damageType);
+	if (damage == 0)
 		return;
 
 	Vector damagePos;
-	pEvent->pInternalData->GetContactPoint( damagePos );
+	pEvent->pInternalData->GetContactPoint(damagePos);
 	Vector damageForce = pEvent->postVelocity[index] * pEvent->pObjects[index]->GetMass();
-	if ( damageForce == vec3_origin )
+	if (damageForce == vec3_origin)
 	{
 		// This can happen if this entity is motion disabled, and can't move.
 		// Use the velocity of the entity that hit us instead.
@@ -523,7 +523,7 @@ void CNPC_Drone::TakeDamageFromPhysicsImpact( int index, gamevcollisionevent_t *
 	}
 
 	// FIXME: this doesn't pass in who is responsible if some other entity "caused" this collision
-	PhysCallbackDamage( this, CTakeDamageInfo( pHitEntity, pHitEntity, damageForce, damagePos, damage, damageType ), *pEvent, index );
+	PhysCallbackDamage(this, CTakeDamageInfo(pHitEntity, pHitEntity, damageForce, damagePos, damage, damageType), *pEvent, index);
 }
 
 
@@ -531,30 +531,30 @@ void CNPC_Drone::TakeDamageFromPhysicsImpact( int index, gamevcollisionevent_t *
 // Purpose: 
 //-----------------------------------------------------------------------------
 #define DRONE_SMASH_TIME	0.35		// How long after being thrown from a physcannon that a drone is eligible to die from impact
-void CNPC_Drone::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
+void CNPC_Drone::VPhysicsCollision(int index, gamevcollisionevent_t *pEvent)
 {
-	BaseClass::VPhysicsCollision( index, pEvent );
+	BaseClass::VPhysicsCollision(index, pEvent);
 
 	// Take no impact damage while being carried.
-	if ( IsHeldByPhyscannon() )
+	if (IsHeldByPhyscannon())
 		return;
 
 	// Wake us up
-	if ( m_spawnflags & SF_DRONE_PACKED_UP )
+	if (m_spawnflags & SF_DRONE_PACKED_UP)
 	{
-		SetCondition( COND_LIGHT_DAMAGE );
+		SetCondition(COND_LIGHT_DAMAGE);
 	}
 
 	int otherIndex = !index;
 	CBaseEntity *pHitEntity = pEvent->pEntities[otherIndex];
 
-	CBasePlayer *pPlayer = HasPhysicsAttacker( DRONE_SMASH_TIME );
-	if( pPlayer )
+	CBasePlayer *pPlayer = HasPhysicsAttacker(DRONE_SMASH_TIME);
+	if (pPlayer)
 	{
 		if (!pHitEntity)
 		{
-			TakeDamageFromPhyscannon( pPlayer );
-			StopBurst( true );
+			TakeDamageFromPhyscannon(pPlayer);
+			StopBurst(true);
 			return;
 		}
 
@@ -562,49 +562,49 @@ void CNPC_Drone::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 		CRagdollProp *pRagdollProp = dynamic_cast<CRagdollProp*>(pHitEntity);
 		if (!pHitEntity->IsNPC() && (!pRagdollProp || pRagdollProp->GetKiller() != this))
 		{
-			TakeDamageFromPhyscannon( pPlayer );
-			StopBurst( true );
+			TakeDamageFromPhyscannon(pPlayer);
+			StopBurst(true);
 			return;
 		}
 	}
 
-	if ( pHitEntity )
+	if (pHitEntity)
 	{
 		// It can take physics damage if it rams into a vehicle
-		if ( pHitEntity->GetServerVehicle() )
+		if (pHitEntity->GetServerVehicle())
 		{
-			TakeDamageFromVehicle( index, pEvent );
+			TakeDamageFromVehicle(index, pEvent);
 		}
-		else if ( pHitEntity->HasPhysicsAttacker( 0.5f ) )
+		else if (pHitEntity->HasPhysicsAttacker(0.5f))
 		{
 			// It also can take physics damage from things thrown by the player.
-			TakeDamageFromPhysicsImpact( index, pEvent );
+			TakeDamageFromPhysicsImpact(index, pEvent);
 		}
-		else if ( FClassnameIs( pHitEntity, "prop_combine_ball" ) )
+		else if (FClassnameIs(pHitEntity, "prop_combine_ball"))
 		{
 			// It also can take physics damage from a combine ball.
-			TakeDamageFromPhysicsImpact( index, pEvent );
+			TakeDamageFromPhysicsImpact(index, pEvent);
 		}
-		else if ( m_iHealth <= 0 )
+		else if (m_iHealth <= 0)
 		{
-			TakeDamageFromPhysicsImpact( index, pEvent );
+			TakeDamageFromPhysicsImpact(index, pEvent);
 		}
 
-		StopBurst( true );
+		StopBurst(true);
 	}
 }
 
 
-void CNPC_Drone::VPhysicsShadowCollision( int index, gamevcollisionevent_t *pEvent )
+void CNPC_Drone::VPhysicsShadowCollision(int index, gamevcollisionevent_t *pEvent)
 {
 	int otherIndex = !index;
 	CBaseEntity *pOther = pEvent->pEntities[otherIndex];
 
-	if ( pOther->GetMoveType() == MOVETYPE_VPHYSICS )
+	if (pOther->GetMoveType() == MOVETYPE_VPHYSICS)
 	{
-		HitPhysicsObject( pOther );
+		HitPhysicsObject(pOther);
 	}
-	BaseClass::VPhysicsShadowCollision( index, pEvent );
+	BaseClass::VPhysicsShadowCollision(index, pEvent);
 }
 
 //-----------------------------------------------------------------------------
@@ -612,11 +612,11 @@ void CNPC_Drone::VPhysicsShadowCollision( int index, gamevcollisionevent_t *pEve
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::CrashTouch( CBaseEntity *pOther )
+void CNPC_Drone::CrashTouch(CBaseEntity *pOther)
 {
-	CTakeDamageInfo	info( GetWorldEntity(), GetWorldEntity(), 25, DMG_CRUSH );
+	CTakeDamageInfo	info(GetWorldEntity(), GetWorldEntity(), 25, DMG_CRUSH);
 
-	CorpseGib( info );
+	CorpseGib(info);
 }
 
 
@@ -625,27 +625,27 @@ void CNPC_Drone::CrashTouch( CBaseEntity *pOther )
 //-----------------------------------------------------------------------------
 void CNPC_Drone::CreateSmokeTrail()
 {
-	if ( HasSpawnFlags( SF_DRONE_NO_DAMAGE_EFFECTS ) )
+	if (HasSpawnFlags(SF_DRONE_NO_DAMAGE_EFFECTS))
 		return;
 
-	if ( m_hSmokeTrail != NULL )
+	if (m_hSmokeTrail != NULL)
 		return;
 
-	SmokeTrail *pSmokeTrail =  SmokeTrail::CreateSmokeTrail();
-	if( !pSmokeTrail )
+	SmokeTrail *pSmokeTrail = SmokeTrail::CreateSmokeTrail();
+	if (!pSmokeTrail)
 		return;
 
 	pSmokeTrail->m_SpawnRate = 20;
 	pSmokeTrail->m_ParticleLifetime = 0.5f;
-	pSmokeTrail->m_StartSize	= 8;
-	pSmokeTrail->m_EndSize		= 32;
-	pSmokeTrail->m_SpawnRadius	= 5;
-	pSmokeTrail->m_MinSpeed		= 15;
-	pSmokeTrail->m_MaxSpeed		= 25;
-	
-	pSmokeTrail->m_StartColor.Init( 0.4f, 0.4f, 0.4f );
-	pSmokeTrail->m_EndColor.Init( 0, 0, 0 );
-	
+	pSmokeTrail->m_StartSize = 8;
+	pSmokeTrail->m_EndSize = 32;
+	pSmokeTrail->m_SpawnRadius = 5;
+	pSmokeTrail->m_MinSpeed = 15;
+	pSmokeTrail->m_MaxSpeed = 25;
+
+	pSmokeTrail->m_StartColor.Init(0.4f, 0.4f, 0.4f);
+	pSmokeTrail->m_EndColor.Init(0, 0, 0);
+
 	pSmokeTrail->SetLifetime(-1);
 	pSmokeTrail->FollowEntity(this);
 
@@ -654,9 +654,9 @@ void CNPC_Drone::CreateSmokeTrail()
 
 void CNPC_Drone::DestroySmokeTrail()
 {
-	if ( m_hSmokeTrail.Get() )
+	if (m_hSmokeTrail.Get())
 	{
-		UTIL_Remove( m_hSmokeTrail );
+		UTIL_Remove(m_hSmokeTrail);
 		m_hSmokeTrail = NULL;
 	}
 }
@@ -666,34 +666,34 @@ void CNPC_Drone::DestroySmokeTrail()
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Drone::OnTakeDamage_Alive( const CTakeDamageInfo &info )
+int	CNPC_Drone::OnTakeDamage_Alive(const CTakeDamageInfo &info)
 {
 	// Hafta make a copy of info cause we might need to scale damage.(sjb)
 	CTakeDamageInfo tdInfo = info;
 
-	if( tdInfo.GetAmmoType() == GetAmmoDef()->Index("SniperRound") )
+	if (tdInfo.GetAmmoType() == GetAmmoDef()->Index("SniperRound"))
 	{
 		// Unfortunately, this is the easiest way to stop the sniper killing drones in one shot.
-		tdInfo.SetDamage( m_iMaxHealth>>1 );
+		tdInfo.SetDamage(m_iMaxHealth >> 1);
 	}
 
-	if (info.GetDamageType() & DMG_PHYSGUN )
+	if (info.GetDamageType() & DMG_PHYSGUN)
 	{
 		m_flBladeSpeed = 20.0;
 
 		// respond to physics
 		// FIXME: shouldn't this happen in a base class?  Anyway to prevent it from happening twice?
-		VPhysicsTakeDamage( info );
+		VPhysicsTakeDamage(info);
 
 		// reduce damage to nothing
-		tdInfo.SetDamage( 1.0 );
+		tdInfo.SetDamage(1.0);
 
-		StopBurst( true );
+		StopBurst(true);
 	}
-	else if ( info.GetDamageType() & DMG_AIRBOAT )
+	else if (info.GetDamageType() & DMG_AIRBOAT)
 	{
 		// Airboat gun kills me instantly.
-		tdInfo.SetDamage( GetHealth() );
+		tdInfo.SetDamage(GetHealth());
 	}
 	else if (info.GetDamageType() & DMG_CLUB)
 	{
@@ -706,97 +706,97 @@ int	CNPC_Drone::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		//
 
 		//		-Take 150% damage from club attacks. This makes crowbar duels take two hits.
-		
-		tdInfo.ScaleDamage( 1.50 );
+
+		tdInfo.ScaleDamage(1.50);
 
 #define DRONE_PHYS_SEARCH_SIZE		64
 #define	DRONE_PHYSICS_SEARCH_RADIUS	128
 
-		CBaseEntity *pList[ DRONE_PHYS_SEARCH_SIZE ];
+		CBaseEntity *pList[DRONE_PHYS_SEARCH_SIZE];
 
 		Vector attackDir = info.GetDamageForce();
-		VectorNormalize( attackDir );
+		VectorNormalize(attackDir);
 
-		Vector testCenter = GetAbsOrigin() + ( attackDir * DRONE_PHYSICS_SEARCH_RADIUS );
-		Vector vecDelta( DRONE_PHYSICS_SEARCH_RADIUS, DRONE_PHYSICS_SEARCH_RADIUS, DRONE_PHYSICS_SEARCH_RADIUS );
+		Vector testCenter = GetAbsOrigin() + (attackDir * DRONE_PHYSICS_SEARCH_RADIUS);
+		Vector vecDelta(DRONE_PHYSICS_SEARCH_RADIUS, DRONE_PHYSICS_SEARCH_RADIUS, DRONE_PHYSICS_SEARCH_RADIUS);
 
-		int count = UTIL_EntitiesInBox( pList, DRONE_PHYS_SEARCH_SIZE, testCenter - vecDelta, testCenter + vecDelta, 0 );
+		int count = UTIL_EntitiesInBox(pList, DRONE_PHYS_SEARCH_SIZE, testCenter - vecDelta, testCenter + vecDelta, 0);
 
 		Vector			vecBestDir = g_vecAttackDir;
 		float			flBestDot = 0.90;
 		IPhysicsObject	*pPhysObj;
 
 		int i;
-		for( i = 0 ; i < count ; i++ )
+		for (i = 0; i < count; i++)
 		{
-			pPhysObj = pList[ i ]->VPhysicsGetObject();
+			pPhysObj = pList[i]->VPhysicsGetObject();
 
-			if( !pPhysObj || pPhysObj->GetMass() > 200 )
+			if (!pPhysObj || pPhysObj->GetMass() > 200)
 			{
 				// Not physics.
 				continue;
 			}
 
-			Vector center = pList[ i ]->WorldSpaceCenter();
+			Vector center = pList[i]->WorldSpaceCenter();
 
 			Vector vecDirToObject;
-			VectorSubtract( center, WorldSpaceCenter(), vecDirToObject );
-			VectorNormalize( vecDirToObject );
+			VectorSubtract(center, WorldSpaceCenter(), vecDirToObject);
+			VectorNormalize(vecDirToObject);
 
 			float flDot;
 
-			flDot = DotProduct( g_vecAttackDir, vecDirToObject );
-			
+			flDot = DotProduct(g_vecAttackDir, vecDirToObject);
 
-			if( flDot > flBestDot )
+
+			if (flDot > flBestDot)
 			{
 				flBestDot = flDot;
 				vecBestDir = vecDirToObject;
 			}
 		}
 
-		tdInfo.SetDamageForce( vecBestDir * info.GetDamage() * 200 );
+		tdInfo.SetDamageForce(vecBestDir * info.GetDamage() * 200);
 
 		// FIXME: shouldn't this happen in a base class?  Anyway to prevent it from happening twice?
-		VPhysicsTakeDamage( tdInfo );
+		VPhysicsTakeDamage(tdInfo);
 
 		// Force us away (no more residual speed hits!)
 		m_vForceVelocity = vecBestDir * info.GetDamage() * 0.5f;
 		m_flBladeSpeed = 10.0;
 
-		EmitSound( "NPC_Drone.Bat" );	
+		EmitSound("NPC_Drone.Bat");
 
 		// tdInfo.SetDamage( 1.0 );
 
 		m_flEngineStallTime = gpGlobals->curtime + 0.5f;
-		StopBurst( true );
+		StopBurst(true);
 	}
 	else
 	{
 		m_flBladeSpeed = 20.0;
 
 		Vector vecDamageDir = tdInfo.GetDamageForce();
-		VectorNormalize( vecDamageDir );
+		VectorNormalize(vecDamageDir);
 
 		m_flEngineStallTime = gpGlobals->curtime + 0.25f;
 		m_vForceVelocity = vecDamageDir * info.GetDamage() * 20.0f;
 
-		tdInfo.SetDamageForce( tdInfo.GetDamageForce() * 20 );
+		tdInfo.SetDamageForce(tdInfo.GetDamageForce() * 20);
 
-		VPhysicsTakeDamage( info );
+		VPhysicsTakeDamage(info);
 	}
 
-	int nRetVal = BaseClass::OnTakeDamage_Alive( tdInfo );
-	if ( nRetVal )
+	int nRetVal = BaseClass::OnTakeDamage_Alive(tdInfo);
+	if (nRetVal)
 	{
-		if ( m_iHealth > 0 )
+		if (m_iHealth > 0)
 		{
-			if ( info.GetDamageType() & DMG_CLUB )
+			if (info.GetDamageType() & DMG_CLUB)
 			{
-				SetEyeState( DRONE_EYE_STATE_STUNNED );
+				SetEyeState(DRONE_EYE_STATE_STUNNED);
 			}
 
-			if ( m_iHealth <= ( m_iMaxHealth / 2 ) )
+			if (m_iHealth <= (m_iMaxHealth / 2))
 			{
 				CreateSmokeTrail();
 			}
@@ -814,35 +814,35 @@ int	CNPC_Drone::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 //------------------------------------------------------------------------------
 // Purpose:
 //------------------------------------------------------------------------------
-bool CNPC_Drone::CorpseGib( const CTakeDamageInfo &info )
+bool CNPC_Drone::CorpseGib(const CTakeDamageInfo &info)
 {
 	Vector			vecGibVelocity;
 	AngularImpulse	vecGibAVelocity;
 
-	if( info.GetDamageType() & DMG_CLUB )
+	if (info.GetDamageType() & DMG_CLUB)
 	{
 		// If clubbed to death, break apart before the attacker's eyes!
 		vecGibVelocity = g_vecAttackDir * -150;
 
-		vecGibAVelocity.x = random->RandomFloat( -2000, 2000 );
-		vecGibAVelocity.y = random->RandomFloat( -2000, 2000 );
-		vecGibAVelocity.z = random->RandomFloat( -2000, 2000 );
+		vecGibAVelocity.x = random->RandomFloat(-2000, 2000);
+		vecGibAVelocity.y = random->RandomFloat(-2000, 2000);
+		vecGibAVelocity.z = random->RandomFloat(-2000, 2000);
 	}
 	else
 	{
 		// Shower the pieces with my velocity.
 		vecGibVelocity = GetCurrentVelocity();
 
-		vecGibAVelocity.x = random->RandomFloat( -500, 500 );
-		vecGibAVelocity.y = random->RandomFloat( -500, 500 );
-		vecGibAVelocity.z = random->RandomFloat( -500, 500 );
+		vecGibAVelocity.x = random->RandomFloat(-500, 500);
+		vecGibAVelocity.y = random->RandomFloat(-500, 500);
+		vecGibAVelocity.z = random->RandomFloat(-500, 500);
 	}
 
-	PropBreakableCreateAll( GetModelIndex(), NULL, GetAbsOrigin(), GetAbsAngles(), vecGibVelocity, vecGibAVelocity, 1.0, 60, COLLISION_GROUP_DEBRIS );
+	PropBreakableCreateAll(GetModelIndex(), NULL, GetAbsOrigin(), GetAbsAngles(), vecGibVelocity, vecGibAVelocity, 1.0, 60, COLLISION_GROUP_DEBRIS);
 
 	RemoveDeferred();
 
-	KillSprites( 0.0f );
+	KillSprites(0.0f);
 
 	return true;
 }
@@ -853,31 +853,31 @@ bool CNPC_Drone::CorpseGib( const CTakeDamageInfo &info )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int	CNPC_Drone::OnTakeDamage_Dying( const CTakeDamageInfo &info )
+int	CNPC_Drone::OnTakeDamage_Dying(const CTakeDamageInfo &info)
 {
 	// Ignore damage for the first 1 second of crashing behavior.
 	// If we don't do this, drones always just explode under 
 	// sustained fire.
-	VPhysicsTakeDamage( info );
-	
+	VPhysicsTakeDamage(info);
+
 	return 0;
 }
 
 //-----------------------------------------------------------------------------
 // Turn on the engine sound if we're gagged!
 //-----------------------------------------------------------------------------
-void CNPC_Drone::OnStateChange( NPC_STATE OldState, NPC_STATE NewState )
+void CNPC_Drone::OnStateChange(NPC_STATE OldState, NPC_STATE NewState)
 {
-	if( m_vNoiseMod.z == DRONE_NOISEMOD_HIDE && !(m_spawnflags & SF_NPC_WAIT_FOR_SCRIPT) && !(m_spawnflags & SF_DRONE_PACKED_UP) )
+	if (m_vNoiseMod.z == DRONE_NOISEMOD_HIDE && !(m_spawnflags & SF_NPC_WAIT_FOR_SCRIPT) && !(m_spawnflags & SF_DRONE_PACKED_UP))
 	{
 		// This drone should get a normal noisemod now.
-		float flNoiseMod = random->RandomFloat( 1.7, 2.3 );
-		
+		float flNoiseMod = random->RandomFloat(1.7, 2.3);
+
 		// Just bob up and down.
-		SetNoiseMod( 0, 0, flNoiseMod );
+		SetNoiseMod(0, 0, flNoiseMod);
 	}
 
-	if( NewState != NPC_STATE_IDLE && (m_spawnflags & SF_NPC_GAG) && (m_nEnginePitch1 < 0) )
+	if (NewState != NPC_STATE_IDLE && (m_spawnflags & SF_NPC_GAG) && (m_nEnginePitch1 < 0))
 	{
 		m_spawnflags &= ~SF_NPC_GAG;
 		SoundInit();
@@ -888,14 +888,14 @@ void CNPC_Drone::OnStateChange( NPC_STATE OldState, NPC_STATE NewState )
 // Purpose: 
 // Input  : Type - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::HandleAnimEvent( animevent_t *pEvent )
+void CNPC_Drone::HandleAnimEvent(animevent_t *pEvent)
 {
 	Vector vecNewVelocity;
-	switch( pEvent->event )
+	switch (pEvent->event)
 	{
 	case DRONE_AE_START_ENGINE:
 		StartEye();
-		StartEngine( true );
+		StartEngine(true);
 		m_spawnflags &= ~SF_DRONE_PACKED_UP;
 
 		// No bursts until fully unpacked!
@@ -911,7 +911,7 @@ void CNPC_Drone::HandleAnimEvent( animevent_t *pEvent )
 		break;
 
 	default:
-		BaseClass::HandleAnimEvent( pEvent );
+		BaseClass::HandleAnimEvent(pEvent);
 		break;
 	}
 }
@@ -920,7 +920,7 @@ void CNPC_Drone::HandleAnimEvent( animevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose: Returns whether or not the given activity would translate to flying.
 //-----------------------------------------------------------------------------
-bool CNPC_Drone::IsFlyingActivity( Activity baseAct )
+bool CNPC_Drone::IsFlyingActivity(Activity baseAct)
 {
 	return ((baseAct == ACT_FLY || baseAct == ACT_IDLE || baseAct == ACT_RUN || baseAct == ACT_WALK) && m_bBladesActive);
 }
@@ -930,97 +930,97 @@ bool CNPC_Drone::IsFlyingActivity( Activity baseAct )
 // Purpose: 
 // Input  : Type - 
 //-----------------------------------------------------------------------------
-Activity CNPC_Drone::NPC_TranslateActivity( Activity baseAct )
+Activity CNPC_Drone::NPC_TranslateActivity(Activity baseAct)
 {
-	if (IsFlyingActivity( baseAct ))
+	if (IsFlyingActivity(baseAct))
 	{
 		return (Activity)ACT_FLY;
 	}
 
-	return BaseClass::NPC_TranslateActivity( baseAct );
+	return BaseClass::NPC_TranslateActivity(baseAct);
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : Type - 
 //-----------------------------------------------------------------------------
-int CNPC_Drone::TranslateSchedule( int scheduleType ) 
+int CNPC_Drone::TranslateSchedule(int scheduleType)
 {
 	// Fail-safe for deployment if packed up and interrupted
-	if ( m_spawnflags & SF_DRONE_PACKED_UP )
+	if (m_spawnflags & SF_DRONE_PACKED_UP)
 	{
-		if ( scheduleType != SCHED_WAIT_FOR_SCRIPT )
+		if (scheduleType != SCHED_WAIT_FOR_SCRIPT)
 			return SCHED_DRONE_DEPLOY;
 	}
 
-	switch ( scheduleType )
+	switch (scheduleType)
 	{
 	case SCHED_MELEE_ATTACK1:
-		{
-			return SCHED_DRONE_ATTACK_HOVER;
-			break;
-		}
+	{
+								return SCHED_DRONE_ATTACK_HOVER;
+								break;
+	}
 	case SCHED_BACK_AWAY_FROM_ENEMY:
-		{
-			return SCHED_DRONE_REGROUP;
-			break;
-		}
+	{
+									   return SCHED_DRONE_REGROUP;
+									   break;
+	}
 	case SCHED_CHASE_ENEMY:
-		{
-			// If we're waiting for our next attack opportunity, just swarm
-			if ( m_flNextBurstTime > gpGlobals->curtime )
-			{
-				return SCHED_DRONE_SWARM;
-			}
+	{
+							  // If we're waiting for our next attack opportunity, just swarm
+							  if (m_flNextBurstTime > gpGlobals->curtime)
+							  {
+								  return SCHED_DRONE_SWARM;
+							  }
 
-			if ( !m_bDoSwarmBehavior || OccupyStrategySlotRange( SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2 ) )
-			{
-				return SCHED_CHASE_ENEMY;
-			}
-			else
-			{
-				return SCHED_DRONE_SWARM;
-			}
-		}
+							  if (!m_bDoSwarmBehavior || OccupyStrategySlotRange(SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2))
+							  {
+								  return SCHED_CHASE_ENEMY;
+							  }
+							  else
+							  {
+								  return SCHED_DRONE_SWARM;
+							  }
+	}
 	case SCHED_COMBAT_FACE:
-		{
-			// Don't care about facing enemy, handled automatically
-			return TranslateSchedule( SCHED_CHASE_ENEMY );
-			break;
-		}
+	{
+							  // Don't care about facing enemy, handled automatically
+							  return TranslateSchedule(SCHED_CHASE_ENEMY);
+							  break;
+	}
 	case SCHED_WAKE_ANGRY:
-		{
-			if( m_spawnflags & SF_DRONE_PACKED_UP )
-			{
-				return SCHED_DRONE_DEPLOY;
-			}
-			else
-			{
-				return TranslateSchedule( SCHED_CHASE_ENEMY );
-			}
-			break;
-		}
+	{
+							 if (m_spawnflags & SF_DRONE_PACKED_UP)
+							 {
+								 return SCHED_DRONE_DEPLOY;
+							 }
+							 else
+							 {
+								 return TranslateSchedule(SCHED_CHASE_ENEMY);
+							 }
+							 break;
+	}
 
 	case SCHED_IDLE_STAND:
 	case SCHED_ALERT_STAND:
 	case SCHED_ALERT_FACE:
-		{
-			if ( m_pSquad && m_bDoSwarmBehavior )
-			{
-				return SCHED_DRONE_SWARM_IDLE;
-			}
-			else
-			{
-				return BaseClass::TranslateSchedule(scheduleType);
-			}
-		}
+	{
+							 if (m_pSquad && m_bDoSwarmBehavior)
+							 {
+								 return SCHED_DRONE_SWARM_IDLE;
+							 }
+							 else
+							 {
+								 return BaseClass::TranslateSchedule(scheduleType);
+							 }
+	}
 
 	case SCHED_CHASE_ENEMY_FAILED:
-		{
-			// Relentless bastard! Doesn't fail (fail not valid anyway)
-			return TranslateSchedule( SCHED_CHASE_ENEMY );
-			break;
-		}
+	{
+									 // Relentless bastard! Doesn't fail (fail not valid anyway)
+									 return TranslateSchedule(SCHED_CHASE_ENEMY);
+									 break;
+	}
 
 	}
 	return BaseClass::TranslateSchedule(scheduleType);
@@ -1032,20 +1032,20 @@ void CNPC_Drone::Loiter()
 	//NDebugOverlay::Line( GetAbsOrigin(), m_vecLoiterPosition, 255, 255, 255, false, 0.1 );
 
 	// Friendly drone is loitering.
-	if( !m_bHeld )
+	if (!m_bHeld)
 	{
 		float distSqr = m_vecLoiterPosition.DistToSqr(GetAbsOrigin());
 
-		if( distSqr > MAX_LOITER_DIST_SQR )
+		if (distSqr > MAX_LOITER_DIST_SQR)
 		{
 			Vector vecDir = m_vecLoiterPosition - GetAbsOrigin();
-			VectorNormalize( vecDir );
+			VectorNormalize(vecDir);
 
 			// Move back to our loiter position.
-			if( gpGlobals->curtime > m_fTimeNextLoiterPulse )
+			if (gpGlobals->curtime > m_fTimeNextLoiterPulse)
 			{
 				// Apply a pulse of force if allowed right now.
-				if( distSqr > MAX_LOITER_DIST_SQR * 4.0f )
+				if (distSqr > MAX_LOITER_DIST_SQR * 4.0f)
 				{
 					//Msg("Big Pulse\n");
 					m_vForceVelocity = vecDir * 12.0f;
@@ -1075,30 +1075,30 @@ void CNPC_Drone::Loiter()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::MaintainGroundHeight( void )
+void CNPC_Drone::MaintainGroundHeight(void)
 {
 	float zSpeed = GetCurrentVelocity().z;
 
-	if ( zSpeed > 32.0f )
+	if (zSpeed > 32.0f)
 		return;
 
 	const float minGroundHeight = 52.0f;
 
 	trace_t	tr;
-	AI_TraceHull(	GetAbsOrigin(), 
-		GetAbsOrigin() - Vector( 0, 0, minGroundHeight ), 
-		GetHullMins(), 
-		GetHullMaxs(), 
-		(MASK_NPCSOLID_BRUSHONLY), 
-		this, 
-		COLLISION_GROUP_NONE, 
-		&tr );
+	AI_TraceHull(GetAbsOrigin(),
+		GetAbsOrigin() - Vector(0, 0, minGroundHeight),
+		GetHullMins(),
+		GetHullMaxs(),
+		(MASK_NPCSOLID_BRUSHONLY),
+		this,
+		COLLISION_GROUP_NONE,
+		&tr);
 
-	if ( tr.fraction != 1.0f )
+	if (tr.fraction != 1.0f)
 	{
-		float speedAdj = MAX( 16, (-zSpeed*0.5f) );
+		float speedAdj = MAX(16, (-zSpeed*0.5f));
 
-		m_vForceVelocity += Vector(0,0,1) * ( speedAdj * ( 1.0f - tr.fraction ) );
+		m_vForceVelocity += Vector(0, 0, 1) * (speedAdj * (1.0f - tr.fraction));
 	}
 }
 
@@ -1106,15 +1106,15 @@ void CNPC_Drone::MaintainGroundHeight( void )
 // Purpose: Handles movement towards the last move target.
 // Input  : flInterval - 
 //-----------------------------------------------------------------------------
-bool CNPC_Drone::OverrideMove( float flInterval )
+bool CNPC_Drone::OverrideMove(float flInterval)
 {
-	SpinBlades( flInterval );
-		
+	SpinBlades(flInterval);
+
 	// Don't execute any move code if packed up.
-	if( HasSpawnFlags(SF_DRONE_PACKED_UP|SF_DRONE_CARRIED) )
+	if (HasSpawnFlags(SF_DRONE_PACKED_UP | SF_DRONE_CARRIED))
 		return true;
 
-	if( IsLoitering() )
+	if (IsLoitering())
 	{
 		Loiter();
 	}
@@ -1124,9 +1124,9 @@ bool CNPC_Drone::OverrideMove( float flInterval )
 	}
 
 	// So cops, etc. will try to avoid them
-	if ( !HasSpawnFlags( SF_DRONE_NO_DANGER_SOUNDS ) && !m_bHeld )
+	if (!HasSpawnFlags(SF_DRONE_NO_DANGER_SOUNDS) && !m_bHeld)
 	{
-		CSoundEnt::InsertSound( SOUND_DANGER, GetAbsOrigin(), 75, flInterval, this );
+		CSoundEnt::InsertSound(SOUND_DANGER, GetAbsOrigin(), 75, flInterval, this);
 	}
 
 	// -----------------------------------------------------------------
@@ -1144,7 +1144,7 @@ bool CNPC_Drone::OverrideMove( float flInterval )
 		bool bReducible = GetNavigator()->GetPath()->GetCurWaypoint()->IsReducible();
 		const float strictTolerance = 64.0;
 		//NDebugOverlay::Line( GetAbsOrigin(), GetAbsOrigin() + Vector(0, 0, 10 ), 255, 0, 0, true, 0.1);
-  		if ( ProgressFlyPath( flInterval, GetEnemy(), MoveCollisionMask(), bReducible, strictTolerance ) == AINPP_COMPLETE )
+		if (ProgressFlyPath(flInterval, GetEnemy(), MoveCollisionMask(), bReducible, strictTolerance) == AINPP_COMPLETE)
 			return true;
 	}
 	// -----------------------------------------------------------------
@@ -1159,8 +1159,8 @@ bool CNPC_Drone::OverrideMove( float flInterval )
 	// -------------------------------------------------------------- ----
 	else
 	{
-		float	myDecay	 = 9.5;
-		Decelerate( flInterval, myDecay );
+		float	myDecay = 9.5;
+		Decelerate(flInterval, myDecay);
 
 		m_vTargetBanking = vec3_origin;
 
@@ -1169,11 +1169,11 @@ bool CNPC_Drone::OverrideMove( float flInterval )
 		// -------------------------------------
 		if (GetEnemy())
 		{
-			TurnHeadToTarget(flInterval, GetEnemy()->EyePosition() );
+			TurnHeadToTarget(flInterval, GetEnemy()->EyePosition());
 		}
 	}
 
-	if ( m_iHealth <= 0 )
+	if (m_iHealth <= 0)
 	{
 		// Crashing!!
 		MoveExecute_Dead(flInterval);
@@ -1193,16 +1193,16 @@ bool CNPC_Drone::OverrideMove( float flInterval )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::TurnHeadRandomly(float flInterval )
+void CNPC_Drone::TurnHeadRandomly(float flInterval)
 {
-	float desYaw = random->RandomFloat(0,360);
+	float desYaw = random->RandomFloat(0, 360);
 
-	float	iRate	 = 0.8;
+	float	iRate = 0.8;
 	// Make frame rate independent
 	float timeToUse = flInterval;
 	while (timeToUse > 0)
 	{
-		m_fHeadYaw	   = (iRate * m_fHeadYaw) + (1-iRate)*desYaw;
+		m_fHeadYaw = (iRate * m_fHeadYaw) + (1 - iRate)*desYaw;
 		timeToUse = -0.1;
 	}
 }
@@ -1222,16 +1222,16 @@ void CNPC_Drone::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 	// -----------------------------------------
 	// Don't steer if engine's have stalled
 	// -----------------------------------------
-	if ( gpGlobals->curtime < m_flEngineStallTime || m_iHealth <= 0 )
+	if (gpGlobals->curtime < m_flEngineStallTime || m_iHealth <= 0)
 		return;
 
-	if ( GetEnemy() != NULL )
+	if (GetEnemy() != NULL)
 	{
-		TurnHeadToTarget( flInterval, GetEnemy()->EyePosition() );
+		TurnHeadToTarget(flInterval, GetEnemy()->EyePosition());
 	}
 	else
 	{
-		TurnHeadToTarget( flInterval, vMoveTarget );
+		TurnHeadToTarget(flInterval, vMoveTarget);
 	}
 
 	// -------------------------------------
@@ -1239,33 +1239,33 @@ void CNPC_Drone::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 	// -------------------------------------
 	float	myAccel;
 	float	myZAccel = 300.0f;
-	float	myDecay	 = 0.3f;
+	float	myDecay = 0.3f;
 
 	Vector targetDir;
 	float flDist;
 
 	// If we're bursting, just head straight
-	if ( m_flBurstDuration > gpGlobals->curtime )
+	if (m_flBurstDuration > gpGlobals->curtime)
 	{
 		float zDist = 500;
 
 		// Steer towards our enemy if we're able to
-		if ( GetEnemy() != NULL )
+		if (GetEnemy() != NULL)
 		{
-			Vector steerDir = ( GetEnemy()->EyePosition() - GetAbsOrigin() );
-			zDist = fabs( steerDir.z );
-			VectorNormalize( steerDir );
+			Vector steerDir = (GetEnemy()->EyePosition() - GetAbsOrigin());
+			zDist = fabs(steerDir.z);
+			VectorNormalize(steerDir);
 
 			float useTime = flInterval;
-			while ( useTime > 0.0f )
+			while (useTime > 0.0f)
 			{
-				m_vecBurstDirection += ( steerDir * 4.0f );
+				m_vecBurstDirection += (steerDir * 4.0f);
 				useTime -= 0.1f;
 			}
 
 			m_vecBurstDirection.z = steerDir.z;
 
-			VectorNormalize( m_vecBurstDirection );
+			VectorNormalize(m_vecBurstDirection);
 		}
 
 		// Debug visualizations
@@ -1278,27 +1278,27 @@ void CNPC_Drone::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 
 		targetDir = m_vecBurstDirection;
 
-		flDist	= FLT_MAX;
-		myDecay	 = 0.3f;
+		flDist = FLT_MAX;
+		myDecay = 0.3f;
 #ifdef _XBOX
-		myAccel	 = 500;
+		myAccel = 500;
 #else
-		myAccel	 = 400;
+		myAccel = 400;
 #endif // _XBOX
-		myZAccel = MIN( 500, zDist / flInterval );
+		myZAccel = MIN(500, zDist / flInterval);
 	}
 	else
 	{
 		Vector vecCurrentDir = GetCurrentVelocity();
-		VectorNormalize( vecCurrentDir );
+		VectorNormalize(vecCurrentDir);
 
 		targetDir = vMoveTarget - GetAbsOrigin();
-		flDist = VectorNormalize( targetDir );
-		
-		float flDot = DotProduct( targetDir, vecCurrentDir );
+		flDist = VectorNormalize(targetDir);
+
+		float flDot = DotProduct(targetDir, vecCurrentDir);
 
 		// Otherwise we should steer towards our goal
-		if( flDot > 0.25 )
+		if (flDot > 0.25)
 		{
 			// If my target is in front of me, my flight model is a bit more accurate.
 			myAccel = 300;
@@ -1311,7 +1311,7 @@ void CNPC_Drone::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 	}
 
 	// Clamp lateral acceleration
-	if ( myAccel > ( flDist / flInterval ) )
+	if (myAccel > (flDist / flInterval))
 	{
 		myAccel = flDist / flInterval;
 	}
@@ -1320,14 +1320,14 @@ void CNPC_Drone::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 	// Boost vertical movement
 	if ( targetDir.z > 0 )
 	{
-		// Z acceleration is faster when we thrust upwards.
-		// This is to help keep drones out of water. 
-		myZAccel *= 5.0;
+	// Z acceleration is faster when we thrust upwards.
+	// This is to help keep drones out of water.
+	myZAccel *= 5.0;
 	}
 	*/
 
 	// Clamp vertical movement
-	if ( myZAccel > flDist / flInterval )
+	if (myZAccel > flDist / flInterval)
 	{
 		myZAccel = flDist / flInterval;
 	}
@@ -1335,15 +1335,15 @@ void CNPC_Drone::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 	// Scale by our engine force
 	myAccel *= m_fEnginePowerScale;
 	myZAccel *= m_fEnginePowerScale;
-	
-	MoveInDirection( flInterval, targetDir, myAccel, myZAccel, myDecay );
+
+	MoveInDirection(flInterval, targetDir, myAccel, myZAccel, myDecay);
 
 	// calc relative banking targets
 	Vector forward, right;
-	GetVectors( &forward, &right, NULL );
-	m_vTargetBanking.x	= 40 * DotProduct( forward, targetDir );
-	m_vTargetBanking.z	= 40 * DotProduct( right, targetDir );
-	m_vTargetBanking.y	= 0.0;
+	GetVectors(&forward, &right, NULL);
+	m_vTargetBanking.x = 40 * DotProduct(forward, targetDir);
+	m_vTargetBanking.z = 40 * DotProduct(right, targetDir);
+	m_vTargetBanking.y = 0.0;
 }
 
 
@@ -1363,51 +1363,51 @@ int CNPC_Drone::MoveCollisionMask(void)
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::Splash( const Vector &vecSplashPos )
+void CNPC_Drone::Splash(const Vector &vecSplashPos)
 {
 	CEffectData	data;
 
 	data.m_fFlags = 0;
 	data.m_vOrigin = vecSplashPos;
-	data.m_vNormal = Vector( 0, 0, 1 );
+	data.m_vNormal = Vector(0, 0, 1);
 
 	data.m_flScale = 8.0f;
 
 	int contents = GetWaterType();
 
 	// Verify we have valid contents
-	if ( !( contents & (CONTENTS_SLIME|CONTENTS_WATER)))
+	if (!(contents & (CONTENTS_SLIME | CONTENTS_WATER)))
 	{
 		// We're leaving the water so we have to reverify what it was
 		trace_t	tr;
-		UTIL_TraceLine( GetAbsOrigin(), GetAbsOrigin() - Vector( 0, 0, 256 ), (CONTENTS_WATER|CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine(GetAbsOrigin(), GetAbsOrigin() - Vector(0, 0, 256), (CONTENTS_WATER | CONTENTS_SLIME), this, COLLISION_GROUP_NONE, &tr);
 
 		// Re-validate this
-		if ( !(tr.contents&(CONTENTS_WATER|CONTENTS_SLIME)) )
+		if (!(tr.contents&(CONTENTS_WATER | CONTENTS_SLIME)))
 		{
 			//NOTENOTE: We called a splash but we don't seem to be near water?
-			Assert( 0 );
+			Assert(0);
 			return;
 		}
 
 		contents = tr.contents;
 	}
-	
+
 	// Mark us if we're in slime
-	if ( contents & CONTENTS_SLIME )
+	if (contents & CONTENTS_SLIME)
 	{
 		data.m_fFlags |= FX_WATER_IN_SLIME;
 	}
 
-	DispatchEffect( "watersplash", data );
+	DispatchEffect("watersplash", data);
 }
 
 //-----------------------------------------------------------------------------
 // Computes the slice bounce velocity
 //-----------------------------------------------------------------------------
-void CNPC_Drone::ComputeSliceBounceVelocity( CBaseEntity *pHitEntity, trace_t &tr )
+void CNPC_Drone::ComputeSliceBounceVelocity(CBaseEntity *pHitEntity, trace_t &tr)
 {
-	if( pHitEntity->IsAlive() && FClassnameIs( pHitEntity, "func_breakable_surf" ) )
+	if (pHitEntity->IsAlive() && FClassnameIs(pHitEntity, "func_breakable_surf"))
 	{
 		// We want to see if the drone hits a breakable pane of glass. To keep from checking
 		// The classname of the HitEntity on each impact, we only do this check if we hit 
@@ -1417,81 +1417,81 @@ void CNPC_Drone::ComputeSliceBounceVelocity( CBaseEntity *pHitEntity, trace_t &t
 	}
 
 	Vector vecDir;
-	
+
 	// If the drone isn't bouncing away from whatever he sliced, force it.
-	VectorSubtract( WorldSpaceCenter(), pHitEntity->WorldSpaceCenter(), vecDir );
-	VectorNormalize( vecDir );
+	VectorSubtract(WorldSpaceCenter(), pHitEntity->WorldSpaceCenter(), vecDir);
+	VectorNormalize(vecDir);
 	vecDir *= 200;
 	vecDir[2] = 0.0f;
-	
+
 	// Knock it away from us
-	if ( VPhysicsGetObject() != NULL )
+	if (VPhysicsGetObject() != NULL)
 	{
-		VPhysicsGetObject()->ApplyForceOffset( vecDir * 4, GetAbsOrigin() );
+		VPhysicsGetObject()->ApplyForceOffset(vecDir * 4, GetAbsOrigin());
 	}
 
 	// Also set our velocity
-	SetCurrentVelocity( vecDir );
+	SetCurrentVelocity(vecDir);
 }
 
 
 //-----------------------------------------------------------------------------
 // Is the drone being held?
 //-----------------------------------------------------------------------------
-bool CNPC_Drone::IsHeldByPhyscannon( )
+bool CNPC_Drone::IsHeldByPhyscannon()
 {
 	return VPhysicsGetObject() && (VPhysicsGetObject()->GetGameFlags() & FVPHYSICS_PLAYER_HELD);
 }
 
-	
+
 //-----------------------------------------------------------------------------
 // Purpose: We've touched something that we can hurt. Slice it!
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::Slice( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
+void CNPC_Drone::Slice(CBaseEntity *pHitEntity, float flInterval, trace_t &tr)
 {
 	// Don't hurt the player if I'm in water
-	if( GetWaterLevel() > 0 && pHitEntity->IsPlayer() )
+	if (GetWaterLevel() > 0 && pHitEntity->IsPlayer())
 		return;
 
 	// Can't slice players holding it with the phys cannon
-	if ( IsHeldByPhyscannon() )
+	if (IsHeldByPhyscannon())
 	{
-		if ( pHitEntity && (pHitEntity == HasPhysicsAttacker( FLT_MAX )) )
+		if (pHitEntity && (pHitEntity == HasPhysicsAttacker(FLT_MAX)))
 			return;
 	}
 
-	if ( pHitEntity->m_takedamage == DAMAGE_NO )
+	if (pHitEntity->m_takedamage == DAMAGE_NO)
 		return;
 
 	// Damage must be scaled by flInterval so framerate independent
 	float flDamage = sk_drone_melee_dmg.GetFloat() * flInterval;
 
-	if ( pHitEntity->IsPlayer() )
+	if (pHitEntity->IsPlayer())
 	{
 		flDamage *= 2.0f;
 	}
-	
+
 	// Held drones do more damage
-	if ( IsHeldByPhyscannon() )
+	if (IsHeldByPhyscannon())
 	{
 		// Deal 100 damage/sec
 		flDamage = 100.0f * flInterval;
 	}
-	else if ( pHitEntity->IsNPC() && HasPhysicsAttacker( DRONE_SMASH_TIME ) )
+	else if (pHitEntity->IsNPC() && HasPhysicsAttacker(DRONE_SMASH_TIME))
 	{
 		extern ConVar sk_combine_guard_health;
 		// NOTE: The else here is essential.
 		// The physics attacker *will* be set even when the drone is held
 		flDamage = sk_combine_guard_health.GetFloat(); // the highest healthed fleshy enemy
 	}
-	else if ( dynamic_cast<CBaseProp*>(pHitEntity) || dynamic_cast<CBreakable*>(pHitEntity) )
+	else if (dynamic_cast<CBaseProp*>(pHitEntity) || dynamic_cast<CBreakable*>(pHitEntity))
 	{
 		// If we hit a prop, we want it to break immediately
 		flDamage = pHitEntity->GetHealth();
 	}
-	else if ( pHitEntity->IsNPC() && IRelationType( pHitEntity ) == D_HT  && FClassnameIs( pHitEntity, "npc_combine_s" ) ) 
+	else if (pHitEntity->IsNPC() && IRelationType(pHitEntity) == D_HT  && FClassnameIs(pHitEntity, "npc_combine_s"))
 	{
 		flDamage *= 6.0f;
 	}
@@ -1501,25 +1501,25 @@ void CNPC_Drone::Slice( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 		flDamage = 1.0f;
 	}
 
-	CTakeDamageInfo info( this, this, flDamage, DMG_SLASH );
+	CTakeDamageInfo info(this, this, flDamage, DMG_SLASH);
 
 	// check for actual "ownership" of damage
-	CBasePlayer *pPlayer = HasPhysicsAttacker( DRONE_SMASH_TIME );
+	CBasePlayer *pPlayer = HasPhysicsAttacker(DRONE_SMASH_TIME);
 	if (pPlayer)
 	{
-		info.SetAttacker( pPlayer );
+		info.SetAttacker(pPlayer);
 	}
 
 	Vector dir = (tr.endpos - tr.startpos);
-	if ( dir == vec3_origin )
+	if (dir == vec3_origin)
 	{
 		dir = tr.m_pEnt->GetAbsOrigin() - GetAbsOrigin();
 	}
-	CalculateMeleeDamageForce( &info, dir, tr.endpos );
-	pHitEntity->TakeDamage( info );
+	CalculateMeleeDamageForce(&info, dir, tr.endpos);
+	pHitEntity->TakeDamage(info);
 
 	// Spawn some extra blood where we hit
-	if ( pHitEntity->BloodColor() == DONT_BLEED )
+	if (pHitEntity->BloodColor() == DONT_BLEED)
 	{
 		CEffectData data;
 		Vector velocity = GetCurrentVelocity();
@@ -1527,30 +1527,30 @@ void CNPC_Drone::Slice( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 		data.m_vOrigin = tr.endpos;
 		data.m_vAngles = GetAbsAngles();
 
-		VectorNormalize( velocity );
-		
-		data.m_vNormal = ( tr.plane.normal + velocity ) * 0.5;;
+		VectorNormalize(velocity);
 
-		DispatchEffect( "DroneSparks", data );
+		data.m_vNormal = (tr.plane.normal + velocity) * 0.5;;
 
-		EmitSound( "NPC_Drone.Grind" );
+		DispatchEffect("DroneSparks", data);
+
+		EmitSound("NPC_Drone.Grind");
 
 		//TODO: What we really want to do is get a material reference and emit the proper sprayage! - jdw
 	}
 	else
 	{
-		SpawnBlood(tr.endpos, g_vecAttackDir, pHitEntity->BloodColor(), 6 );
-		EmitSound( "NPC_Drone.Slice" );
+		SpawnBlood(tr.endpos, g_vecAttackDir, pHitEntity->BloodColor(), 6);
+		EmitSound("NPC_Drone.Slice");
 	}
 
 	// Pop back a little bit after hitting the player
-	ComputeSliceBounceVelocity( pHitEntity, tr );
+	ComputeSliceBounceVelocity(pHitEntity, tr);
 
 	// Save off when we last hit something
 	m_flLastDamageTime = gpGlobals->curtime;
 
 	// Reset our state and give the player time to react
-	StopBurst( true );
+	StopBurst(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1558,30 +1558,30 @@ void CNPC_Drone::Slice( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
+void CNPC_Drone::Bump(CBaseEntity *pHitEntity, float flInterval, trace_t &tr)
 {
-	if ( !VPhysicsGetObject() )
+	if (!VPhysicsGetObject())
 		return;
 
 	// Surpressing this behavior
-	if ( m_flBumpSuppressTime > gpGlobals->curtime )
+	if (m_flBumpSuppressTime > gpGlobals->curtime)
 		return;
 
-	if ( pHitEntity->GetMoveType() == MOVETYPE_VPHYSICS && pHitEntity->Classify()!=CLASS_DRONE )
+	if (pHitEntity->GetMoveType() == MOVETYPE_VPHYSICS && pHitEntity->Classify() != CLASS_DRONE)
 	{
-		HitPhysicsObject( pHitEntity );
+		HitPhysicsObject(pHitEntity);
 	}
 
 	// We've hit something so deflect our velocity based on the surface
 	// norm of what we've hit
 	if (flInterval > 0)
 	{
-		float moveLen = ( (GetCurrentVelocity() * flInterval) * (1.0 - tr.fraction) ).Length();
+		float moveLen = ((GetCurrentVelocity() * flInterval) * (1.0 - tr.fraction)).Length();
 
-		Vector moveVec	= moveLen*tr.plane.normal/flInterval;
+		Vector moveVec = moveLen*tr.plane.normal / flInterval;
 
 		// If I'm totally dead, don't bounce me up
-		if (m_iHealth <=0 && moveVec.z > 0)
+		if (m_iHealth <= 0 && moveVec.z > 0)
 		{
 			moveVec.z = 0;
 		}
@@ -1597,10 +1597,10 @@ void CNPC_Drone::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 		}
 
 		Vector myUp;
-		VPhysicsGetObject()->LocalToWorldVector( &myUp, Vector( 0.0, 0.0, 1.0 ) );
+		VPhysicsGetObject()->LocalToWorldVector(&myUp, Vector(0.0, 0.0, 1.0));
 
 		// plane must be something that could hit the blades
-		if (fabs( DotProduct( myUp, tr.plane.normal ) ) < 0.25 )
+		if (fabs(DotProduct(myUp, tr.plane.normal)) < 0.25)
 		{
 			CEffectData data;
 			Vector velocity = GetCurrentVelocity();
@@ -1608,69 +1608,69 @@ void CNPC_Drone::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 			data.m_vOrigin = tr.endpos;
 			data.m_vAngles = GetAbsAngles();
 
-			VectorNormalize( velocity );
-			
-			data.m_vNormal = ( tr.plane.normal + velocity ) * 0.5;;
+			VectorNormalize(velocity);
 
-			DispatchEffect( "DroneSparks", data );
+			data.m_vNormal = (tr.plane.normal + velocity) * 0.5;;
+
+			DispatchEffect("DroneSparks", data);
 
 			CBroadcastRecipientFilter filter;
 
-			te->DynamicLight( filter, 0.0, &GetAbsOrigin(), 255, 180, 100, 0, 50, 0.3, 150 );
-			
+			te->DynamicLight(filter, 0.0, &GetAbsOrigin(), 255, 180, 100, 0, 50, 0.3, 150);
+
 			// add some spin, but only if we're not already going fast..
 			Vector vecVelocity;
 			AngularImpulse vecAngVelocity;
-			VPhysicsGetObject()->GetVelocity( &vecVelocity, &vecAngVelocity );
-			float flDot = DotProduct( myUp, vecAngVelocity );
-			if ( fabs(flDot) < 100 )
+			VPhysicsGetObject()->GetVelocity(&vecVelocity, &vecAngVelocity);
+			float flDot = DotProduct(myUp, vecAngVelocity);
+			if (fabs(flDot) < 100)
 			{
 				//AngularImpulse torque = myUp * (1000 - flDot * 10);
 				AngularImpulse torque = myUp * (1000 - flDot * 2);
-				VPhysicsGetObject()->ApplyTorqueCenter( torque );
+				VPhysicsGetObject()->ApplyTorqueCenter(torque);
 			}
-			
+
 			if (!(m_spawnflags	& SF_NPC_GAG))
 			{
-				EmitSound( "NPC_Drone.Grind" );
+				EmitSound("NPC_Drone.Grind");
 			}
 
 			// For decals and sparks we must trace a line in the direction of the surface norm
 			// that we hit.
 			trace_t	decalTrace;
-			AI_TraceLine( GetAbsOrigin(), GetAbsOrigin() - (tr.plane.normal * 24),MASK_SOLID, this, COLLISION_GROUP_NONE, &decalTrace );
+			AI_TraceLine(GetAbsOrigin(), GetAbsOrigin() - (tr.plane.normal * 24), MASK_SOLID, this, COLLISION_GROUP_NONE, &decalTrace);
 
-			if ( decalTrace.fraction != 1.0 )
+			if (decalTrace.fraction != 1.0)
 			{
 				// Leave decal only if colliding horizontally
-				if ((DotProduct(Vector(0,0,1),decalTrace.plane.normal)<0.5) && (DotProduct(Vector(0,0,-1),decalTrace.plane.normal)<0.5))
+				if ((DotProduct(Vector(0, 0, 1), decalTrace.plane.normal)<0.5) && (DotProduct(Vector(0, 0, -1), decalTrace.plane.normal)<0.5))
 				{
-					UTIL_DecalTrace( &decalTrace, "DroneCut" );
+					UTIL_DecalTrace(&decalTrace, "DroneCut");
 				}
 			}
 		}
-		
+
 		// See if we will not have a valid surface
-		if ( tr.allsolid || tr.startsolid )
+		if (tr.allsolid || tr.startsolid)
 		{
 			// Build a fake reflection back along our current velocity because we can't know how to reflect off
 			// a non-existant surface! -- jdw
 
-			Vector vecRandomDir = RandomVector( -1.0f, 1.0f );
-			SetCurrentVelocity( vecRandomDir * 50.0f );
+			Vector vecRandomDir = RandomVector(-1.0f, 1.0f);
+			SetCurrentVelocity(vecRandomDir * 50.0f);
 			m_flBumpSuppressTime = gpGlobals->curtime + 0.5f;
 		}
 		else
 		{
 			// This is a valid hit and we can deflect properly
-			
-			VectorNormalize( moveVec );
-			float hitAngle = -DotProduct( tr.plane.normal, -moveVec );
+
+			VectorNormalize(moveVec);
+			float hitAngle = -DotProduct(tr.plane.normal, -moveVec);
 
 			Vector vReflection = 2.0 * tr.plane.normal * hitAngle + -moveVec;
 
 			float flSpeed = GetCurrentVelocity().Length();
-			SetCurrentVelocity( GetCurrentVelocity() + vReflection * flSpeed * 0.5f );
+			SetCurrentVelocity(GetCurrentVelocity() + vReflection * flSpeed * 0.5f);
 		}
 	}
 
@@ -1679,14 +1679,14 @@ void CNPC_Drone::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr )
 	// if I don't have LOS.  Note this is the only place I do this,
 	// so the drone has to collide before failing on a path
 	// -------------------------------------------------------------
-	if (GetNavigator()->IsGoalActive() && !(GetNavigator()->GetPath()->CurWaypointFlags() & bits_WP_TO_PATHCORNER) )
+	if (GetNavigator()->IsGoalActive() && !(GetNavigator()->GetPath()->CurWaypointFlags() & bits_WP_TO_PATHCORNER))
 	{
 		AIMoveTrace_t moveTrace;
-		GetMoveProbe()->MoveLimit( NAV_GROUND, GetAbsOrigin(), GetNavigator()->GetCurWaypointPos(), 
-			MoveCollisionMask(), GetEnemy(), &moveTrace );
+		GetMoveProbe()->MoveLimit(NAV_GROUND, GetAbsOrigin(), GetNavigator()->GetCurWaypointPos(),
+			MoveCollisionMask(), GetEnemy(), &moveTrace);
 
-		if (IsMoveBlocked( moveTrace ) && 
-			!moveTrace.pObstruction->ClassMatches( GetClassname() ))
+		if (IsMoveBlocked(moveTrace) &&
+			!moveTrace.pObstruction->ClassMatches(GetClassname()))
 		{
 			TaskFail(FAIL_NO_ROUTE);
 			GetNavigator()->ClearGoal();
@@ -1706,60 +1706,60 @@ void CNPC_Drone::CheckCollisions(float flInterval)
 	// Trace forward to see if I hit anything. But trace forward along the
 	// owner's view direction if you're being carried.
 	Vector vecTraceDir, vecCheckPos;
-	VPhysicsGetObject()->GetVelocity( &vecTraceDir, NULL );
+	VPhysicsGetObject()->GetVelocity(&vecTraceDir, NULL);
 	vecTraceDir *= flInterval;
-	if ( IsHeldByPhyscannon() )
+	if (IsHeldByPhyscannon())
 	{
-		CBasePlayer *pCarrier = HasPhysicsAttacker( FLT_MAX );
-		if ( pCarrier )
+		CBasePlayer *pCarrier = HasPhysicsAttacker(FLT_MAX);
+		if (pCarrier)
 		{
-			if ( pCarrier->CollisionProp()->CalcDistanceFromPoint( WorldSpaceCenter() ) < 30 )
+			if (pCarrier->CollisionProp()->CalcDistanceFromPoint(WorldSpaceCenter()) < 30)
 			{
-				AngleVectors( pCarrier->EyeAngles(), &vecTraceDir, NULL, NULL );
+				AngleVectors(pCarrier->EyeAngles(), &vecTraceDir, NULL, NULL);
 				vecTraceDir *= 40.0f;
 			}
 		}
 	}
 
-	VectorAdd( GetAbsOrigin(), vecTraceDir, vecCheckPos );
-	
+	VectorAdd(GetAbsOrigin(), vecTraceDir, vecCheckPos);
+
 	trace_t			tr;
 	CBaseEntity*	pHitEntity = NULL;
-	
-	AI_TraceHull(	GetAbsOrigin(), 
-					vecCheckPos, 
-					GetHullMins(), 
-					GetHullMaxs(),
-					MoveCollisionMask(),
-					this,
-					COLLISION_GROUP_NONE,
-					&tr );
 
-	if ( (tr.fraction != 1.0 || tr.startsolid) && tr.m_pEnt)
+	AI_TraceHull(GetAbsOrigin(),
+		vecCheckPos,
+		GetHullMins(),
+		GetHullMaxs(),
+		MoveCollisionMask(),
+		this,
+		COLLISION_GROUP_NONE,
+		&tr);
+
+	if ((tr.fraction != 1.0 || tr.startsolid) && tr.m_pEnt)
 	{
-		PhysicsMarkEntitiesAsTouching( tr.m_pEnt, tr );
+		PhysicsMarkEntitiesAsTouching(tr.m_pEnt, tr);
 		pHitEntity = tr.m_pEnt;
 
-		if( m_bHeld && tr.m_pEnt->MyNPCPointer() && tr.m_pEnt->MyNPCPointer()->IsPlayerAlly() )
+		if (m_bHeld && tr.m_pEnt->MyNPCPointer() && tr.m_pEnt->MyNPCPointer()->IsPlayerAlly())
 		{
 			// Don't slice Alyx when she approaches to hack. We need a better solution for this!!
 			//Msg("Ignoring!\n");
 			return;
 		}
 
-		if ( pHitEntity != NULL && 
-			 pHitEntity->m_takedamage == DAMAGE_YES && 
-			 pHitEntity->Classify() != CLASS_DRONE && 
-			 gpGlobals->curtime > m_flWaterSuspendTime )
+		if (pHitEntity != NULL &&
+			pHitEntity->m_takedamage == DAMAGE_YES &&
+			pHitEntity->Classify() != CLASS_DRONE &&
+			gpGlobals->curtime > m_flWaterSuspendTime)
 		{
 			// Slice this thing
-			Slice( pHitEntity, flInterval, tr );
+			Slice(pHitEntity, flInterval, tr);
 			m_flBladeSpeed = 20.0;
 		}
 		else
 		{
 			// Just bump into this thing.
-			Bump( pHitEntity, flInterval, tr );
+			Bump(pHitEntity, flInterval, tr);
 			m_flBladeSpeed = 20.0;
 		}
 	}
@@ -1775,7 +1775,7 @@ void CNPC_Drone::PlayFlySound(void)
 {
 	float flEnemyDist;
 
-	if( GetEnemy() )
+	if (GetEnemy())
 	{
 		flEnemyDist = (GetAbsOrigin() - GetEnemy()->GetAbsOrigin()).Length();
 	}
@@ -1784,16 +1784,16 @@ void CNPC_Drone::PlayFlySound(void)
 		flEnemyDist = FLT_MAX;
 	}
 
-	if( m_spawnflags & SF_NPC_GAG )
+	if (m_spawnflags & SF_NPC_GAG)
 	{
 		// Quiet!
 		return;
 	}
 
-	if( m_flWaterSuspendTime > gpGlobals->curtime )
+	if (m_flWaterSuspendTime > gpGlobals->curtime)
 	{
 		// Just went in water. Slow the motor!!
-		if( m_bDirtyPitch )
+		if (m_bDirtyPitch)
 		{
 			m_nEnginePitch1 = DRONE_WATER_PITCH1;
 			m_flEnginePitch1Time = gpGlobals->curtime + 0.5f;
@@ -1803,20 +1803,20 @@ void CNPC_Drone::PlayFlySound(void)
 		}
 	}
 	// Spin sound based on distance from enemy (unless we're crashing)
-	else if (GetEnemy() && IsAlive() )
+	else if (GetEnemy() && IsAlive())
 	{
-		if( flEnemyDist < DRONE_PITCH_DIST1 )
+		if (flEnemyDist < DRONE_PITCH_DIST1)
 		{
 			// recalculate pitch.
 			int iPitch1, iPitch2;
 			float flDistFactor;
 
-			flDistFactor = MIN( 1.0, 1 - flEnemyDist / DRONE_PITCH_DIST1 ); 
-			iPitch1 = DRONE_MIN_PITCH1 + ( ( DRONE_MAX_PITCH1 - DRONE_MIN_PITCH1 ) * flDistFactor); 
+			flDistFactor = MIN(1.0, 1 - flEnemyDist / DRONE_PITCH_DIST1);
+			iPitch1 = DRONE_MIN_PITCH1 + ((DRONE_MAX_PITCH1 - DRONE_MIN_PITCH1) * flDistFactor);
 
 			// NOTE: DRONE_PITCH_DIST2 must be < DRONE_PITCH_DIST1
-			flDistFactor = MIN( 1.0, 1 - flEnemyDist / DRONE_PITCH_DIST2 ); 
-			iPitch2 = DRONE_MIN_PITCH2 + ( ( DRONE_MAX_PITCH2 - DRONE_MIN_PITCH2 ) * flDistFactor); 
+			flDistFactor = MIN(1.0, 1 - flEnemyDist / DRONE_PITCH_DIST2);
+			iPitch2 = DRONE_MIN_PITCH2 + ((DRONE_MAX_PITCH2 - DRONE_MIN_PITCH2) * flDistFactor);
 
 			m_nEnginePitch1 = iPitch1;
 			m_flEnginePitch1Time = gpGlobals->curtime + 0.1f;
@@ -1825,7 +1825,7 @@ void CNPC_Drone::PlayFlySound(void)
 
 			m_bDirtyPitch = true;
 		}
-		else if( m_bDirtyPitch )
+		else if (m_bDirtyPitch)
 		{
 			m_nEnginePitch1 = DRONE_MIN_PITCH1;
 			m_flEnginePitch1Time = gpGlobals->curtime + 0.1f;
@@ -1835,7 +1835,7 @@ void CNPC_Drone::PlayFlySound(void)
 		}
 	}
 	// If no enemy just play low sound
-	else if( IsAlive() && m_bDirtyPitch )
+	else if (IsAlive() && m_bDirtyPitch)
 	{
 		m_nEnginePitch1 = DRONE_MIN_PITCH1;
 		m_flEnginePitch1Time = gpGlobals->curtime + 0.1f;
@@ -1848,9 +1848,9 @@ void CNPC_Drone::PlayFlySound(void)
 	// Play special engine every once in a while
 	if (gpGlobals->curtime > m_flNextEngineSoundTime && flEnemyDist < 48)
 	{
-		m_flNextEngineSoundTime	= gpGlobals->curtime + random->RandomFloat( 3.0, 10.0 );
+		m_flNextEngineSoundTime = gpGlobals->curtime + random->RandomFloat(3.0, 10.0);
 
-		EmitSound( "NPC_Drone.EngineNoise" );
+		EmitSound("NPC_Drone.EngineNoise");
 	}
 }
 
@@ -1868,7 +1868,7 @@ void CNPC_Drone::MoveExecute_Alive(float flInterval)
 	// FIXME: move this
 	VPhysicsGetObject()->Wake();
 
-	if( m_fEnginePowerScale < GetMaxEnginePower() && gpGlobals->curtime > m_flWaterSuspendTime )
+	if (m_fEnginePowerScale < GetMaxEnginePower() && gpGlobals->curtime > m_flWaterSuspendTime)
 	{
 		// Power is low, and we're no longer stuck in water, so bring power up.
 		m_fEnginePowerScale += 0.05;
@@ -1879,67 +1879,67 @@ void CNPC_Drone::MoveExecute_Alive(float flInterval)
 	// ----------------------------------------------------------------------------------------
 	float noiseScale = 7.0f;
 
-	if ( (CBaseEntity*)GetEnemy() )
+	if ((CBaseEntity*)GetEnemy())
 	{
 		float flDist = (GetAbsOrigin() - GetEnemy()->GetAbsOrigin()).Length2D();
 
-		if( flDist < DRONE_CHARGE_MIN_DIST )
+		if (flDist < DRONE_CHARGE_MIN_DIST)
 		{
 			// Less noise up close.
 			noiseScale = 2.0;
 		}
 
-		if ( IsInEffectiveTargetZone( GetEnemy() ) && flDist < DRONE_CHARGE_MIN_DIST && gpGlobals->curtime > m_flNextBurstTime )
+		if (IsInEffectiveTargetZone(GetEnemy()) && flDist < DRONE_CHARGE_MIN_DIST && gpGlobals->curtime > m_flNextBurstTime)
 		{
 			Vector vecCurrentDir = GetCurrentVelocity();
-			VectorNormalize( vecCurrentDir );
+			VectorNormalize(vecCurrentDir);
 
-			Vector vecToEnemy = ( GetEnemy()->EyePosition() - WorldSpaceCenter() );
-			VectorNormalize( vecToEnemy );
+			Vector vecToEnemy = (GetEnemy()->EyePosition() - WorldSpaceCenter());
+			VectorNormalize(vecToEnemy);
 
-			float flDot = DotProduct( vecCurrentDir, vecToEnemy );
+			float flDot = DotProduct(vecCurrentDir, vecToEnemy);
 
-			if ( flDot > 0.75 )
-			{				
-				Vector offsetDir = ( vecToEnemy - vecCurrentDir );
-				VectorNormalize( offsetDir );
+			if (flDot > 0.75)
+			{
+				Vector offsetDir = (vecToEnemy - vecCurrentDir);
+				VectorNormalize(offsetDir);
 
 				Vector offsetSpeed = GetCurrentVelocity() * flDot;
 
 				//FIXME: This code sucks -- jdw
 
 				offsetDir.z = 0.0f;
-				m_vForceVelocity += ( offsetDir * ( offsetSpeed.Length2D() * 0.25f ) );
+				m_vForceVelocity += (offsetDir * (offsetSpeed.Length2D() * 0.25f));
 
 				// Commit to the attack- no steering for about a second
-				StartBurst( vecToEnemy );
-				SetEyeState( DRONE_EYE_STATE_CHARGE );
+				StartBurst(vecToEnemy);
+				SetEyeState(DRONE_EYE_STATE_CHARGE);
 			}
 		}
-		
-		if ( gpGlobals->curtime > m_flBurstDuration )
+
+		if (gpGlobals->curtime > m_flBurstDuration)
 		{
-			ShowHostile( false );
+			ShowHostile(false);
 		}
 	}
 
 	// ----------------------------------------------------------------------------------------
 	// Add in any forced velocity
 	// ----------------------------------------------------------------------------------------
-	SetCurrentVelocity( vCurrentVelocity + m_vForceVelocity );
+	SetCurrentVelocity(vCurrentVelocity + m_vForceVelocity);
 	m_vForceVelocity = vec3_origin;
 
-	if( !m_bHackedByAlyx || GetEnemy() )
+	if (!m_bHackedByAlyx || GetEnemy())
 	{
 		// If hacked and no enemy, don't drift!
-		AddNoiseToVelocity( noiseScale );
+		AddNoiseToVelocity(noiseScale);
 	}
 
-	LimitSpeed( 200, DroneMaxSpeed() );
+	LimitSpeed(200, DroneMaxSpeed());
 
-	if( m_flWaterSuspendTime > gpGlobals->curtime )
-	{ 
-		if( UTIL_PointContents( GetAbsOrigin() ) & (CONTENTS_WATER|CONTENTS_SLIME) )
+	if (m_flWaterSuspendTime > gpGlobals->curtime)
+	{
+		if (UTIL_PointContents(GetAbsOrigin()) & (CONTENTS_WATER | CONTENTS_SLIME))
 		{
 			// Ooops, we're submerged somehow. Move upwards until our origin is out of the water.
 			m_vCurrentVelocity.z = 20.0;
@@ -1950,23 +1950,23 @@ void CNPC_Drone::MoveExecute_Alive(float flInterval)
 			m_vCurrentVelocity.z = 0.0;
 		}
 	}
-	else if( GetWaterLevel() > 0 )
+	else if (GetWaterLevel() > 0)
 	{
 		// Allow the drone to lift off, but not to go deeper.
-		m_vCurrentVelocity.z = MAX( m_vCurrentVelocity.z, 0 );
+		m_vCurrentVelocity.z = MAX(m_vCurrentVelocity.z, 0);
 	}
 
 	CheckCollisions(flInterval);
 
 	// Blend out desired velocity when launched by the physcannon
-	if ( HasPhysicsAttacker( DRONE_SMASH_TIME ) && (!IsHeldByPhyscannon()) && VPhysicsGetObject() )
+	if (HasPhysicsAttacker(DRONE_SMASH_TIME) && (!IsHeldByPhyscannon()) && VPhysicsGetObject())
 	{
 		Vector vecCurrentVelocity;
-		VPhysicsGetObject()->GetVelocity( &vecCurrentVelocity, NULL );
+		VPhysicsGetObject()->GetVelocity(&vecCurrentVelocity, NULL);
 		float flLerpFactor = (gpGlobals->curtime - m_flLastPhysicsInfluenceTime) / DRONE_SMASH_TIME;
-		flLerpFactor = clamp( flLerpFactor, 0.0f, 1.0f );
-		flLerpFactor = SimpleSplineRemapVal( flLerpFactor, 0.0f, 1.0f, 0.0f, 1.0f );
-		VectorLerp( vecCurrentVelocity, m_vCurrentVelocity, flLerpFactor, m_vCurrentVelocity );
+		flLerpFactor = clamp(flLerpFactor, 0.0f, 1.0f);
+		flLerpFactor = SimpleSplineRemapVal(flLerpFactor, 0.0f, 1.0f, 0.0f, 1.0f);
+		VectorLerp(vecCurrentVelocity, m_vCurrentVelocity, flLerpFactor, m_vCurrentVelocity);
 	}
 
 	QAngle angles = GetLocalAngles();
@@ -1980,14 +1980,13 @@ void CNPC_Drone::MoveExecute_Alive(float flInterval)
 		// If I'm stalled add random noise
 		angles.x += -20+(random->RandomInt(-10,10));
 		angles.z += -20+(random->RandomInt(0,40));
-
 		TurnHeadRandomly(flInterval);
 		*/
 	}
 	else
 	{
 		// Make frame rate independent
-		float	iRate	 = 0.5;
+		float	iRate = 0.5;
 		float timeToUse = flInterval;
 		while (timeToUse > 0)
 		{
@@ -2001,18 +2000,18 @@ void CNPC_Drone::MoveExecute_Alive(float flInterval)
 
 #if 0
 		// Using our steering if we're not otherwise affecting our panels
-		if ( m_flEngineStallTime < gpGlobals->curtime && m_flBurstDuration < gpGlobals->curtime )
+		if (m_flEngineStallTime < gpGlobals->curtime && m_flBurstDuration < gpGlobals->curtime)
 		{
-			Vector delta( 10 * AngleDiff( m_vTargetBanking.x, m_vCurrentBanking.x ), -10 * AngleDiff( m_vTargetBanking.z, m_vCurrentBanking.z ), 0 );
+			Vector delta(10 * AngleDiff(m_vTargetBanking.x, m_vCurrentBanking.x), -10 * AngleDiff(m_vTargetBanking.z, m_vCurrentBanking.z), 0);
 			//Vector delta( 3 * AngleNormalize( m_vCurrentBanking.x ), -4 * AngleNormalize( m_vCurrentBanking.z ), 0 );
-			VectorYawRotate( delta, -m_fHeadYaw, delta );
+			VectorYawRotate(delta, -m_fHeadYaw, delta);
 
 			// DevMsg("%.0f %.0f\n", delta.x, delta.y );
 
-			SetPoseParameter( m_iPanel1, -delta.x - delta.y * 2);
-			SetPoseParameter( m_iPanel2, -delta.x + delta.y * 2);
-			SetPoseParameter( m_iPanel3,  delta.x + delta.y * 2);
-			SetPoseParameter( m_iPanel4,  delta.x - delta.y * 2);
+			SetPoseParameter(m_iPanel1, -delta.x - delta.y * 2);
+			SetPoseParameter(m_iPanel2, -delta.x + delta.y * 2);
+			SetPoseParameter(m_iPanel3, delta.x + delta.y * 2);
+			SetPoseParameter(m_iPanel4, delta.x - delta.y * 2);
 
 			//SetPoseParameter( m_iPanel1, -delta.x );
 			//SetPoseParameter( m_iPanel2, -delta.x );
@@ -2024,14 +2023,14 @@ void CNPC_Drone::MoveExecute_Alive(float flInterval)
 
 	// SetLocalAngles( angles );
 
-	if( m_lifeState != LIFE_DEAD )
+	if (m_lifeState != LIFE_DEAD)
 	{
 		PlayFlySound();
 		// SpinBlades( flInterval );
 		// WalkMove( GetCurrentVelocity() * flInterval, MASK_NPCSOLID );
 	}
 
-//	 NDebugOverlay::Line( GetAbsOrigin(), GetAbsOrigin() + Vector(0, 0, -10 ), 0, 255, 0, true, 0.1);
+	//	 NDebugOverlay::Line( GetAbsOrigin(), GetAbsOrigin() + Vector(0, 0, -10 ), 0, 255, 0, true, 0.1);
 }
 
 
@@ -2044,17 +2043,17 @@ void CNPC_Drone::SpinBlades(float flInterval)
 {
 	if (!m_bBladesActive)
 	{
-		SetBodygroup( DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_OFF );
-		SetBodygroup( DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_OFF );
+		SetBodygroup(DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_OFF);
+		SetBodygroup(DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_OFF);
 		m_flBladeSpeed = 0.0;
 		m_flPlaybackRate = 1.0;
 		return;
 	}
 
-	if ( IsFlyingActivity( GetActivity() ) )
+	if (IsFlyingActivity(GetActivity()))
 	{
 		// Blades may only ramp up while the engine is running
-		if ( m_flEngineStallTime < gpGlobals->curtime )
+		if (m_flEngineStallTime < gpGlobals->curtime)
 		{
 			if (m_flBladeSpeed < 10)
 			{
@@ -2075,18 +2074,18 @@ void CNPC_Drone::SpinBlades(float flInterval)
 		// blend through blades, blades+blur, blur
 		if (m_flBladeSpeed < 20)
 		{
-			SetBodygroup( DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_ON );
-			SetBodygroup( DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_OFF );
+			SetBodygroup(DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_ON);
+			SetBodygroup(DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_OFF);
 		}
 		else if (m_flBladeSpeed < 40)
 		{
-			SetBodygroup( DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_ON );
-			SetBodygroup( DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_ON );
+			SetBodygroup(DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_ON);
+			SetBodygroup(DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_ON);
 		}
 		else
 		{
-			SetBodygroup( DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_OFF );
-			SetBodygroup( DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_ON );
+			SetBodygroup(DRONE_BODYGROUP_BLADE, DRONE_BODYGROUP_OFF);
+			SetBodygroup(DRONE_BODYGROUP_BLUR, DRONE_BODYGROUP_ON);
 		}
 
 		m_flPlaybackRate = m_flBladeSpeed / 100.0;
@@ -2103,7 +2102,7 @@ void CNPC_Drone::SpinBlades(float flInterval)
 //-----------------------------------------------------------------------------
 void CNPC_Drone::MoveExecute_Dead(float flInterval)
 {
-	if( GetWaterLevel() > 0 )
+	if (GetWaterLevel() > 0)
 	{
 		// No movement if sinking in water.
 		return;
@@ -2112,21 +2111,21 @@ void CNPC_Drone::MoveExecute_Dead(float flInterval)
 	// Periodically emit smoke.
 	if (gpGlobals->curtime > m_fSmokeTime && GetWaterLevel() == 0)
 	{
-//		UTIL_Smoke(GetAbsOrigin(), random->RandomInt(10, 15), 10);
-		m_fSmokeTime = gpGlobals->curtime + random->RandomFloat( 0.1, 0.3);
+		//		UTIL_Smoke(GetAbsOrigin(), random->RandomInt(10, 15), 10);
+		m_fSmokeTime = gpGlobals->curtime + random->RandomFloat(0.1, 0.3);
 	}
 
 	// Periodically emit sparks.
 	if (gpGlobals->curtime > m_fSparkTime)
 	{
-		g_pEffects->Sparks( GetAbsOrigin() );
+		g_pEffects->Sparks(GetAbsOrigin());
 		m_fSparkTime = gpGlobals->curtime + random->RandomFloat(0.1, 0.3);
 	}
 
 	Vector newVelocity = GetCurrentVelocity();
 
 	// accelerate faster and faster when dying
-	newVelocity = newVelocity + (newVelocity * 1.5 * flInterval );
+	newVelocity = newVelocity + (newVelocity * 1.5 * flInterval);
 
 	// Lose lift
 	newVelocity.z -= 0.02*flInterval*(GetCurrentGravity());
@@ -2135,33 +2134,33 @@ void CNPC_Drone::MoveExecute_Dead(float flInterval)
 	// Add in any forced velocity
 	// ----------------------------------------------------------------------------------------
 	newVelocity += m_vForceVelocity;
-	SetCurrentVelocity( newVelocity );
+	SetCurrentVelocity(newVelocity);
 	m_vForceVelocity = vec3_origin;
 
 
 	// Lots of noise!! Out of control!
-	AddNoiseToVelocity( 5.0 );
+	AddNoiseToVelocity(5.0);
 
 
 	// ----------------------
 	// Limit overall speed
 	// ----------------------
-	LimitSpeed( -1, DRONE_MAX_SPEED * 2.0 );
+	LimitSpeed(-1, DRONE_MAX_SPEED * 2.0);
 
 	QAngle angles = GetLocalAngles();
 
 	// ------------------------------------------
 	// If I'm dying, add random banking noise
 	// ------------------------------------------
-	angles.x += -20+(random->RandomInt(0,40));
-	angles.z += -20+(random->RandomInt(0,40));
+	angles.x += -20 + (random->RandomInt(0, 40));
+	angles.z += -20 + (random->RandomInt(0, 40));
 
 	CheckCollisions(flInterval);
 	PlayFlySound();
 
 	// SetLocalAngles( angles );
 
-	WalkMove( GetCurrentVelocity() * flInterval,MASK_NPCSOLID );
+	WalkMove(GetCurrentVelocity() * flInterval, MASK_NPCSOLID);
 }
 
 
@@ -2174,23 +2173,23 @@ void CNPC_Drone::Precache(void)
 	// Model.
 	//
 	PrecacheModel("models/drone.mdl");
-	PrecacheModel( DRONE_GLOW_SPRITE );
-	PropBreakablePrecacheAll( MAKE_STRING("models/drone.mdl") );
-	
-	PrecacheScriptSound( "NPC_Drone.Die" );
-	PrecacheScriptSound( "NPC_Drone.Bat" );
-	PrecacheScriptSound( "NPC_Drone.Grind" );
-	PrecacheScriptSound( "NPC_Drone.Slice" );
-	PrecacheScriptSound( "NPC_Drone.EngineNoise" );
-	PrecacheScriptSound( "NPC_Drone.Unpack" );
-	PrecacheScriptSound( "NPC_Drone.ChargeAnnounce" );
-	PrecacheScriptSound( "NPC_Drone.ChargeEnd" );
-	PrecacheScriptSound( "NPC_Drone.Stunned" );
+	PrecacheModel(DRONE_GLOW_SPRITE);
+	PropBreakablePrecacheAll(MAKE_STRING("models/drone.mdl"));
+
+	PrecacheScriptSound("NPC_Drone.Die");
+	PrecacheScriptSound("NPC_Drone.Bat");
+	PrecacheScriptSound("NPC_Drone.Grind");
+	PrecacheScriptSound("NPC_Drone.Slice");
+	PrecacheScriptSound("NPC_Drone.EngineNoise");
+	PrecacheScriptSound("NPC_Drone.Unpack");
+	PrecacheScriptSound("NPC_Drone.ChargeAnnounce");
+	PrecacheScriptSound("NPC_Drone.ChargeEnd");
+	PrecacheScriptSound("NPC_Drone.Stunned");
 
 	// Sounds used on Client:
-	PrecacheScriptSound( "NPC_Drone.EngineSound1" );
-	PrecacheScriptSound( "NPC_Drone.EngineSound2"  );
-	PrecacheScriptSound( "NPC_Drone.BladeSound" );
+	PrecacheScriptSound("NPC_Drone.EngineSound1");
+	PrecacheScriptSound("NPC_Drone.EngineSound2");
+	PrecacheScriptSound("NPC_Drone.BladeSound");
 
 	BaseClass::Precache();
 }
@@ -2200,7 +2199,7 @@ void CNPC_Drone::Precache(void)
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::GatherEnemyConditions( CBaseEntity *pEnemy )
+void CNPC_Drone::GatherEnemyConditions(CBaseEntity *pEnemy)
 {
 	// The Drone "regroups" when its in attack range but to
 	// far above or below its enemy.  Set the start attack
@@ -2211,18 +2210,18 @@ void CNPC_Drone::GatherEnemyConditions( CBaseEntity *pEnemy )
 	float fl2DDist = 60.0f;
 	float flZDist = 12.0f;
 
-	if ( GetEnemy()->IsPlayer() && assert_cast< CBasePlayer * >(GetEnemy())->IsInAVehicle() )
+	if (GetEnemy()->IsPlayer() && assert_cast< CBasePlayer * >(GetEnemy())->IsInAVehicle())
 	{
 		flZDist = 24.0f;
 	}
 
-	if ((GetAbsOrigin() - pEnemy->GetAbsOrigin()).Length2D() > fl2DDist) 
+	if ((GetAbsOrigin() - pEnemy->GetAbsOrigin()).Length2D() > fl2DDist)
 	{
 		SetCondition(COND_DRONE_START_ATTACK);
 	}
 	else
 	{
-		float targetZ	= pEnemy->EyePosition().z;
+		float targetZ = pEnemy->EyePosition().z;
 		if (fabs(GetAbsOrigin().z - targetZ) < flZDist)
 		{
 			SetCondition(COND_DRONE_START_ATTACK);
@@ -2237,19 +2236,19 @@ void CNPC_Drone::GatherEnemyConditions( CBaseEntity *pEnemy )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-int CNPC_Drone::MeleeAttack1Conditions( float flDot, float flDist )
+int CNPC_Drone::MeleeAttack1Conditions(float flDot, float flDist)
 {
-	if ( GetEnemy() == NULL )
+	if (GetEnemy() == NULL)
 		return COND_NONE;
 
 	//TODO: We could also decide if we want to back up here
-	if ( m_flNextBurstTime > gpGlobals->curtime )
+	if (m_flNextBurstTime > gpGlobals->curtime)
 		return COND_NONE;
 
 	float flMaxDist = 45;
 	float flMinDist = 24;
 	bool bEnemyInVehicle = GetEnemy()->IsPlayer() && assert_cast< CBasePlayer * >(GetEnemy())->IsInAVehicle();
-	if ( GetEnemy()->IsPlayer() && assert_cast< CBasePlayer * >(GetEnemy())->IsInAVehicle() )
+	if (GetEnemy()->IsPlayer() && assert_cast< CBasePlayer * >(GetEnemy())->IsInAVehicle())
 	{
 		flMinDist = 0;
 		flMaxDist = 200.0f;
@@ -2268,7 +2267,7 @@ int CNPC_Drone::MeleeAttack1Conditions( float flDot, float flDist )
 	// Check our current velocity and speed, if it's too far off, we need to settle
 
 	// Don't bother with Z if the enemy is in a vehicle
-	if ( bEnemyInVehicle )
+	if (bEnemyInVehicle)
 	{
 		return COND_CAN_MELEE_ATTACK1;
 	}
@@ -2276,7 +2275,7 @@ int CNPC_Drone::MeleeAttack1Conditions( float flDot, float flDist )
 	// Assume the this check is in regards to my current enemy
 	// for the Drones spetial condition
 	float deltaZ = GetAbsOrigin().z - GetEnemy()->EyePosition().z;
-	if ( (deltaZ > 12.0f) || (deltaZ < -24.0f) )
+	if ((deltaZ > 12.0f) || (deltaZ < -24.0f))
 	{
 		return COND_TOO_CLOSE_TO_ATTACK;
 	}
@@ -2289,71 +2288,71 @@ int CNPC_Drone::MeleeAttack1Conditions( float flDot, float flDist )
 // Purpose: 
 // Input  : *pTask - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::RunTask( const Task_t *pTask )
+void CNPC_Drone::RunTask(const Task_t *pTask)
 {
-	switch ( pTask->iTask )
+	switch (pTask->iTask)
 	{
 		// Override this task so we go for the enemy at eye level
 	case TASK_DRONE_HOVER:
-		{
-			break;
-		}
+	{
+							 break;
+	}
 
-	// If my enemy has moved significantly, update my path
+		// If my enemy has moved significantly, update my path
 	case TASK_WAIT_FOR_MOVEMENT:
-		{
-			CBaseEntity *pEnemy = GetEnemy();
-			if (pEnemy &&
-				(GetCurSchedule()->GetId() == SCHED_CHASE_ENEMY) && 
-				GetNavigator()->IsGoalActive() )
-			{
-				Vector vecEnemyPosition;
-				vecEnemyPosition = pEnemy->EyePosition();
-				if ( GetNavigator()->GetGoalPos().DistToSqr(vecEnemyPosition) > 40 * 40 )
-				{
-					GetNavigator()->UpdateGoalPos( vecEnemyPosition );
-				}
-			}				
-			BaseClass::RunTask(pTask);
-			break;
-		}
+	{
+								   CBaseEntity *pEnemy = GetEnemy();
+								   if (pEnemy &&
+									   (GetCurSchedule()->GetId() == SCHED_CHASE_ENEMY) &&
+									   GetNavigator()->IsGoalActive())
+								   {
+									   Vector vecEnemyPosition;
+									   vecEnemyPosition = pEnemy->EyePosition();
+									   if (GetNavigator()->GetGoalPos().DistToSqr(vecEnemyPosition) > 40 * 40)
+									   {
+										   GetNavigator()->UpdateGoalPos(vecEnemyPosition);
+									   }
+								   }
+								   BaseClass::RunTask(pTask);
+								   break;
+	}
 
 	case TASK_DRONE_MOVEAT_SAVEPOSITION:
-		{
-			// do the movement thingy
+	{
+										   // do the movement thingy
 
-//			NDebugOverlay::Line( GetAbsOrigin(), m_vSavePosition, 0, 255, 0, true, 0.1);
+										   //			NDebugOverlay::Line( GetAbsOrigin(), m_vSavePosition, 0, 255, 0, true, 0.1);
 
-			Vector dir = (m_vSavePosition - GetAbsOrigin());
-			float dist = VectorNormalize( dir );
-			float t = m_fSwarmMoveTime - gpGlobals->curtime;
+										   Vector dir = (m_vSavePosition - GetAbsOrigin());
+										   float dist = VectorNormalize(dir);
+										   float t = m_fSwarmMoveTime - gpGlobals->curtime;
 
-			if (t < 0.1)
-			{
-				if (dist > 256)
-				{
-					TaskFail( FAIL_NO_ROUTE );
-				}
-				else
-				{
-					TaskComplete();
-				}
-			}
-			else if (dist < 64)
-			{
-				m_vSwarmMoveTarget = GetAbsOrigin() - Vector( -dir.y, dir.x, 0 ) * 4;
-			}
-			else
-			{
-				m_vSwarmMoveTarget = GetAbsOrigin() + dir * 10;
-			}
-			break;
-		}
+										   if (t < 0.1)
+										   {
+											   if (dist > 256)
+											   {
+												   TaskFail(FAIL_NO_ROUTE);
+											   }
+											   else
+											   {
+												   TaskComplete();
+											   }
+										   }
+										   else if (dist < 64)
+										   {
+											   m_vSwarmMoveTarget = GetAbsOrigin() - Vector(-dir.y, dir.x, 0) * 4;
+										   }
+										   else
+										   {
+											   m_vSwarmMoveTarget = GetAbsOrigin() + dir * 10;
+										   }
+										   break;
+	}
 
 	default:
-		{
-			BaseClass::RunTask(pTask);
-		}
+	{
+			   BaseClass::RunTask(pTask);
+	}
 	}
 }
 
@@ -2366,32 +2365,32 @@ void CNPC_Drone::Spawn(void)
 
 #ifdef _XBOX
 	// Always fade the corpse
-	AddSpawnFlags( SF_NPC_FADE_CORPSE );
+	AddSpawnFlags(SF_NPC_FADE_CORPSE);
 #endif // _XBOX
 
-	SetModel( "models/drone.mdl" );
-	SetHullType(HULL_TINY_CENTERED); 
+	SetModel("models/drone.mdl");
+	SetHullType(HULL_TINY_CENTERED);
 	SetHullSizeNormal();
 	SetModelScale(3.0);
-	SetSolid( SOLID_BBOX );
-	AddSolidFlags( FSOLID_NOT_STANDABLE );
+	SetSolid(SOLID_BBOX);
+	AddSolidFlags(FSOLID_NOT_STANDABLE);
 
-	if ( HasSpawnFlags( SF_DRONE_CARRIED ) )
+	if (HasSpawnFlags(SF_DRONE_CARRIED))
 	{
-		AddSolidFlags( FSOLID_NOT_SOLID );
-		SetMoveType( MOVETYPE_NONE );
+		AddSolidFlags(FSOLID_NOT_SOLID);
+		SetMoveType(MOVETYPE_NONE);
 	}
 	else
 	{
-		SetMoveType( MOVETYPE_VPHYSICS );
+		SetMoveType(MOVETYPE_VPHYSICS);
 	}
-	
-	m_iHealth			= sk_drone_health.GetFloat();
-	SetViewOffset( Vector(0, 0, 10) );		// Position of the eyes relative to NPC's origin.
-	m_flFieldOfView		= VIEW_FIELD_FULL;
-	m_NPCState			= NPC_STATE_NONE;
 
-	if ( m_spawnflags & SF_DRONE_USE_AIR_NODES)
+	m_iHealth = sk_drone_health.GetFloat();
+	SetViewOffset(Vector(0, 0, 10));		// Position of the eyes relative to NPC's origin.
+	m_flFieldOfView = VIEW_FIELD_FULL;
+	m_NPCState = NPC_STATE_NONE;
+
+	if (m_spawnflags & SF_DRONE_USE_AIR_NODES)
 	{
 		SetNavType(NAV_FLY);
 	}
@@ -2399,58 +2398,58 @@ void CNPC_Drone::Spawn(void)
 	{
 		SetNavType(NAV_GROUND);
 	}
-		 
-	AddEFlags( EFL_NO_DISSOLVE | EFL_NO_MEGAPHYSCANNON_RAGDOLL );
-	AddEffects( EF_NOSHADOW );
 
-	SetBloodColor( DONT_BLEED );
-	SetCurrentVelocity( vec3_origin );
+	AddEFlags(EFL_NO_DISSOLVE | EFL_NO_MEGAPHYSCANNON_RAGDOLL);
+	AddEffects(EF_NOSHADOW);
+
+	SetBloodColor(DONT_BLEED);
+	SetCurrentVelocity(vec3_origin);
 	m_vForceVelocity.Init();
 	m_vCurrentBanking.Init();
 	m_vTargetBanking.Init();
 
-	m_flNextBurstTime	= gpGlobals->curtime;
+	m_flNextBurstTime = gpGlobals->curtime;
 
-	CapabilitiesAdd( bits_CAP_INNATE_MELEE_ATTACK1 | bits_CAP_MOVE_FLY | bits_CAP_SQUAD );
+	CapabilitiesAdd(bits_CAP_INNATE_MELEE_ATTACK1 | bits_CAP_MOVE_FLY | bits_CAP_SQUAD);
 
-	m_flNextEngineSoundTime		= gpGlobals->curtime;
-	m_flWaterSuspendTime		= gpGlobals->curtime;
-	m_flEngineStallTime			= gpGlobals->curtime;
-	m_fForceMoveTime			= gpGlobals->curtime;
-	m_vForceMoveTarget			= vec3_origin;
-	m_fSwarmMoveTime			= gpGlobals->curtime;
-	m_vSwarmMoveTarget			= vec3_origin;
-	m_nLastSpinSound			= -1;
+	m_flNextEngineSoundTime = gpGlobals->curtime;
+	m_flWaterSuspendTime = gpGlobals->curtime;
+	m_flEngineStallTime = gpGlobals->curtime;
+	m_fForceMoveTime = gpGlobals->curtime;
+	m_vForceMoveTarget = vec3_origin;
+	m_fSwarmMoveTime = gpGlobals->curtime;
+	m_vSwarmMoveTarget = vec3_origin;
+	m_nLastSpinSound = -1;
 
-	m_fSmokeTime		= 0;
-	m_fSparkTime		= 0;
+	m_fSmokeTime = 0;
+	m_fSparkTime = 0;
 
 	// Set the noise mod to huge numbers right now, in case this drone starts out waiting for a script
 	// for instance, we don't want him to bob whilst he's waiting for a script. This allows designers
 	// to 'hide' drones in small places. (sjb)
-	SetNoiseMod( DRONE_NOISEMOD_HIDE, DRONE_NOISEMOD_HIDE, DRONE_NOISEMOD_HIDE );
+	SetNoiseMod(DRONE_NOISEMOD_HIDE, DRONE_NOISEMOD_HIDE, DRONE_NOISEMOD_HIDE);
 
 	// Start out with full power! 
 	m_fEnginePowerScale = GetMaxEnginePower();
-	
-	// find panels
-	m_iPanel1 = LookupPoseParameter( "Panel1" );
-	m_iPanel2 = LookupPoseParameter( "Panel2" );
-	m_iPanel3 = LookupPoseParameter( "Panel3" );
-	m_iPanel4 = LookupPoseParameter( "Panel4" );
 
-	m_fHeadYaw			= 0;
+	// find panels
+	m_iPanel1 = LookupPoseParameter("Panel1");
+	m_iPanel2 = LookupPoseParameter("Panel2");
+	m_iPanel3 = LookupPoseParameter("Panel3");
+	m_iPanel4 = LookupPoseParameter("Panel4");
+
+	m_fHeadYaw = 0;
 
 	NPCInit();
 
 	// Drones are designed to slam into things, so don't take much damage from it!
-	SetImpactEnergyScale( 0.001 );
+	SetImpactEnergyScale(0.001);
 
 	// Drones get 30 seconds worth of free knowledge.
-	GetEnemies()->SetFreeKnowledgeDuration( 30.0 );
-	
+	GetEnemies()->SetFreeKnowledgeDuration(30.0);
+
 	// don't be an NPC, we want to collide with debris stuff
-	SetCollisionGroup( COLLISION_GROUP_NONE );
+	SetCollisionGroup(COLLISION_GROUP_NONE);
 
 	m_bHeld = false;
 	m_bHackedByAlyx = false;
@@ -2460,49 +2459,49 @@ void CNPC_Drone::Spawn(void)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::StartEye( void )
+void CNPC_Drone::StartEye(void)
 {
 	//Create our Eye sprite
-	if ( m_pEyeGlow == NULL )
+	if (m_pEyeGlow == NULL)
 	{
-		m_pEyeGlow = CSprite::SpriteCreate( DRONE_GLOW_SPRITE, GetLocalOrigin(), false );
-		m_pEyeGlow->SetAttachment( this, LookupAttachment( "Eye" ) );
-		
-		if( m_bHackedByAlyx )
+		m_pEyeGlow = CSprite::SpriteCreate(DRONE_GLOW_SPRITE, GetLocalOrigin(), false);
+		m_pEyeGlow->SetAttachment(this, LookupAttachment("Eye"));
+
+		if (m_bHackedByAlyx)
 		{
-			m_pEyeGlow->SetTransparency( kRenderTransAdd, 0, 255, 0, 128, kRenderFxNoDissipation );
-			m_pEyeGlow->SetColor( 0, 255, 0 );
+			m_pEyeGlow->SetTransparency(kRenderTransAdd, 0, 255, 0, 128, kRenderFxNoDissipation);
+			m_pEyeGlow->SetColor(0, 255, 0);
 		}
 		else
 		{
-			m_pEyeGlow->SetTransparency( kRenderTransAdd, 255, 0, 0, 128, kRenderFxNoDissipation );
-			m_pEyeGlow->SetColor( 255, 0, 0 );
+			m_pEyeGlow->SetTransparency(kRenderTransAdd, 255, 0, 0, 128, kRenderFxNoDissipation);
+			m_pEyeGlow->SetColor(255, 0, 0);
 		}
 
-		m_pEyeGlow->SetBrightness( 225, 0.1f );
-		m_pEyeGlow->SetScale( 0.25f, 0.1f ); //m_pEyeGlow->SetScale( 0.25f, 0.1f );
+		m_pEyeGlow->SetBrightness(225, 0.1f);
+		m_pEyeGlow->SetScale(0.25f, 0.1f); //m_pEyeGlow->SetScale( 0.25f, 0.1f );
 		m_pEyeGlow->SetAsTemporary();
 	}
 
 	//Create our light sprite
-	if ( m_pLightGlow == NULL )
+	if (m_pLightGlow == NULL)
 	{
-		m_pLightGlow = CSprite::SpriteCreate( DRONE_GLOW_SPRITE, GetLocalOrigin(), false );
-		m_pLightGlow->SetAttachment( this, LookupAttachment( "Light" ) );
+		m_pLightGlow = CSprite::SpriteCreate(DRONE_GLOW_SPRITE, GetLocalOrigin(), false);
+		m_pLightGlow->SetAttachment(this, LookupAttachment("Light"));
 
-		if( m_bHackedByAlyx )
+		if (m_bHackedByAlyx)
 		{
-			m_pLightGlow->SetTransparency( kRenderTransAdd, 0, 255, 0, 128, kRenderFxNoDissipation );
-			m_pLightGlow->SetColor( 0, 255, 0 );
+			m_pLightGlow->SetTransparency(kRenderTransAdd, 0, 255, 0, 128, kRenderFxNoDissipation);
+			m_pLightGlow->SetColor(0, 255, 0);
 		}
 		else
 		{
-			m_pLightGlow->SetTransparency( kRenderTransAdd, 255, 0, 0, 128, kRenderFxNoDissipation );
-			m_pLightGlow->SetColor( 255, 0, 0 );
+			m_pLightGlow->SetTransparency(kRenderTransAdd, 255, 0, 0, 128, kRenderFxNoDissipation);
+			m_pLightGlow->SetColor(255, 0, 0);
 		}
 
-		m_pLightGlow->SetBrightness( 164, 0.1f );
-		m_pLightGlow->SetScale( 0.25f, 0.1f );
+		m_pLightGlow->SetBrightness(164, 0.1f);
+		m_pLightGlow->SetScale(0.25f, 0.1f);
 		m_pLightGlow->SetAsTemporary();
 	}
 }
@@ -2513,7 +2512,7 @@ void CNPC_Drone::Activate()
 {
 	BaseClass::Activate();
 
-	if ( IsAlive() )
+	if (IsAlive())
 	{
 		StartEye();
 	}
@@ -2522,29 +2521,29 @@ void CNPC_Drone::Activate()
 //-----------------------------------------------------------------------------
 // Purpose: Get the engine sound started. Unless we're not supposed to have it on yet!
 //-----------------------------------------------------------------------------
-void CNPC_Drone::PostNPCInit( void )
+void CNPC_Drone::PostNPCInit(void)
 {
 	// SetAbsVelocity( vec3_origin ); 
-	m_bBladesActive = (m_spawnflags & (SF_DRONE_PACKED_UP|SF_DRONE_CARRIED)) ? false : true;
+	m_bBladesActive = (m_spawnflags & (SF_DRONE_PACKED_UP | SF_DRONE_CARRIED)) ? false : true;
 	BladesInit();
 }
 
 void CNPC_Drone::BladesInit()
 {
-	if( !m_bBladesActive )
+	if (!m_bBladesActive)
 	{
 		// drone is packed up, so has no power of its own. 
 		// don't start the engine sounds.
 		// make us fall a little slower than we should, for visual's sake
-		SetGravity( UTIL_ScaleForGravity( 400 ) );
+		SetGravity(UTIL_ScaleForGravity(400));
 
-		SetActivity( ACT_IDLE );
+		SetActivity(ACT_IDLE);
 	}
 	else
 	{
 		bool engineSound = (m_spawnflags & SF_NPC_GAG) ? false : true;
-		StartEngine( engineSound );
-		SetActivity( ACT_FLY );
+		StartEngine(engineSound);
+		SetActivity(ACT_FLY);
 	}
 }
 
@@ -2552,20 +2551,20 @@ void CNPC_Drone::BladesInit()
 //-----------------------------------------------------------------------------
 // Crank up the engine!
 //-----------------------------------------------------------------------------
-void CNPC_Drone::StartEngine( bool fStartSound )
+void CNPC_Drone::StartEngine(bool fStartSound)
 {
-	if( fStartSound )
+	if (fStartSound)
 	{
 		SoundInit();
 	}
 
 	// Make the blade appear.
-	SetBodygroup( 1, 1 );
+	SetBodygroup(1, 1);
 
 	// Pop up a little if falling fast!
 	Vector vecVelocity;
-	GetVelocity( &vecVelocity, NULL );
-	if( ( m_spawnflags & SF_DRONE_PACKED_UP ) && vecVelocity.z < 0 )
+	GetVelocity(&vecVelocity, NULL);
+	if ((m_spawnflags & SF_DRONE_PACKED_UP) && vecVelocity.z < 0)
 	{
 		// DevMsg(" POP UP \n" );
 		// ApplyAbsVelocityImpulse( Vector(0,0,-vecVelocity.z*0.75) );
@@ -2574,14 +2573,14 @@ void CNPC_Drone::StartEngine( bool fStartSound )
 	// Under powered flight now.
 	// SetMoveType( MOVETYPE_STEP );
 	// SetGravity( DRONE_GRAVITY );
-	AddFlag( FL_FLY );
+	AddFlag(FL_FLY);
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Start the drone's engine sound.
 //-----------------------------------------------------------------------------
-void CNPC_Drone::SoundInit( void )
+void CNPC_Drone::SoundInit(void)
 {
 	m_nEnginePitch1 = DRONE_MIN_PITCH1;
 	m_flEnginePitch1Time = gpGlobals->curtime;
@@ -2607,17 +2606,17 @@ void CNPC_Drone::StopLoopingSounds(void)
 // Purpose: 
 // Input  : pTask - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::StartTask( const Task_t *pTask )
+void CNPC_Drone::StartTask(const Task_t *pTask)
 {
 	switch (pTask->iTask)
-	{	
+	{
 	case TASK_DRONE_UNPACK:
-		{
-			// Just play a sound for now.
-			EmitSound( "NPC_Drone.Unpack" );
+	{
+							  // Just play a sound for now.
+							  EmitSound("NPC_Drone.Unpack");
 
-			TaskComplete();
-		}
+							  TaskComplete();
+	}
 		break;
 
 	case TASK_DRONE_HOVER:
@@ -2627,152 +2626,152 @@ void CNPC_Drone::StartTask( const Task_t *pTask )
 	case TASK_GET_PATH_TO_GOAL:
 	case TASK_GET_PATH_TO_ENEMY_LKP:
 	case TASK_GET_PATH_TO_PLAYER:
-		{
-			BaseClass::StartTask( pTask );
-			/*
-			// FIXME: why were these tasks considered bad?
-			_asm
-			{
-				int	3;
-				int 5;
-			}
-			*/
-		}
+	{
+									BaseClass::StartTask(pTask);
+									/*
+									// FIXME: why were these tasks considered bad?
+									_asm
+									{
+									int	3;
+									int 5;
+									}
+									*/
+	}
 		break;
 
 	case TASK_FACE_IDEAL:
-		{
-			// this shouldn't ever happen, but if it does, don't choke
-			TaskComplete();
-		}
+	{
+							// this shouldn't ever happen, but if it does, don't choke
+							TaskComplete();
+	}
 		break;
 
 	case TASK_GET_PATH_TO_ENEMY:
-		{
-			if (IsUnreachable(GetEnemy()))
-			{
-				TaskFail(FAIL_NO_ROUTE);
-				return;
-			}
+	{
+								   if (IsUnreachable(GetEnemy()))
+								   {
+									   TaskFail(FAIL_NO_ROUTE);
+									   return;
+								   }
 
-			CBaseEntity *pEnemy = GetEnemy();
+								   CBaseEntity *pEnemy = GetEnemy();
 
-			if ( pEnemy == NULL )
-			{
-				TaskFail(FAIL_NO_ENEMY);
-				return;
-			}
-						
-			if ( GetNavigator()->SetGoal( GOALTYPE_ENEMY ) )
-			{
-				TaskComplete();
-			}
-			else
-			{
-				// no way to get there =( 
-				DevWarning( 2, "GetPathToEnemy failed!!\n" );
-				RememberUnreachable(GetEnemy());
-				TaskFail(FAIL_NO_ROUTE);
-			}
-			break;
-		}
+								   if (pEnemy == NULL)
+								   {
+									   TaskFail(FAIL_NO_ENEMY);
+									   return;
+								   }
+
+								   if (GetNavigator()->SetGoal(GOALTYPE_ENEMY))
+								   {
+									   TaskComplete();
+								   }
+								   else
+								   {
+									   // no way to get there =( 
+									   DevWarning(2, "GetPathToEnemy failed!!\n");
+									   RememberUnreachable(GetEnemy());
+									   TaskFail(FAIL_NO_ROUTE);
+								   }
+								   break;
+	}
 		break;
 
 	case TASK_GET_PATH_TO_TARGET:
 		// DevMsg("TARGET\n");
-		BaseClass::StartTask( pTask );
+		BaseClass::StartTask(pTask);
 		break;
 
 	case TASK_DRONE_FIND_SQUAD_CENTER:
-		{
-			if (!m_pSquad)
-			{
-				m_vSavePosition = GetAbsOrigin();
-				TaskComplete();
-				break;
-			}
+	{
+										 if (!m_pSquad)
+										 {
+											 m_vSavePosition = GetAbsOrigin();
+											 TaskComplete();
+											 break;
+										 }
 
-			// calc center of squad
-			int count = 0;
-			m_vSavePosition = Vector( 0, 0, 0 );
+										 // calc center of squad
+										 int count = 0;
+										 m_vSavePosition = Vector(0, 0, 0);
 
-			// give attacking members more influence
-			AISquadIter_t iter;
-			for (CAI_BaseNPC *pSquadMember = m_pSquad->GetFirstMember( &iter ); pSquadMember; pSquadMember = m_pSquad->GetNextMember( &iter ) )
-			{
-				if (pSquadMember->HasStrategySlotRange( SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2 ))
-				{
-					m_vSavePosition += pSquadMember->GetAbsOrigin() * 10;
-					count += 10;
-				}
-				else
-				{
-					m_vSavePosition += pSquadMember->GetAbsOrigin();
-					count++;
-				}
-			}
+										 // give attacking members more influence
+										 AISquadIter_t iter;
+										 for (CAI_BaseNPC *pSquadMember = m_pSquad->GetFirstMember(&iter); pSquadMember; pSquadMember = m_pSquad->GetNextMember(&iter))
+										 {
+											 if (pSquadMember->HasStrategySlotRange(SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2))
+											 {
+												 m_vSavePosition += pSquadMember->GetAbsOrigin() * 10;
+												 count += 10;
+											 }
+											 else
+											 {
+												 m_vSavePosition += pSquadMember->GetAbsOrigin();
+												 count++;
+											 }
+										 }
 
-			// pull towards enemy
-			if (GetEnemy() != NULL)
-			{
-				m_vSavePosition += GetEnemyLKP() * 4;
-				count += 4;
-			}
+										 // pull towards enemy
+										 if (GetEnemy() != NULL)
+										 {
+											 m_vSavePosition += GetEnemyLKP() * 4;
+											 count += 4;
+										 }
 
-			Assert( count != 0 );
-			m_vSavePosition = m_vSavePosition * (1.0 / count);
+										 Assert(count != 0);
+										 m_vSavePosition = m_vSavePosition * (1.0 / count);
 
-			TaskComplete();
-		}
+										 TaskComplete();
+	}
 		break;
 
 	case TASK_DRONE_FIND_SQUAD_MEMBER:
-		{
-			if (m_pSquad)
-			{
-				CAI_BaseNPC *pSquadMember = m_pSquad->GetAnyMember();
-				m_vSavePosition = pSquadMember->GetAbsOrigin();
+	{
+										 if (m_pSquad)
+										 {
+											 CAI_BaseNPC *pSquadMember = m_pSquad->GetAnyMember();
+											 m_vSavePosition = pSquadMember->GetAbsOrigin();
 
-				// find attacking members
-				AISquadIter_t iter;
-				for (pSquadMember = m_pSquad->GetFirstMember( &iter ); pSquadMember; pSquadMember = m_pSquad->GetNextMember( &iter ) )
-				{
-					// are they attacking?
-					if (pSquadMember->HasStrategySlotRange( SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2 ))
-					{
-						m_vSavePosition = pSquadMember->GetAbsOrigin();
-						break;
-					}
-					// do they have a goal?
-					if (pSquadMember->GetNavigator()->IsGoalActive())
-					{
-						m_vSavePosition = pSquadMember->GetAbsOrigin();
-						break;
-					}
-				}
-			}
-			else
-			{
-				m_vSavePosition = GetAbsOrigin();
-			}
+											 // find attacking members
+											 AISquadIter_t iter;
+											 for (pSquadMember = m_pSquad->GetFirstMember(&iter); pSquadMember; pSquadMember = m_pSquad->GetNextMember(&iter))
+											 {
+												 // are they attacking?
+												 if (pSquadMember->HasStrategySlotRange(SQUAD_SLOT_ATTACK1, SQUAD_SLOT_ATTACK2))
+												 {
+													 m_vSavePosition = pSquadMember->GetAbsOrigin();
+													 break;
+												 }
+												 // do they have a goal?
+												 if (pSquadMember->GetNavigator()->IsGoalActive())
+												 {
+													 m_vSavePosition = pSquadMember->GetAbsOrigin();
+													 break;
+												 }
+											 }
+										 }
+										 else
+										 {
+											 m_vSavePosition = GetAbsOrigin();
+										 }
 
-			TaskComplete();
-		}
+										 TaskComplete();
+	}
 		break;
 
 	case TASK_DRONE_MOVEAT_SAVEPOSITION:
-		{
-			trace_t tr;
-			AI_TraceLine( GetAbsOrigin(), m_vSavePosition, MASK_NPCWORLDSTATIC, this, COLLISION_GROUP_NONE, &tr );
-			if (tr.DidHitWorld())
-			{
-				TaskFail( FAIL_NO_ROUTE );
-			}
-			else
-			{
-				m_fSwarmMoveTime = gpGlobals->curtime + RandomFloat( pTask->flTaskData * 0.8, pTask->flTaskData * 1.2 );
-			}
-		}
+	{
+										   trace_t tr;
+										   AI_TraceLine(GetAbsOrigin(), m_vSavePosition, MASK_NPCWORLDSTATIC, this, COLLISION_GROUP_NONE, &tr);
+										   if (tr.DidHitWorld())
+										   {
+											   TaskFail(FAIL_NO_ROUTE);
+										   }
+										   else
+										   {
+											   m_fSwarmMoveTime = gpGlobals->curtime + RandomFloat(pTask->flTaskData * 0.8, pTask->flTaskData * 1.2);
+										   }
+	}
 		break;
 
 	default:
@@ -2785,10 +2784,10 @@ void CNPC_Drone::StartTask( const Task_t *pTask )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::UpdateOnRemove( void )
+void CNPC_Drone::UpdateOnRemove(void)
 {
 	DestroySmokeTrail();
-	KillSprites( 0.0 );
+	KillSprites(0.0);
 	BaseClass::UpdateOnRemove();
 }
 
@@ -2810,7 +2809,7 @@ bool CNPC_Drone::HandleInteraction(int interactionType, void* data, CBaseCombatC
 		m_vForceMoveTarget.x = ((Vector *)data)->x;
 		m_vForceMoveTarget.y = ((Vector *)data)->y;
 		m_vForceMoveTarget.z = ((Vector *)data)->z;
-		m_fForceMoveTime   = gpGlobals->curtime + 2.0;
+		m_fForceMoveTime = gpGlobals->curtime + 2.0;
 		return false;
 	}
 
@@ -2821,15 +2820,15 @@ bool CNPC_Drone::HandleInteraction(int interactionType, void* data, CBaseCombatC
 // Purpose: 
 // Output : float
 //-----------------------------------------------------------------------------
-float CNPC_Drone::DroneMaxSpeed( void )
+float CNPC_Drone::DroneMaxSpeed(void)
 {
-	if( m_flWaterSuspendTime > gpGlobals->curtime )
+	if (m_flWaterSuspendTime > gpGlobals->curtime)
 	{
 		// Slower in water!
 		return DRONE_MAX_SPEED * 0.1;
 	}
 
-	if ( HasPhysicsAttacker( DRONE_SMASH_TIME ) )
+	if (HasPhysicsAttacker(DRONE_SMASH_TIME))
 	{
 		return DRONE_NPC_BURST_SPEED;
 	}
@@ -2843,7 +2842,7 @@ float CNPC_Drone::DroneMaxSpeed( void )
 // Purpose: 
 // Output :
 //-----------------------------------------------------------------------------
-void CNPC_Drone::ClampMotorForces( Vector &linear, AngularImpulse &angular )
+void CNPC_Drone::ClampMotorForces(Vector &linear, AngularImpulse &angular)
 {
 	float scale = m_flBladeSpeed / 100.0;
 
@@ -2851,18 +2850,18 @@ void CNPC_Drone::ClampMotorForces( Vector &linear, AngularImpulse &angular )
 
 	float fscale = 3000 * scale;
 
-	if ( m_flEngineStallTime > gpGlobals->curtime )
+	if (m_flEngineStallTime > gpGlobals->curtime)
 	{
 		linear.x = 0.0f;
 		linear.y = 0.0f;
-		linear.z = clamp( linear.z, -fscale, fscale < 1200 ? 1200 : fscale );
+		linear.z = clamp(linear.z, -fscale, fscale < 1200 ? 1200 : fscale);
 	}
 	else
 	{
 		// limit reaction forces
-		linear.x = clamp( linear.x, -fscale, fscale );
-		linear.y = clamp( linear.y, -fscale, fscale );
-		linear.z = clamp( linear.z, -fscale, fscale < 1200 ? 1200 : fscale );
+		linear.x = clamp(linear.x, -fscale, fscale);
+		linear.y = clamp(linear.y, -fscale, fscale);
+		linear.z = clamp(linear.z, -fscale, fscale < 1200 ? 1200 : fscale);
 	}
 
 	angular.x *= scale;
@@ -2873,17 +2872,17 @@ void CNPC_Drone::ClampMotorForces( Vector &linear, AngularImpulse &angular )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::KillSprites( float flDelay )
+void CNPC_Drone::KillSprites(float flDelay)
 {
-	if( m_pEyeGlow )
+	if (m_pEyeGlow)
 	{
-		m_pEyeGlow->FadeAndDie( flDelay );
+		m_pEyeGlow->FadeAndDie(flDelay);
 		m_pEyeGlow = NULL;
 	}
 
-	if( m_pLightGlow )
+	if (m_pLightGlow)
 	{
-		m_pLightGlow->FadeAndDie( flDelay );
+		m_pLightGlow->FadeAndDie(flDelay);
 		m_pLightGlow = NULL;
 	}
 
@@ -2891,8 +2890,8 @@ void CNPC_Drone::KillSprites( float flDelay )
 	/*
 	if ( m_hLightTrail )
 	{
-		m_hLightTrail->FadeAndDie( flDelay );
-		m_hLightTrail = NULL;
+	m_hLightTrail->FadeAndDie( flDelay );
+	m_hLightTrail = NULL;
 	}
 	*/
 }
@@ -2901,33 +2900,33 @@ void CNPC_Drone::KillSprites( float flDelay )
 // Purpose: Tests whether we're above the target's feet but also below their top
 // Input  : *pTarget - who we're testing against
 //-----------------------------------------------------------------------------
-bool CNPC_Drone::IsInEffectiveTargetZone( CBaseEntity *pTarget )
+bool CNPC_Drone::IsInEffectiveTargetZone(CBaseEntity *pTarget)
 {
 	Vector	vecMaxPos, vecMinPos;
 	float	ourHeight = WorldSpaceCenter().z;
 
 	// If the enemy is in a vehicle, we need to get those bounds
-	if ( pTarget && pTarget->IsPlayer() && assert_cast< CBasePlayer * >(pTarget)->IsInAVehicle() )
+	if (pTarget && pTarget->IsPlayer() && assert_cast< CBasePlayer * >(pTarget)->IsInAVehicle())
 	{
 		CBaseEntity *pVehicle = assert_cast< CBasePlayer * >(pTarget)->GetVehicleEntity();
-		pVehicle->CollisionProp()->NormalizedToWorldSpace( Vector(0.0f,0.0f,1.0f), &vecMaxPos );
-		pVehicle->CollisionProp()->NormalizedToWorldSpace( Vector(0.0f,0.0f,0.0f), &vecMinPos );
-	
-		if ( ourHeight > vecMinPos.z && ourHeight < vecMaxPos.z )
+		pVehicle->CollisionProp()->NormalizedToWorldSpace(Vector(0.0f, 0.0f, 1.0f), &vecMaxPos);
+		pVehicle->CollisionProp()->NormalizedToWorldSpace(Vector(0.0f, 0.0f, 0.0f), &vecMinPos);
+
+		if (ourHeight > vecMinPos.z && ourHeight < vecMaxPos.z)
 			return true;
 
 		return false;
 	}
-	
+
 	// Get the enemies top and bottom point
-	pTarget->CollisionProp()->NormalizedToWorldSpace( Vector(0.0f,0.0f,1.0f), &vecMaxPos );
+	pTarget->CollisionProp()->NormalizedToWorldSpace(Vector(0.0f, 0.0f, 1.0f), &vecMaxPos);
 #ifdef _XBOX
-	pTarget->CollisionProp()->NormalizedToWorldSpace( Vector(0.0f,0.0f,0.5f), &vecMinPos ); // Only half the body is valid
+	pTarget->CollisionProp()->NormalizedToWorldSpace(Vector(0.0f, 0.0f, 0.5f), &vecMinPos); // Only half the body is valid
 #else
-	pTarget->CollisionProp()->NormalizedToWorldSpace( Vector(0.0f,0.0f,0.0f), &vecMinPos );
+	pTarget->CollisionProp()->NormalizedToWorldSpace(Vector(0.0f, 0.0f, 0.0f), &vecMinPos);
 #endif // _XBOX
 	// See if we're within that range
-	if ( ourHeight > vecMinPos.z && ourHeight < vecMaxPos.z )
+	if (ourHeight > vecMinPos.z && ourHeight < vecMaxPos.z)
 		return true;
 
 	return false;
@@ -2939,19 +2938,19 @@ bool CNPC_Drone::IsInEffectiveTargetZone( CBaseEntity *pTarget )
 //			&chasePosition - 
 //			&tolerance - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::TranslateNavGoal( CBaseEntity *pEnemy, Vector &chasePosition )
+void CNPC_Drone::TranslateNavGoal(CBaseEntity *pEnemy, Vector &chasePosition)
 {
-	if ( pEnemy && pEnemy->IsPlayer() && assert_cast< CBasePlayer * >(pEnemy)->IsInAVehicle() )
+	if (pEnemy && pEnemy->IsPlayer() && assert_cast< CBasePlayer * >(pEnemy)->IsInAVehicle())
 	{
 		Vector vecNewPos;
 		CBaseEntity *pVehicle = assert_cast< CBasePlayer * >(pEnemy)->GetVehicleEntity();
-		pVehicle->CollisionProp()->NormalizedToWorldSpace( Vector(0.5,0.5,0.5f), &vecNewPos );
+		pVehicle->CollisionProp()->NormalizedToWorldSpace(Vector(0.5, 0.5, 0.5f), &vecNewPos);
 		chasePosition.z = vecNewPos.z;
 	}
 	else
 	{
 		Vector vecTarget;
-		pEnemy->CollisionProp()->NormalizedToCollisionSpace( Vector(0,0,0.75f), &vecTarget );
+		pEnemy->CollisionProp()->NormalizedToCollisionSpace(Vector(0, 0, 0.75f), &vecTarget);
 		chasePosition.z += vecTarget.z;
 	}
 }
@@ -2964,7 +2963,7 @@ float CNPC_Drone::GetDefaultNavGoalTolerance()
 //-----------------------------------------------------------------------------
 // Purpose: Input that disables the drone's swarm behavior
 //-----------------------------------------------------------------------------
-void CNPC_Drone::InputDisableSwarm( inputdata_t &inputdata )
+void CNPC_Drone::InputDisableSwarm(inputdata_t &inputdata)
 {
 	m_bDoSwarmBehavior = false;
 }
@@ -2973,12 +2972,12 @@ void CNPC_Drone::InputDisableSwarm( inputdata_t &inputdata )
 // Purpose: 
 // Input  : &inputdata - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::InputUnpack( inputdata_t &inputdata )
+void CNPC_Drone::InputUnpack(inputdata_t &inputdata)
 {
-	if ( HasSpawnFlags( SF_DRONE_PACKED_UP ) == false )
+	if (HasSpawnFlags(SF_DRONE_PACKED_UP) == false)
 		return;
 
-	SetCondition( COND_LIGHT_DAMAGE );
+	SetCondition(COND_LIGHT_DAMAGE);
 }
 
 //-----------------------------------------------------------------------------
@@ -2986,12 +2985,12 @@ void CNPC_Drone::InputUnpack( inputdata_t &inputdata )
 // Input  : *pPhysGunUser - 
 //			reason - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason )
+void CNPC_Drone::OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPickup_t reason)
 {
 	m_hPhysicsAttacker = pPhysGunUser;
 	m_flLastPhysicsInfluenceTime = gpGlobals->curtime;
 
-	if ( reason == PUNTED_BY_CANNON )
+	if (reason == PUNTED_BY_CANNON)
 	{
 		StopLoitering();
 
@@ -2999,17 +2998,17 @@ void CNPC_Drone::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t rea
 
 		// There's about to be a massive change in velocity. 
 		// Think immediately so we can do our slice traces, etc.
-		SetNextThink( gpGlobals->curtime + 0.01f );
+		SetNextThink(gpGlobals->curtime + 0.01f);
 
 		// Stall our engine for awhile
 		m_flEngineStallTime = gpGlobals->curtime + 2.0f;
-		SetEyeState( DRONE_EYE_STATE_STUNNED );
+		SetEyeState(DRONE_EYE_STATE_STUNNED);
 	}
 	else
 	{
 		// Suppress collisions between the drone and the player; we're currently bumping
 		// almost certainly because it's not purely a physics object.
-		SetOwnerEntity( pPhysGunUser );
+		SetOwnerEntity(pPhysGunUser);
 		m_bHeld = true;
 	}
 }
@@ -3020,33 +3019,33 @@ void CNPC_Drone::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t rea
 // Input  : *pPhysGunUser - 
 //			Reason - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason )
+void CNPC_Drone::OnPhysGunDrop(CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason)
 {
 	// Stop suppressing collisions between the drone and the player
-	SetOwnerEntity( NULL );
+	SetOwnerEntity(NULL);
 
 	m_bHeld = false;
 
-	if ( Reason == LAUNCHED_BY_CANNON )
+	if (Reason == LAUNCHED_BY_CANNON)
 	{
 		m_hPhysicsAttacker = pPhysGunUser;
 		m_flLastPhysicsInfluenceTime = gpGlobals->curtime;
 
 		// There's about to be a massive change in velocity. 
 		// Think immediately so we can do our slice traces, etc.
-		SetNextThink( gpGlobals->curtime + 0.01f );
+		SetNextThink(gpGlobals->curtime + 0.01f);
 
 		// Stall our engine for awhile
 		m_flEngineStallTime = gpGlobals->curtime + 2.0f;
-		SetEyeState( DRONE_EYE_STATE_STUNNED );
+		SetEyeState(DRONE_EYE_STATE_STUNNED);
 	}
 	else
 	{
-		if( m_bHackedByAlyx && !GetEnemy() )
+		if (m_bHackedByAlyx && !GetEnemy())
 		{
 			// If a hacked drone is released in peaceable conditions, 
 			// just loiter, don't zip off.
-			StartLoitering( GetAbsOrigin() );
+			StartLoitering(GetAbsOrigin());
 		}
 
 		m_hPhysicsAttacker = NULL;
@@ -3054,21 +3053,21 @@ void CNPC_Drone::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason 
 	}
 }
 
-void CNPC_Drone::StartLoitering( const Vector &vecLoiterPosition )
+void CNPC_Drone::StartLoitering(const Vector &vecLoiterPosition)
 {
 	//Msg("Start Loitering\n");
 
 	m_vTargetBanking = vec3_origin;
 	m_vecLoiterPosition = GetAbsOrigin();
 	m_vForceVelocity = vec3_origin;
-	SetCurrentVelocity( vec3_origin );
+	SetCurrentVelocity(vec3_origin);
 }
 
-CBasePlayer *CNPC_Drone::HasPhysicsAttacker( float dt )
+CBasePlayer *CNPC_Drone::HasPhysicsAttacker(float dt)
 {
 	// If the player is holding me now, or I've been recently thrown
 	// then return a pointer to that player
-	if ( IsHeldByPhyscannon() || (gpGlobals->curtime - dt <= m_flLastPhysicsInfluenceTime) )
+	if (IsHeldByPhyscannon() || (gpGlobals->curtime - dt <= m_flLastPhysicsInfluenceTime))
 	{
 		return m_hPhysicsAttacker;
 	}
@@ -3080,7 +3079,7 @@ CBasePlayer *CNPC_Drone::HasPhysicsAttacker( float dt )
 //-----------------------------------------------------------------------------
 float CNPC_Drone::GetMaxEnginePower()
 {
-	if( m_bHackedByAlyx )
+	if (m_bHackedByAlyx)
 	{
 		return 2.0f;
 	}
@@ -3092,33 +3091,33 @@ float CNPC_Drone::GetMaxEnginePower()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::UpdatePanels( void )
+void CNPC_Drone::UpdatePanels(void)
 {
-	if ( m_flEngineStallTime > gpGlobals->curtime )
+	if (m_flEngineStallTime > gpGlobals->curtime)
 	{
-		SetPoseParameter( m_iPanel1, random->RandomFloat( 0.0f, 90.0f ) );
-		SetPoseParameter( m_iPanel2, random->RandomFloat( 0.0f, 90.0f ) );
-		SetPoseParameter( m_iPanel3, random->RandomFloat( 0.0f, 90.0f ) );
-		SetPoseParameter( m_iPanel4, random->RandomFloat( 0.0f, 90.0f ) );
+		SetPoseParameter(m_iPanel1, random->RandomFloat(0.0f, 90.0f));
+		SetPoseParameter(m_iPanel2, random->RandomFloat(0.0f, 90.0f));
+		SetPoseParameter(m_iPanel3, random->RandomFloat(0.0f, 90.0f));
+		SetPoseParameter(m_iPanel4, random->RandomFloat(0.0f, 90.0f));
 		return;
 	}
 
-	float panelPosition = GetPoseParameter( m_iPanel1 );
+	float panelPosition = GetPoseParameter(m_iPanel1);
 
-	if ( m_bShowingHostile )
+	if (m_bShowingHostile)
 	{
 		panelPosition = 90.0f;//UTIL_Approach( 90.0f, panelPosition, 90.0f );
 	}
 	else
 	{
-		panelPosition = UTIL_Approach( 0.0f, panelPosition, 25.0f );
+		panelPosition = UTIL_Approach(0.0f, panelPosition, 25.0f);
 	}
 
 	//FIXME: If we're going to have all these be equal, there's no need for 4 poses..
-	SetPoseParameter( m_iPanel1, panelPosition );
-	SetPoseParameter( m_iPanel2, panelPosition );
-	SetPoseParameter( m_iPanel3, panelPosition );
-	SetPoseParameter( m_iPanel4, panelPosition );
+	SetPoseParameter(m_iPanel1, panelPosition);
+	SetPoseParameter(m_iPanel2, panelPosition);
+	SetPoseParameter(m_iPanel3, panelPosition);
+	SetPoseParameter(m_iPanel4, panelPosition);
 
 	//TODO: Make these waver randomly?
 }
@@ -3127,30 +3126,30 @@ void CNPC_Drone::UpdatePanels( void )
 // Purpose: 
 // Input  : hostile - 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::ShowHostile( bool hostile /*= true*/)
+void CNPC_Drone::ShowHostile(bool hostile /*= true*/)
 {
-	if ( m_bShowingHostile == hostile )
+	if (m_bShowingHostile == hostile)
 		return;
 
 	//TODO: Open the drone panels or close them, depending on the state
 	m_bShowingHostile = hostile;
 
-	if ( hostile )
+	if (hostile)
 	{
-		EmitSound( "NPC_Drone.ChargeAnnounce" );
+		EmitSound("NPC_Drone.ChargeAnnounce");
 	}
 	else
 	{
-		EmitSound( "NPC_Drone.ChargeEnd" );
+		EmitSound("NPC_Drone.ChargeEnd");
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::StartBurst( const Vector &vecDirection )
+void CNPC_Drone::StartBurst(const Vector &vecDirection)
 {
-	if ( m_flBurstDuration > gpGlobals->curtime )
+	if (m_flBurstDuration > gpGlobals->curtime)
 		return;
 
 	ShowHostile();
@@ -3158,7 +3157,7 @@ void CNPC_Drone::StartBurst( const Vector &vecDirection )
 	// Don't burst attack again for a couple seconds
 	m_flNextBurstTime = gpGlobals->curtime + 2.0;
 	m_flBurstDuration = gpGlobals->curtime + 1.0;
-	
+
 	// Save off where we were going towards and for how long
 	m_vecBurstDirection = vecDirection;
 }
@@ -3166,108 +3165,108 @@ void CNPC_Drone::StartBurst( const Vector &vecDirection )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::StopBurst( bool bInterruptSchedule /*= false*/ )
+void CNPC_Drone::StopBurst(bool bInterruptSchedule /*= false*/)
 {
-	if ( m_flBurstDuration < gpGlobals->curtime )
+	if (m_flBurstDuration < gpGlobals->curtime)
 		return;
 
-	ShowHostile( false );
+	ShowHostile(false);
 
 	// Stop our burst timers
 	m_flNextBurstTime = gpGlobals->curtime + 2.0f; //FIXME: Skill level based
 	m_flBurstDuration = gpGlobals->curtime - 0.1f;
 
-	if ( bInterruptSchedule )
+	if (bInterruptSchedule)
 	{
 		// We need to rethink our current schedule
-		ClearSchedule( "Stopping burst" );
+		ClearSchedule("Stopping burst");
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CNPC_Drone::SetEyeState( int state )
+void CNPC_Drone::SetEyeState(int state)
 {
 	// Make sure we're active
 	StartEye();
 
-	switch( state )
+	switch (state)
 	{
 	case DRONE_EYE_STATE_STUNNED:
-		{
-			if ( m_pEyeGlow )
-			{
-				//Toggle our state
-				m_pEyeGlow->SetColor( 255, 128, 0 );
-				m_pEyeGlow->SetScale( 0.15f, 0.1f );
-				m_pEyeGlow->SetBrightness( 164, 0.1f );
-				m_pEyeGlow->m_nRenderFX = kRenderFxStrobeFast;
-			}
-			
-			if ( m_pLightGlow )
-			{
-				m_pLightGlow->SetColor( 255, 128, 0 );
-				m_pLightGlow->SetScale( 0.15f, 0.1f );
-				m_pLightGlow->SetBrightness( 164, 0.1f );
-				m_pLightGlow->m_nRenderFX = kRenderFxStrobeFast;
-			}
+	{
+									if (m_pEyeGlow)
+									{
+										//Toggle our state
+										m_pEyeGlow->SetColor(255, 128, 0);
+										m_pEyeGlow->SetScale(0.15f, 0.1f);
+										m_pEyeGlow->SetBrightness(164, 0.1f);
+										m_pEyeGlow->m_nRenderFX = kRenderFxStrobeFast;
+									}
 
-			EmitSound("NPC_Drone.Stunned");
+									if (m_pLightGlow)
+									{
+										m_pLightGlow->SetColor(255, 128, 0);
+										m_pLightGlow->SetScale(0.15f, 0.1f);
+										m_pLightGlow->SetBrightness(164, 0.1f);
+										m_pLightGlow->m_nRenderFX = kRenderFxStrobeFast;
+									}
 
-			break;
-		}
+									EmitSound("NPC_Drone.Stunned");
+
+									break;
+	}
 
 	case DRONE_EYE_STATE_CHARGE:
-		{
-			if ( m_pEyeGlow )
-			{
-				//Toggle our state
-				if( m_bHackedByAlyx )
-				{
-					m_pEyeGlow->SetColor( 0, 255, 0 );
-				}
-				else
-				{
-					m_pEyeGlow->SetColor( 255, 0, 0 );
-				}
+	{
+								   if (m_pEyeGlow)
+								   {
+									   //Toggle our state
+									   if (m_bHackedByAlyx)
+									   {
+										   m_pEyeGlow->SetColor(0, 255, 0);
+									   }
+									   else
+									   {
+										   m_pEyeGlow->SetColor(255, 0, 0);
+									   }
 
-				m_pEyeGlow->SetScale( 0.25f, 0.5f );
-				m_pEyeGlow->SetBrightness( 164, 0.1f );
-				m_pEyeGlow->m_nRenderFX = kRenderFxNone;
-			}
-			
-			if ( m_pLightGlow )
-			{
-				if( m_bHackedByAlyx )
-				{
-					m_pLightGlow->SetColor( 0, 255, 0 );
-				}
-				else
-				{
-					m_pLightGlow->SetColor( 255, 0, 0 );
-				}
+									   m_pEyeGlow->SetScale(0.25f, 0.5f);
+									   m_pEyeGlow->SetBrightness(164, 0.1f);
+									   m_pEyeGlow->m_nRenderFX = kRenderFxNone;
+								   }
 
-				m_pLightGlow->SetScale( 0.25f, 0.5f );
-				m_pLightGlow->SetBrightness( 164, 0.1f );
-				m_pLightGlow->m_nRenderFX = kRenderFxNone;
-			}
+								   if (m_pLightGlow)
+								   {
+									   if (m_bHackedByAlyx)
+									   {
+										   m_pLightGlow->SetColor(0, 255, 0);
+									   }
+									   else
+									   {
+										   m_pLightGlow->SetColor(255, 0, 0);
+									   }
 
-			break;
-		}
-	
+									   m_pLightGlow->SetScale(0.25f, 0.5f);
+									   m_pLightGlow->SetBrightness(164, 0.1f);
+									   m_pLightGlow->m_nRenderFX = kRenderFxNone;
+								   }
+
+								   break;
+	}
+
 	default:
-		if ( m_pEyeGlow )
+		if (m_pEyeGlow)
 			m_pEyeGlow->m_nRenderFX = kRenderFxNone;
 		break;
 	}
 }
 
 
-unsigned int CNPC_Drone::PhysicsSolidMaskForEntity( void ) const 
-{ 
+unsigned int CNPC_Drone::PhysicsSolidMaskForEntity(void) const
+{
 	unsigned int mask = BaseClass::PhysicsSolidMaskForEntity();
-	if ( m_bIgnoreClipbrushes )
+	if (m_bIgnoreClipbrushes)
 	{
 		mask &= ~CONTENTS_MONSTERCLIP;
 	}
@@ -3278,9 +3277,9 @@ unsigned int CNPC_Drone::PhysicsSolidMaskForEntity( void ) const
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CNPC_Drone::CreateVPhysics( void )
+bool CNPC_Drone::CreateVPhysics(void)
 {
-	if ( HasSpawnFlags( SF_DRONE_CARRIED ) )
+	if (HasSpawnFlags(SF_DRONE_CARRIED))
 		return false;
 
 	return BaseClass::CreateVPhysics();
@@ -3291,37 +3290,37 @@ bool CNPC_Drone::CreateVPhysics( void )
 // Schedules
 //
 //-----------------------------------------------------------------------------
-AI_BEGIN_CUSTOM_NPC( npc_drone, CNPC_Drone )
+AI_BEGIN_CUSTOM_NPC(npc_drone, CNPC_Drone)
 
-	DECLARE_TASK( TASK_DRONE_HOVER );
-	DECLARE_TASK( TASK_DRONE_UNPACK );
-	DECLARE_TASK( TASK_DRONE_FIND_SQUAD_CENTER );
-	DECLARE_TASK( TASK_DRONE_FIND_SQUAD_MEMBER );
-	DECLARE_TASK( TASK_DRONE_MOVEAT_SAVEPOSITION );
+DECLARE_TASK(TASK_DRONE_HOVER);
+DECLARE_TASK(TASK_DRONE_UNPACK);
+DECLARE_TASK(TASK_DRONE_FIND_SQUAD_CENTER);
+DECLARE_TASK(TASK_DRONE_FIND_SQUAD_MEMBER);
+DECLARE_TASK(TASK_DRONE_MOVEAT_SAVEPOSITION);
 
-	DECLARE_CONDITION( COND_DRONE_START_ATTACK );
+DECLARE_CONDITION(COND_DRONE_START_ATTACK);
 
-	DECLARE_ACTIVITY( ACT_DRONE_UNPACK );
+DECLARE_ACTIVITY(ACT_DRONE_UNPACK);
 
 //=========================================================
 // > SCHED_DRONE_ATTACK_HOVER
 //=========================================================
 DEFINE_SCHEDULE
 (
-	SCHED_DRONE_ATTACK_HOVER,
+SCHED_DRONE_ATTACK_HOVER,
 
-	"	Tasks"
-	"		TASK_SET_ACTIVITY		ACTIVITY:ACT_FLY"
-	"		TASK_DRONE_HOVER		0"
-	"	"
-	"	Interrupts"
-	"		COND_TOO_FAR_TO_ATTACK"
-	"		COND_TOO_CLOSE_TO_ATTACK"
-	"		COND_NEW_ENEMY"
-	"		COND_ENEMY_DEAD"
-	"		COND_LIGHT_DAMAGE"
-	"		COND_HEAVY_DAMAGE"
-	"		COND_ENEMY_OCCLUDED"
+"	Tasks"
+"		TASK_SET_ACTIVITY		ACTIVITY:ACT_FLY"
+"		TASK_DRONE_HOVER		0"
+"	"
+"	Interrupts"
+"		COND_TOO_FAR_TO_ATTACK"
+"		COND_TOO_CLOSE_TO_ATTACK"
+"		COND_NEW_ENEMY"
+"		COND_ENEMY_DEAD"
+"		COND_LIGHT_DAMAGE"
+"		COND_HEAVY_DAMAGE"
+"		COND_ENEMY_OCCLUDED"
 );
 
 
@@ -3330,12 +3329,12 @@ DEFINE_SCHEDULE
 //=========================================================
 DEFINE_SCHEDULE
 (
-	SCHED_DRONE_DEPLOY,
+SCHED_DRONE_DEPLOY,
 
-	"	Tasks"
-	"		TASK_PLAY_SEQUENCE			ACTIVITY:ACT_DRONE_UNPACK"
-	"		TASK_SET_ACTIVITY			ACTIVITY:ACT_FLY"
-	"	"
+"	Tasks"
+"		TASK_PLAY_SEQUENCE			ACTIVITY:ACT_DRONE_UNPACK"
+"		TASK_SET_ACTIVITY			ACTIVITY:ACT_FLY"
+"	"
 //	"	Interrupts"
 );
 
@@ -3344,20 +3343,20 @@ DEFINE_SCHEDULE
 //=========================================================
 DEFINE_SCHEDULE
 (
-	SCHED_DRONE_REGROUP,
+SCHED_DRONE_REGROUP,
 
-	"	Tasks"
-	"		TASK_STOP_MOVING							0"
-	"		TASK_SET_TOLERANCE_DISTANCE					24"
-	"		TASK_STORE_ENEMY_POSITION_IN_SAVEPOSITION	0"
-	"		TASK_FIND_BACKAWAY_FROM_SAVEPOSITION		0"
-	"		TASK_RUN_PATH								0"
-	"		TASK_WAIT_FOR_MOVEMENT						0"
-	"	"
-	"	Interrupts"
-	"		COND_DRONE_START_ATTACK"
-	"		COND_NEW_ENEMY"
-	"		COND_CAN_MELEE_ATTACK1"
+"	Tasks"
+"		TASK_STOP_MOVING							0"
+"		TASK_SET_TOLERANCE_DISTANCE					24"
+"		TASK_STORE_ENEMY_POSITION_IN_SAVEPOSITION	0"
+"		TASK_FIND_BACKAWAY_FROM_SAVEPOSITION		0"
+"		TASK_RUN_PATH								0"
+"		TASK_WAIT_FOR_MOVEMENT						0"
+"	"
+"	Interrupts"
+"		COND_DRONE_START_ATTACK"
+"		COND_NEW_ENEMY"
+"		COND_CAN_MELEE_ATTACK1"
 );
 
 
@@ -3367,62 +3366,62 @@ DEFINE_SCHEDULE
 //=========================================================
 DEFINE_SCHEDULE
 (
-	SCHED_DRONE_SWARM_IDLE,
+SCHED_DRONE_SWARM_IDLE,
 
-	"	Tasks"
-	"		TASK_STOP_MOVING							0"
-	"		TASK_SET_FAIL_SCHEDULE						SCHEDULE:SCHED_DRONE_SWARM_FAILURE"
-	"		TASK_DRONE_FIND_SQUAD_CENTER				0"
-	"		TASK_DRONE_MOVEAT_SAVEPOSITION			5"
-	"	"
-	"	Interrupts"
-	"		COND_NEW_ENEMY"
-	"		COND_SEE_ENEMY"
-	"		COND_SEE_FEAR"
-	"		COND_LIGHT_DAMAGE"
-	"		COND_HEAVY_DAMAGE"
-	"		COND_SMELL"
-	"		COND_PROVOKED"
-	"		COND_GIVE_WAY"
-	"		COND_HEAR_PLAYER"
-	"		COND_HEAR_DANGER"
-	"		COND_HEAR_COMBAT"
-	"		COND_HEAR_BULLET_IMPACT"
+"	Tasks"
+"		TASK_STOP_MOVING							0"
+"		TASK_SET_FAIL_SCHEDULE						SCHEDULE:SCHED_DRONE_SWARM_FAILURE"
+"		TASK_DRONE_FIND_SQUAD_CENTER				0"
+"		TASK_DRONE_MOVEAT_SAVEPOSITION			5"
+"	"
+"	Interrupts"
+"		COND_NEW_ENEMY"
+"		COND_SEE_ENEMY"
+"		COND_SEE_FEAR"
+"		COND_LIGHT_DAMAGE"
+"		COND_HEAVY_DAMAGE"
+"		COND_SMELL"
+"		COND_PROVOKED"
+"		COND_GIVE_WAY"
+"		COND_HEAR_PLAYER"
+"		COND_HEAR_DANGER"
+"		COND_HEAR_COMBAT"
+"		COND_HEAR_BULLET_IMPACT"
 );
 
 
 DEFINE_SCHEDULE
 (
-	SCHED_DRONE_SWARM,
+SCHED_DRONE_SWARM,
 
-	"	Tasks"
-	"		TASK_STOP_MOVING							0"
-	"		TASK_SET_FAIL_SCHEDULE						SCHEDULE:SCHED_DRONE_SWARM_FAILURE"
-	"		TASK_DRONE_FIND_SQUAD_CENTER				0"
-	"		TASK_DRONE_MOVEAT_SAVEPOSITION			1"
-	"	"
-	"	Interrupts"
-	"		COND_NEW_ENEMY"
-	"		COND_CAN_MELEE_ATTACK1"
-	"		COND_LIGHT_DAMAGE"
-	"		COND_HEAVY_DAMAGE"
+"	Tasks"
+"		TASK_STOP_MOVING							0"
+"		TASK_SET_FAIL_SCHEDULE						SCHEDULE:SCHED_DRONE_SWARM_FAILURE"
+"		TASK_DRONE_FIND_SQUAD_CENTER				0"
+"		TASK_DRONE_MOVEAT_SAVEPOSITION			1"
+"	"
+"	Interrupts"
+"		COND_NEW_ENEMY"
+"		COND_CAN_MELEE_ATTACK1"
+"		COND_LIGHT_DAMAGE"
+"		COND_HEAVY_DAMAGE"
 );
 
 DEFINE_SCHEDULE
 (
-	SCHED_DRONE_SWARM_FAILURE,
+SCHED_DRONE_SWARM_FAILURE,
 
-	"	Tasks"
-	"		TASK_STOP_MOVING							0"
-	"		TASK_WAIT									2"
-	"		TASK_WAIT_RANDOM							2"
-	"		TASK_DRONE_FIND_SQUAD_MEMBER				0"
-	"		TASK_GET_PATH_TO_SAVEPOSITION				0"
-	"		TASK_WAIT_FOR_MOVEMENT						0"
-	"	"
-	"	Interrupts"
-	"		COND_SEE_ENEMY"
-	"		COND_NEW_ENEMY"
+"	Tasks"
+"		TASK_STOP_MOVING							0"
+"		TASK_WAIT									2"
+"		TASK_WAIT_RANDOM							2"
+"		TASK_DRONE_FIND_SQUAD_MEMBER				0"
+"		TASK_GET_PATH_TO_SAVEPOSITION				0"
+"		TASK_WAIT_FOR_MOVEMENT						0"
+"	"
+"	Interrupts"
+"		COND_SEE_ENEMY"
+"		COND_NEW_ENEMY"
 );
 
 AI_END_CUSTOM_NPC()
