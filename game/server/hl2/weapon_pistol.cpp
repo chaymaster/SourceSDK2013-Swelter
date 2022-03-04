@@ -319,6 +319,8 @@ void CWeaponPistol::ItemPostFrame( void )
 {
 
 	HoldIronsight();
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	BaseClass::ItemPostFrame();
 

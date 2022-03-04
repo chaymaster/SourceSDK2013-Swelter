@@ -76,8 +76,8 @@ void CWeaponStunStick::Precache()
 {
 	BaseClass::Precache();
 
-	PrecacheScriptSound("Weapon_StunStick.Activate");
-	PrecacheScriptSound("Weapon_StunStick.Deactivate");
+	//PrecacheScriptSound("Weapon_StunStick.Activate");
+	//PrecacheScriptSound("Weapon_StunStick.Deactivate");
 
 }
 
@@ -336,7 +336,7 @@ void CWeaponStunStick::SetStunState(bool state)
 	}
 	else
 	{
-		EmitSound("Weapon_StunStick.Deactivate");
+		//EmitSound("Weapon_StunStick.Deactivate");
 	}
 }
 
@@ -358,6 +358,9 @@ bool CWeaponStunStick::Deploy(void)
 void CWeaponStunStick::ItemPostFrame(void)
 {
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	SetStunState(true);
 

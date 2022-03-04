@@ -17,11 +17,9 @@
 #include "convar.h"
 #include "c_baseplayer.h"
 #include "c_basecombatweapon.h"
-
 #else
 #include "vguiscreen.h"
 #endif
-
 #if defined( CLIENT_DLL ) && defined( SIXENSE )
 #include "sixense/in_sixense.h"
 #include "sixense/sixense_convars_extern.h"
@@ -43,9 +41,9 @@ extern ConVar in_forceuser;
 
 ConVar sde_iron_enable("sde_iron_enable","1");
 
-
-
 #endif
+ConVar sde_iron_fov_annabelle_62("sde_iron_fov_annabelle_62", "0");
+ConVar sde_iron_fov_annabelle_70("sde_iron_fov_annabelle_70", "0");
 //endnew
 
 
@@ -79,8 +77,38 @@ void CBaseViewModel::CalcIronsights(Vector &pos, QAngle &ang)
 	//автообнуление
 	if (vForward.x == 0)
 		return;
+	
 
-	newPos += vForward * vOffset.x;
+	
+	const ConVar *pVar = (ConVar *)cvar->FindVar("viewmodel_fov");
+	float fovCoeff62 = sde_iron_fov_annabelle_62.GetFloat();
+	float fovCoeff70 = sde_iron_fov_annabelle_70.GetFloat();
+	float fovCoeff = 0;
+	int ViewModelFov = pVar->GetInt();
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	CBaseCombatWeapon *pWeapon2 = pPlayer->GetActiveWeapon();
+	if (pPlayer && pWeapon2)
+	{
+		//Msg("SDE_ADJUST 2 \n");
+		if ((printf("%s", pWeapon2->GetClassname()) == printf("weapon_annabelle")))
+		{
+			//Msg("SDE_ADJUST 3 %f \n", ViewModelFov);
+			if (ViewModelFov == 62)
+			{
+				Msg("SDE_ADJUST	62	fov: %f	coefficent: %f\n", ViewModelFov, fovCoeff62);
+				fovCoeff = -15;
+			}
+			else if (ViewModelFov == 70)
+			{
+				Msg("SDE_ADJUST	70	fov: %f	coefficent: %f\n", ViewModelFov, fovCoeff70);
+				fovCoeff = -21;
+			}
+		}
+	}
+
+
+	newPos += vForward * (vOffset.x + fovCoeff);
+	//newPos += vForward * vOffset.x;
 	newPos += vRight * vOffset.y;
 	newPos += vUp * vOffset.z;
 	newAng += pWeapon->GetIronsightAngleOffset();

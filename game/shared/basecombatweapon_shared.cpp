@@ -1675,7 +1675,7 @@ Activity CBaseCombatWeapon::GetDrawActivity(void)
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
-	DisableIronsights(); //added
+	DisableIronsights(); //added 228
 	MDLCACHE_CRITICAL_SECTION();
 
 	// cancel any reload in progress.
@@ -1711,6 +1711,20 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 		// Hide the weapon when the holster animation's finished
 		SetContextThink(&CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT);
 	}
+
+	Msg("SDE_HOLSTER\n");
+	//disable attack when holstered 1337
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		m_flNextPrimaryAttack = gpGlobals->curtime + 0.1f;
+		UpdateAutoFire();
+		m_fFireDuration = (pPlayer->m_nButtons & IN_ATTACK) ? (m_fFireDuration + gpGlobals->frametime) : 0.0f;
+	}
+
+
+
+
 
 	// if we were displaying a hud hint, squelch it.
 	if (m_flHudHintMinDisplayTime && gpGlobals->curtime < m_flHudHintMinDisplayTime)
@@ -1880,8 +1894,10 @@ void CBaseCombatWeapon::ItemPostFrame(void)
 
 
 	if (pOwner->GetMoveType() == MOVETYPE_LADDER) //new
-		//return; //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 0.1f; //new
+
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	UpdateAutoFire();
 

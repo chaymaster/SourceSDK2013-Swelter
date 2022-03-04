@@ -239,6 +239,10 @@ public:
 	void				AR1M1_GL_Unload(void);
 	bool				Get_AR1M1_GLL(void);
 
+	void				AR2_GL_Load(void);
+	void				AR2_GL_Unload(void);
+	bool				Get_AR2_GLL(void);
+
 	// Underwater breather device
 	virtual void		SetPlayerUnderwater(bool state);
 	virtual bool		CanBreatheUnderwater() const { return m_HL2Local.m_flSuitPower > 0.0f; }

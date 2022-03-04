@@ -312,6 +312,10 @@ bool CWeaponBugBait::Deploy(void)
 	m_bDrawBackFinished = false;
 	SetSkin();
 
+	//CBaseViewModel *pViewModel = pOwner->GetViewModel();
+	//pViewModel->set
+	//
+	//
 	return BaseClass::Deploy();
 }
 
