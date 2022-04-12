@@ -105,6 +105,7 @@ CFlashlightEffect::CFlashlightEffect(int nEntIndex)
 		m_ARMuzzlelightTexture.Init("effects/armuzzlelight001", TEXTURE_GROUP_OTHER, true);
 		m_ShotgunMuzzlelightTexture.Init("effects/shotgunmuzzlelight001", TEXTURE_GROUP_OTHER, true);
 		m_PistolMuzzlelightTexture.Init("effects/shotgunmuzzlelight001", TEXTURE_GROUP_OTHER, true);
+		m_SilenserMuzzlelightTexture.Init("effects/silensermuzzlelight001", TEXTURE_GROUP_OTHER, true);
 	}
 }
 
@@ -366,6 +367,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	bool weaponShot = false;
 	bool weaponPistol = false;
 	bool weapon357 = false;
+	bool weaponMP5 = false;
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	if (pPlayer)
 	{
@@ -376,7 +378,8 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			weaponAr2 = (strcmp(pWeapon->GetClassname(), "weapon_ar2") == 0);
 			weaponShot = (strcmp(pWeapon->GetClassname(), "weapon_shotgun") == 0);
 			weaponPistol = (strcmp(pWeapon->GetClassname(), "weapon_pistol") == 0);
-			weaponPistol = (strcmp(pWeapon->GetClassname(), "weapon_357") == 0);
+			weapon357 = (strcmp(pWeapon->GetClassname(), "weapon_357") == 0);
+			weaponMP5 = (strcmp(pWeapon->GetClassname(), "weapon_smg2") == 0);
 		}
 	}
 
@@ -388,7 +391,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			state.m_fVerticalFOVDegrees = abs(flFov);
 			state.m_Color[0] = 2.5f;
 			state.m_Color[1] = 2.5f;
-			state.m_Color[2] = 2.3f;
+			state.m_Color[2] = 2.5f;
 			state.m_pSpotlightTexture = m_ARMuzzlelightTexture;
 			state.m_FarZ = r_flashlightfar.GetFloat();
 		}
@@ -397,7 +400,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			state.m_fHorizontalFOVDegrees = abs(flFov);
 			state.m_fVerticalFOVDegrees = abs(flFov);
 			state.m_Color[0] = 2.5f;
-			state.m_Color[1] = 2.5f;
+			state.m_Color[1] = 2.4f;
 			state.m_Color[2] = 2.3f;
 			state.m_pSpotlightTexture = m_ShotgunMuzzlelightTexture;
 			state.m_FarZ = r_flashlightfar.GetFloat();
@@ -410,6 +413,16 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			state.m_Color[1] = 2.5f;
 			state.m_Color[2] = 2.3f;
 			state.m_pSpotlightTexture = m_PistolMuzzlelightTexture;
+			state.m_FarZ = r_flashlightfar.GetFloat();
+		}
+		else if (weaponMP5)
+		{
+			state.m_fHorizontalFOVDegrees = abs(flFov);
+			state.m_fVerticalFOVDegrees = abs(flFov);
+			state.m_Color[0] = 2.5f;
+			state.m_Color[1] = 2.5f;
+			state.m_Color[2] = 2.3f;
+			state.m_pSpotlightTexture = m_SilenserMuzzlelightTexture;
 			state.m_FarZ = r_flashlightfar.GetFloat();
 		}
 		else

@@ -49,7 +49,7 @@ public:
 	virtual void Equip(CBaseCombatCharacter *pOwner);
 	bool	Reload(void);
 
-	float	GetFireRate(void) { return 0.075f; }	// 13.3hz
+	float	GetFireRate(void) { return 0.085f; }	// 13.3hz
 	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
 	int		WeaponRangeAttack2Condition(float flDot, float flDist);
 	Activity	GetPrimaryAttackActivity(void);
@@ -739,16 +739,16 @@ void CWeaponSMG2::PrimaryAttack(void)
 	{
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
 
-		viewPunch.x = random->RandomFloat(0.05f, 0.01f);
-		viewPunch.y = random->RandomFloat(-0.01f, 0.01f);
+		viewPunch.x = random->RandomFloat(-0.8f, 0.8f);
+		viewPunch.y = random->RandomFloat(-0.8f, 0.8f);
 		viewPunch.z = 0.0f;
 	}
 	else
 	{
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
-		viewPunch.x = random->RandomFloat(0.1f, 0.1f);
-		viewPunch.y = random->RandomFloat(0.1f, 0.1f);
+		viewPunch.x = random->RandomFloat(-1.2f, 1.2f);
+		viewPunch.y = random->RandomFloat(-1.2f, 0.6f);
 		viewPunch.z = 0.0f;
 	}
 

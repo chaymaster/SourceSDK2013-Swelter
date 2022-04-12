@@ -497,13 +497,14 @@ void CWeapon357::PrimaryAttack(void)
 	if (m_bIsIronsighted)
 	{
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0));
+		pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
+		//pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); punch off
 		m_snipering = true;
 	}
 	else
 	{
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-2, -1), random->RandomFloat(-2, 2), 0));
+		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
 		m_snipering = false;
 
 	}

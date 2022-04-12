@@ -6151,7 +6151,6 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveAmmo( 255,	"Buckshot");
 		GiveAmmo( 5,	"smg1_grenade");
 		GiveAmmo( 5,    "smg2_grenade");
-		GiveAmmo( 3,	"rpg_round");
 		GiveAmmo( 5,	"grenade");
 		GiveAmmo( 32,	"357" );
 		GiveAmmo( 32,   "356");
@@ -6170,10 +6169,10 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_physcannon" );
 		GiveNamedItem( "weapon_bugbait" );
 		GiveNamedItem( "weapon_356" );
-		GiveNamedItem( "weapon_ar1m1" );
 		GiveNamedItem( "weapon_annabelle" );
 		GiveNamedItem( "weapon_bugbottle" );
 		GiveNamedItem( "weapon_glauncher");
+		GiveNamedItem( "weapon_adot");
 
 #ifdef HL2_EPISODIC
 		// GiveNamedItem( "weapon_magnade" );
@@ -6266,6 +6265,54 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		}
 		break;
 	}
+	case 116:
+		gEvilImpulse101 = true;
+
+		EquipSuit();
+
+		// Give the player everything!
+		GiveAmmo(255, "Pistol" );
+		GiveAmmo(255, "AR2" );
+		GiveAmmo(255, "AR1" );
+		GiveAmmo(5, "AR2AltFire" );
+		GiveAmmo(255, "SMG1" );
+		GiveAmmo(255, "Buckshot" );
+		GiveAmmo(5, "smg1_grenade" );
+		GiveAmmo(5, "smg2_grenade" );
+		GiveAmmo(3, "rpg_round" );
+		GiveAmmo(5, "grenade" );
+		GiveAmmo(32, "357" );
+		GiveAmmo(32, "356" );
+		GiveAmmo(16, "XBowBolt" );
+		GiveAmmo(3, "bugbottle" );	
+		GiveNamedItem( "weapon_smg1" );
+		GiveNamedItem( "weapon_smg2" );
+		GiveNamedItem( "weapon_frag" );
+		GiveNamedItem( "weapon_handgren" );
+		GiveNamedItem( "weapon_stunstick" );
+		GiveNamedItem( "weapon_pistol" );
+		GiveNamedItem( "weapon_ar2" );
+		GiveNamedItem( "weapon_shotgun" );
+		GiveNamedItem( "weapon_sos" );
+		GiveNamedItem( "weapon_physcannon" );
+		GiveNamedItem( "weapon_bugbait" );
+		GiveNamedItem( "weapon_356" );
+		GiveNamedItem( "weapon_357" );
+		GiveNamedItem( "weapon_ar1m1" );
+		GiveNamedItem( "weapon_annabelle" );
+		GiveNamedItem( "weapon_bugbottle" );
+		GiveNamedItem( "weapon_glauncher" );
+		GiveNamedItem( "weapon_adot" );
+		GiveNamedItem( "weapon_rpg" );
+
+		if (GetHealth() < 100)
+		{
+			TakeHealth(100, DMG_GENERIC);
+		}
+
+		gEvilImpulse101 = false;
+
+		break;
 
 	case	195:// show shortest paths for entire level to nearest node
 		{
