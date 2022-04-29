@@ -46,7 +46,7 @@ public:
 
 	int		GetMinBurst(void) { return 4; }
 	int		GetMaxBurst(void) { return 5; }
-	float	GetFireRate(void) { return 0.13f; }
+	float	GetFireRate(void) { return 0.10f; } //{ return 0.13f; } ускорено
 
 	bool	CanHolster(void);
 	bool	Reload(void);
