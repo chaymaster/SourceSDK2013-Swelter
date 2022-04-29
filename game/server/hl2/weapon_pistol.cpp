@@ -261,6 +261,7 @@ void CWeaponPistol::PrimaryAttack( void )
 		// the aim from 'drifting off' when the player fires very quickly. This may
 		// not be the ideal way to achieve this, but it's cheap and it works, which is
 		// great for a feature we're evaluating. (sjb)
+		pOwner->ViewPunch(QAngle(random->RandomFloat(-8.0, -6.4), random->RandomFloat(-4, 4), 0));
 		pOwner->ViewPunchReset();
 		pOwner->DoMuzzleFlash();
 	}

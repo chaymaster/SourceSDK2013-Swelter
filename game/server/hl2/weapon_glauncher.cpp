@@ -560,7 +560,7 @@ pGrenade->SetLocalAngularVelocity(RandomAngle(-5, 5));
 pGrenade->SetMoveType(MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE);
 pGrenade->SetThrower(GetOwner());
 pGrenade->SetDamage(sk_plr_dmg_smg1_grenade.GetFloat());
-
+pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
 //WeaponSound(RELOAD);
 CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), 1000, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
 

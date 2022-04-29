@@ -739,16 +739,16 @@ void CWeaponSMG1::PrimaryAttack(void)
 	{
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
 
-		viewPunch.x = random->RandomFloat(0.05f, 0.01f);
-		viewPunch.y = random->RandomFloat(-0.01f, 0.01f);
+		viewPunch.x = random->RandomFloat(-0.4f, 0.4f);
+		viewPunch.y = random->RandomFloat(-0.4f, 0.4f);
 		viewPunch.z = 0.0f;
 	}
 	else
 	{
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
-		viewPunch.x = random->RandomFloat(0.1f, 0.1f);
-		viewPunch.y = random->RandomFloat(0.1f, 0.1f);
+		viewPunch.x = random->RandomFloat(-0.8f, 0.8f);
+		viewPunch.y = random->RandomFloat(-0.8f, 0.3f);
 		viewPunch.z = 0.0f;
 	}
 
