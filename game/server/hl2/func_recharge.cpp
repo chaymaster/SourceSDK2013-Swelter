@@ -28,7 +28,7 @@ static ConVar	sk_suitcharger_citadel_maxarmor( "sk_suitcharger_citadel_maxarmor"
 
 #define SF_CITADEL_RECHARGER	0x2000
 #define SF_KLEINER_RECHARGER	0x4000 // Gives only 25 health
-#define SF_PCV_RECHARGER	0x8000 // Gives only 25 health
+#define SF_PCV_RECHARGER	0x8000
 
 class CRecharge : public CBaseToggle
 {

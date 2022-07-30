@@ -39,6 +39,7 @@ public:
 
 	void		AddViewKick( void );
 	float		GetDamageForActivity( Activity hitActivity );
+	void		ItemPostFrame(void);
 
 	virtual int WeaponMeleeAttack1Condition( float flDot, float flDist );
 	void		SecondaryAttack( void )	{	return;	}

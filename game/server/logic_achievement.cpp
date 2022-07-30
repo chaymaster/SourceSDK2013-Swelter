@@ -127,7 +127,7 @@ CLogicAchievement::CLogicAchievement(void)
 {
 	m_iszAchievementEventID		= NULL_STRING;
 }
-#define ACHIEVEMENT_PREFIX	"ACH_SDE_" //было ACHIEVEMENT_EVENT_
+#define ACHIEVEMENT_PREFIX	"ACHIEVEMENT_EVENT_" //было ACH_SDE_
 
 //-----------------------------------------------------------------------------
 // Purpose: Sends the achievement event to the achievement marking system.
@@ -145,28 +145,27 @@ void CLogicAchievement::InputFireEvent( inputdata_t &inputdata )
 {
 	if (!sv_cheats->GetBool())
 	{
-		Msg("SDE: YOU GET ACHIELEMENT BUT ACHIEVEMENTS TEMPONARY DESABLED\n");
-		/*
+		Msg("SDE: YOU GET ACHIEVEMENT BUT ACHIEVEMENTS TEMPONARY DESABLED\n");
+		
 		// If we're active, and our string matched a valid achievement ID
 		if ( !m_bDisabled  && m_iszAchievementEventID != NULL_STRING)
 		{
-		m_OnFired.FireOutput( inputdata.pActivator, this );
+			m_OnFired.FireOutput( inputdata.pActivator, this );
 
-		char const *pchName = STRING( m_iszAchievementEventID );
+			char const *pchName = STRING( m_iszAchievementEventID );
 
-		int nPrefixLen = Q_strlen( ACHIEVEMENT_PREFIX );
-		if ( !Q_strnicmp( pchName, ACHIEVEMENT_PREFIX, nPrefixLen ) )
-		{
-		// Skip the prefix
-		pchName += nPrefixLen;
-		if ( pchName && *pchName )
-		{
-		CBroadcastRecipientFilter filter;
-		g_pGameRules->MarkAchievement( filter, pchName );
-		}
-		}
-		}
-		*/
+			int nPrefixLen = Q_strlen( ACHIEVEMENT_PREFIX );
+			if ( !Q_strnicmp( pchName, ACHIEVEMENT_PREFIX, nPrefixLen ) )
+			{
+				// Skip the prefix
+				pchName += nPrefixLen;
+				if ( pchName && *pchName )
+				{
+					CBroadcastRecipientFilter filter;
+					g_pGameRules->MarkAchievement( filter, pchName );
+				}
+			}
+		}	
 	}
 	return;
 }
