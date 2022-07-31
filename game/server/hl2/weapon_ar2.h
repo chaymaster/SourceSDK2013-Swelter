@@ -34,6 +34,8 @@ public:
 	void	SecondaryAttack(void);
 	void	HoldIronsight(void);
 	void	DelayedAttack(void);
+	void	SecondaryEject(void); //new
+	void	SecondaryEjectSpawn(void); //new
 
 	const char *GetTracerType(void) { return "AR2Tracer"; }
 
@@ -46,7 +48,7 @@ public:
 
 	int		GetMinBurst(void) { return 4; }
 	int		GetMaxBurst(void) { return 5; }
-	float	GetFireRate(void) { return 0.10f; } //{ return 0.13f; } ускорено
+	float	GetFireRate(void) { return 0.115f; } //{ return 0.13f; } ускорено
 
 	bool	CanHolster(void);
 	bool	Reload(void);
@@ -73,6 +75,11 @@ protected:
 	float					m_flDelayedFire;
 	bool					m_bShotDelayed;
 	int						m_nVentPose;
+
+	float m_flSecondaryEjectTime; //new
+	bool m_bSecondaryEjectPending; //new
+	float m_flSecondaryEjectTime2; //new
+	bool m_bSecondaryEjectPending2; //new
 
 	DECLARE_ACTTABLE();
 	DECLARE_DATADESC();

@@ -55,6 +55,7 @@ protected:
 	CTextureReference m_ARMuzzlelightTexture;
 	CTextureReference m_ShotgunMuzzlelightTexture;
 	CTextureReference m_PistolMuzzlelightTexture;
+	CTextureReference m_SilenserMuzzlelightTexture;
 };
 
 class CHeadlightEffect : public CFlashlightEffect

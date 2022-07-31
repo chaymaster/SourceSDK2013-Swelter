@@ -57,6 +57,8 @@ public:
 
 	bool				Get_AR1M1_GLL(void) { return m_HL2Local.m_bAR1M1_GL_Loaded; };
 
+	bool				Get_AR2_GLL(void) { return m_HL2Local.m_bAR2_GL_Loaded; }
+
 public:
 
 	C_HL2PlayerLocalData		m_HL2Local;

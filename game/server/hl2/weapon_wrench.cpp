@@ -144,7 +144,35 @@ int CWeaponWrench::WeaponMeleeAttack1Condition( float flDot, float flDist )
 	return COND_CAN_MELEE_ATTACK1;
 }
 
+void CWeaponWrench::ItemPostFrame(void)
+{
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 2.25f; //new
+
+	if (m_bIsIronsighted)
+	{
+		DisableIronsights();
+	}
+
+	if (pOwner == NULL)
+		return;
+
+	if ((pOwner->m_nButtons & IN_ATTACK) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	{
+		PrimaryAttack();
+	}
+	else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_flNextSecondaryAttack <= gpGlobals->curtime))
+	{
+		SecondaryAttack();
+	}
+	else
+	{
+		WeaponIdle();
+		return;
+	}
+}
 //-----------------------------------------------------------------------------
 // Animation event handlers
 //-----------------------------------------------------------------------------
