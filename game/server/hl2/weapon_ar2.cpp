@@ -43,6 +43,10 @@ BEGIN_DATADESC(CWeaponAR2)
 DEFINE_FIELD(m_flDelayedFire, FIELD_TIME),
 DEFINE_FIELD(m_bShotDelayed, FIELD_BOOLEAN),
 //DEFINE_FIELD( m_nVentPose, FIELD_INTEGER ),
+DEFINE_FIELD(m_flSecondaryEjectTime, FIELD_TIME), //new
+DEFINE_FIELD(m_bSecondaryEjectPending, FIELD_BOOLEAN), //new
+DEFINE_FIELD(m_flSecondaryEjectTime2, FIELD_TIME), //new
+DEFINE_FIELD(m_bSecondaryEjectPending2, FIELD_BOOLEAN), //new
 
 END_DATADESC()
 
@@ -131,6 +135,7 @@ void CWeaponAR2::Precache(void)
 
 	UTIL_PrecacheOther("prop_combine_ball");
 	UTIL_PrecacheOther("env_entity_dissolver");
+	PrecacheModel("models/items/combine_rifle_ammo01_off.mdl");
 }
 
 //-----------------------------------------------------------------------------
@@ -174,6 +179,15 @@ void CWeaponAR2::ItemPostFrame(void)
 	{
 		DelayedAttack();
 	}
+	if (m_bSecondaryEjectPending && gpGlobals->curtime > m_flSecondaryEjectTime) //new
+	{
+		SecondaryEject();
+	}
+	if (m_bSecondaryEjectPending2 && gpGlobals->curtime > m_flSecondaryEjectTime2) //new
+	{
+		SecondaryEjectSpawn();
+	}
+
 
 	// Update our pose parameter for the vents
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
@@ -472,6 +486,10 @@ void CWeaponAR2::SecondaryAttack(void)
 		//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
 		//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
+		m_bSecondaryEjectPending = true; //new
+		m_bSecondaryEjectPending2 = true; //new
+		m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
+		m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
 		pHL2Player->AR2_GL_Load();
 		pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
 		//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
@@ -893,4 +911,38 @@ void CWeaponAR2::SetSkin(int skinNum)
 		return;
 
 	pViewModel->m_nSkin = skinNum;
+}
+
+void CWeaponAR2::SecondaryEject(void)
+{
+	m_bSecondaryEjectPending = false;
+	SetSkin(2);
+}
+
+void CWeaponAR2::SecondaryEjectSpawn(void)
+{
+	m_bSecondaryEjectPending2 = false;
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		Vector vecForward;
+		AngleVectors(pPlayer->EyeAngles(), &vecForward);
+
+		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
+
+		if (pEjectProp)
+		{
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, 0, 35);
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 10, 0);
+			pEjectProp->SetAbsOrigin(vecOrigin);
+			pEjectProp->SetAbsAngles(vecAngles);
+			pEjectProp->KeyValue("model", "models/items/combine_rifle_ammo01_off.mdl");
+			pEjectProp->KeyValue("solid", "1");
+			pEjectProp->KeyValue("targetname", "EjectProp");
+			pEjectProp->KeyValue("spawnflags", "260");
+			DispatchSpawn(pEjectProp);
+			pEjectProp->Activate();
+			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+		}
+	}
 }
