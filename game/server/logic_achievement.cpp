@@ -145,15 +145,13 @@ void CLogicAchievement::InputFireEvent( inputdata_t &inputdata )
 {
 	if (!sv_cheats->GetBool())
 	{
-		Msg("SDE: YOU GET ACHIEVEMENT BUT ACHIEVEMENTS TEMPONARY DESABLED\n");
-		
+		DevMsg("SDE: TECHNICALLY, YOU GET ACHIEVEMENT\n");
 		// If we're active, and our string matched a valid achievement ID
 		if ( !m_bDisabled  && m_iszAchievementEventID != NULL_STRING)
 		{
 			m_OnFired.FireOutput( inputdata.pActivator, this );
 
 			char const *pchName = STRING( m_iszAchievementEventID );
-
 			int nPrefixLen = Q_strlen( ACHIEVEMENT_PREFIX );
 			if ( !Q_strnicmp( pchName, ACHIEVEMENT_PREFIX, nPrefixLen ) )
 			{

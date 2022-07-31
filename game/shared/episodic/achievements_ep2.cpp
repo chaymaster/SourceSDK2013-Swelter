@@ -37,7 +37,7 @@ class CAchievementEp2FindAllRadarCaches : public CBaseAchievement
 		SetGoal(m_iNumComponents);
 	}
 };
-DECLARE_ACHIEVEMENT(CAchievementEp2FindAllRadarCaches, ACHIEVEMENT_ACH_SWELTER_END_RADAR, "ACH_SWELTER_RADAR", 10);
+DECLARE_ACHIEVEMENT(CAchievementEp2FindAllRadarCaches, ACHIEVEMENT_ACH_SWELTER_RADAR, "ACH_SWELTER_RADAR", 10);
 
 
 
