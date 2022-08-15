@@ -105,6 +105,15 @@ void CNPC_CombineS::Precache()
 		m_fIsElite = false;
 	}
 
+	if (!Q_stricmp(pModelName, "models/humans/group12/male_04s.mdl"))
+	{
+		m_fIsAperture = true;
+	}
+	else
+	{
+		m_fIsAperture = false;
+	}
+
 	if( !GetModelName() )
 	{
 		SetModelName( MAKE_STRING( "models/combine_soldier.mdl" ) );
@@ -128,7 +137,8 @@ void CNPC_CombineS::DeathSound( const CTakeDamageInfo &info )
 	if ( GetFlags() & FL_DISSOLVING )
 		return;
 
-	GetSentences()->Speak( "COMBINE_DIE", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS ); 
+	if (!IsAperture())
+		GetSentences()->Speak( "COMBINE_DIE", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS ); 
 }
 
 

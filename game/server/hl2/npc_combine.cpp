@@ -171,6 +171,7 @@ DEFINE_INPUTFUNC( FIELD_STRING,	"ThrowGrenadeAtTarget",	InputThrowGrenadeAtTarge
 
 DEFINE_FIELD( m_iLastAnimEventHandled, FIELD_INTEGER ),
 DEFINE_FIELD( m_fIsElite, FIELD_BOOLEAN ),
+DEFINE_FIELD(m_fIsAperture, FIELD_BOOLEAN),
 DEFINE_FIELD( m_vecAltFireTarget, FIELD_VECTOR ),
 
 DEFINE_KEYFIELD( m_iTacticalVariant, FIELD_INTEGER, "tacticalvariant" ),
@@ -350,6 +351,8 @@ void CNPC_Combine::Spawn( void )
 	m_flNextAltFireTime = gpGlobals->curtime;
 
 	NPCInit();
+	if (IsAperture())
+		Msg("SDE: aperture regulator spawned \n");
 }
 
 //-----------------------------------------------------------------------------
@@ -813,7 +816,9 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 				{
 					m_flLastAttackTime = gpGlobals->curtime;
 
-					m_Sentences.Speak( "COMBINE_ANNOUNCE", SENTENCE_PRIORITY_HIGH );
+					if (!IsAperture())
+						m_Sentences.Speak( "COMBINE_ANNOUNCE", SENTENCE_PRIORITY_HIGH );
+					//else 1337
 
 					// Wait two seconds
 					SetWait( 2.0 );
@@ -837,7 +842,9 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 			}
 			else
 			{
+				if (!IsAperture())
 				m_Sentences.Speak( "COMBINE_THROW_GRENADE", SENTENCE_PRIORITY_MEDIUM );
+				//else 1337
 				SetActivity(ACT_IDLE);
 
 				// Wait two seconds
@@ -973,7 +980,9 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 							m_pSquad->SquadRemember(bits_MEMORY_PLAYER_HURT);
 						}
 
+						if (!IsAperture())
 						m_Sentences.Speak( "COMBINE_PLAYERHIT", SENTENCE_PRIORITY_INVALID );
+						//else 1337
 						JustMadeSound( SENTENCE_PRIORITY_HIGH );
 					}
 					if ( pEntity->MyNPCPointer() )
@@ -1399,7 +1408,9 @@ void CNPC_Combine::AnnounceAssault(void)
 	// Make sure player can see me
 	if ( FVisible( pBCC ) )
 	{
+		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_ASSAULT" );
+		//else 1337
 	}
 }
 
@@ -1438,7 +1449,9 @@ void CNPC_Combine::AnnounceEnemyType( CBaseEntity *pEnemy )
 		break;
 	}
 
+	if (!IsAperture())
 	m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_HIGH );
+	//else 1337
 }
 
 void CNPC_Combine::AnnounceEnemyKill( CBaseEntity *pEnemy )
@@ -1474,7 +1487,10 @@ void CNPC_Combine::AnnounceEnemyKill( CBaseEntity *pEnemy )
 		break;
 	}
 
+
+	if (!IsAperture())
 	m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_HIGH );
+	//else 1337
 }
 
 //-----------------------------------------------------------------------------
@@ -1792,7 +1808,9 @@ int CNPC_Combine::SelectSchedule( void )
 							}
 						}
 
+						if (!IsAperture())
 						m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_NORMAL, SENTENCE_CRITERIA_NORMAL );
+						//else 1337
 
 						// If the sound is approaching danger, I have no enemy, and I don't see it, turn to face.
 						if( !GetEnemy() && pSound->IsSoundType(SOUND_CONTEXT_DANGER_APPROACH) && pSound->m_hOwner && !FInViewCone(pSound->GetSoundReactOrigin()) )
@@ -2058,7 +2076,9 @@ int CNPC_Combine::TranslateSchedule( int scheduleType )
 					HasCondition(COND_CAN_RANGE_ATTACK2)		&&
 					OccupyStrategySlot( SQUAD_SLOT_GRENADE1 ) )
 				{
+					if (!IsAperture())
 					m_Sentences.Speak( "COMBINE_THROW_GRENADE" );
+					//else 1337
 					return SCHED_COMBINE_TOSS_GRENADE_COVER1;
 				}
 				else
@@ -2463,13 +2483,17 @@ void CNPC_Combine::HandleAnimEvent( animevent_t *pEvent )
 					}
 				}			
 
+				if (!IsAperture())
 				m_Sentences.Speak( "COMBINE_KICK" );
+				//else 1337
 				handledEvent = true;
 				break;
 			}
 
 		case COMBINE_AE_CAUGHT_ENEMY:
+			if (!IsAperture())
 			m_Sentences.Speak( "COMBINE_ALERT" );
+			//else 1337
 			handledEvent = true;
 			break;
 
@@ -2556,7 +2580,9 @@ void CNPC_Combine::SpeakSentence( int sentenceType )
 		// If I'm moving more than 20ft, I need to talk about it
 		if ( GetNavigator()->GetPath()->GetPathLength() > 20 * 12.0f )
 		{
+			if (!IsAperture())
 			m_Sentences.Speak( "COMBINE_FLANK" );
+			//else 1337
 		}
 		break;
 	}
@@ -2586,7 +2612,9 @@ void CNPC_Combine::PainSound ( void )
 			pSentenceName = "COMBINE_COVER";
 		}
 
+		if (!IsAperture())
 		m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS );
+		//else 1337
 		m_flNextPainSoundTime = gpGlobals->curtime + 1;
 	}
 }
@@ -2626,7 +2654,9 @@ void CNPC_Combine::LostEnemySound( void)
 //-----------------------------------------------------------------------------
 void CNPC_Combine::FoundEnemySound( void)
 {
+	if (!IsAperture())
 	m_Sentences.Speak( "COMBINE_REFIND_ENEMY", SENTENCE_PRIORITY_HIGH );
+	//else 1337
 }
 
 //-----------------------------------------------------------------------------
@@ -2641,7 +2671,9 @@ void CNPC_Combine::AlertSound( void)
 {
 	if ( gpGlobals->curtime > m_flNextAlertSoundTime )
 	{
+		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_GO_ALERT", SENTENCE_PRIORITY_HIGH );
+		//else 1337
 		m_flNextAlertSoundTime = gpGlobals->curtime + 10.0f;
 	}
 }
@@ -2653,14 +2685,18 @@ void CNPC_Combine::NotifyDeadFriend ( CBaseEntity* pFriend )
 {
 	if ( GetSquad()->NumMembers() < 2 )
 	{
+		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_LAST_OF_SQUAD", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_NORMAL );
+		//else 1337
 		JustMadeSound();
 		return;
 	}
 	// relaxed visibility test so that guys say this more often
 	//if( FInViewCone( pFriend ) && FVisible( pFriend ) )
 	{
+		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_MAN_DOWN" );
+		//else 1337
 	}
 	BaseClass::NotifyDeadFriend(pFriend);
 }
@@ -2674,7 +2710,9 @@ void CNPC_Combine::DeathSound ( void )
 	if ( GetFlags() & FL_DISSOLVING )
 		return;
 
-	m_Sentences.Speak( "COMBINE_DIE", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS );
+	if (!IsAperture())
+		m_Sentences.Speak( "COMBINE_DIE", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS );
+	//else 1337
 }
 
 //=========================================================
