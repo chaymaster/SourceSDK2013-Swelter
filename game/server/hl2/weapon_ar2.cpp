@@ -342,7 +342,7 @@ void CWeaponAR2::DelayedAttack(void)
 
 	pOwner->SnapEyeAngles(angles);
 
-	pOwner->ViewPunch(QAngle(random->RandomInt(-8, -12), random->RandomInt(1, 2), 0));
+	pOwner->ViewPunch(QAngle(random->RandomInt(-6, -10), random->RandomInt(1, 2), 0));
 
 	//Grenade launcher gets unloaded
 	pHL2Player_Owner->AR2_GL_Unload();
@@ -858,7 +858,7 @@ void CWeaponAR2::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharac
 void CWeaponAR2::AddViewKick(void)
 {
 #define	EASY_DAMPEN			0.5f
-#define	MAX_VERTICAL_KICK	20.0f	//Degrees
+#define	MAX_VERTICAL_KICK	10.0f	//Degrees
 #define	SLIDE_LIMIT			5.0f	//Seconds
 
 	//Get the view kick
@@ -926,20 +926,21 @@ void CWeaponAR2::SecondaryEjectSpawn(void)
 	if (pPlayer)
 	{
 		Vector vecForward;
-		AngleVectors(pPlayer->EyeAngles(), &vecForward);
+		AngleVectors(pPlayer->EyeAngles() + pPlayer->GetPunchAngle(), &vecForward);
 
 		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
 
 		if (pEjectProp)
 		{
-			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, 0, 35);
-			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 10, 0);
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, -8, 16);
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
 			pEjectProp->SetAbsOrigin(vecOrigin);
 			pEjectProp->SetAbsAngles(vecAngles);
 			pEjectProp->KeyValue("model", "models/items/combine_rifle_ammo01_off.mdl");
 			pEjectProp->KeyValue("solid", "1");
 			pEjectProp->KeyValue("targetname", "EjectProp");
 			pEjectProp->KeyValue("spawnflags", "260");
+			pEjectProp->SetAbsVelocity(vecForward);
 			DispatchSpawn(pEjectProp);
 			pEjectProp->Activate();
 			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);

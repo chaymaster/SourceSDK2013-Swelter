@@ -18,6 +18,7 @@ STUB_WEAPON_CLASS(env_lasersight, LaserSight, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_binoculars, WeaponBinoculars, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_bugbait, WeaponBugBait, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_bugbait2, WeaponBugBait2, C_BaseHLCombatWeapon);
+STUB_WEAPON_CLASS(weapon_mapcase, WeaponMapcase, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_bugbottle, WeaponBugbottle, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_flaregun, Flaregun, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_annabelle, WeaponAnnabelle, C_BaseHLCombatWeapon);
