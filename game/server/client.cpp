@@ -997,13 +997,13 @@ void CC_Player_BugBaitSwap( void )
 
 			const char *strWeaponName = pWeapon->GetName();
 
-			if ( !Q_stricmp( strWeaponName, "weapon_bugbait" ) )
+			if ( !Q_stricmp( strWeaponName, "weapon_mapcase" ) )
 			{
 				pPlayer->SelectLastItem();
 			}
 			else
 			{
-				pPlayer->SelectItem( "weapon_bugbait" );
+				pPlayer->SelectItem( "weapon_mapcase" );
 			}
 		}
 	}

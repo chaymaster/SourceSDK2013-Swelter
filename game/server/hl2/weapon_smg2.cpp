@@ -474,6 +474,7 @@ void CWeaponSMG2::AddViewKick(void)
 //-----------------------------------------------------------------------------
 void CWeaponSMG2::SecondaryAttack(void)
 {
+	/*
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 
@@ -545,7 +546,8 @@ void CWeaponSMG2::SecondaryAttack(void)
 	pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5);
 
 	m_iSecondaryAttacks++;
-	gamestats->Event_WeaponFired(pPlayer, false, GetClassname());
+	gamestats->Event_WeaponFired(pPlayer, false, GetClassname());*/
+	return;
 }
 
 #define	COMBINE_MIN_GRENADE_CLEAR_DIST 256

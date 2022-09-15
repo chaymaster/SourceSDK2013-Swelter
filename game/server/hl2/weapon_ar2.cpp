@@ -147,7 +147,7 @@ bool CWeaponAR2::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	DisplaySDEHudHint();
+	//DisplaySDEHudHint();
 	SetSkin(0);
 
 	//if (pPlayer)
@@ -932,7 +932,8 @@ void CWeaponAR2::SecondaryEjectSpawn(void)
 
 		if (pEjectProp)
 		{
-			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, -8, 16);
+			// Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, -8, 16);
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + Vector(-16, -48, 16);
 			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
 			pEjectProp->SetAbsOrigin(vecOrigin);
 			pEjectProp->SetAbsAngles(vecAngles);

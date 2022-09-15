@@ -48,7 +48,7 @@ public:
 
 	int		GetMinBurst(void) { return 4; }
 	int		GetMaxBurst(void) { return 5; }
-	float	GetFireRate(void) { return 0.115f; } //{ return 0.13f; } ускорено
+	float	GetFireRate(void) { return 0.1f; } //{ return 0.115f; } { return 0.13f; } все эти вариации - скорострельность у игрока меньше, чем у NPC, потому закомментил
 
 	bool	CanHolster(void);
 	bool	Reload(void);
