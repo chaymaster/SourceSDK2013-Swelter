@@ -577,6 +577,17 @@ void CWeaponShotgun::SecondaryAttack(void)
 	{
 		return;
 	}
+
+	if (m_bBoltRequired && m_iClip1 > 0) // if reloading from the empty magazine, interrupt loading and chamber a round
+	{
+		//SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH);
+		//m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
+		Pump();
+		m_bBoltRequired = false;
+		m_bInReload = false;
+		return;
+	}
+
 	WeaponSound(WPN_DOUBLE);
 
 	m_DoDouble = true;
@@ -630,7 +641,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
-	DisplaySDEHudHint(); //added
+	//DisplaySDEHudHint(); //added
 	if (m_bInReload)
 	{
 		// If I'm primary firing and have one round stop reloading and fire

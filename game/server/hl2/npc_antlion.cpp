@@ -3979,7 +3979,7 @@ bool CNPC_Antlion::ShouldGib( const CTakeDamageInfo &info )
 	if ( info.GetDamageType() & (DMG_ALWAYSGIB|DMG_BLAST) )
 		return true;
 
-	if ( m_iHealth < -20 )
+	if ( m_iHealth <= -10 ) // [HEVcrab] to make 30 hp antlions explode on 357 Magnum hit which deals 40 damage...and close-range shotgun hit, as a side effect 
 		return true;
 	
 	return false;

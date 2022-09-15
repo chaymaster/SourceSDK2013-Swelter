@@ -549,6 +549,7 @@ void CWeaponSMG1::SecondaryAttack(void)
 	m_iSecondaryAttacks++;
 	gamestats->Event_WeaponFired( pPlayer, false, GetClassname() );
 	*/
+	return;
 }
 
 #define	COMBINE_MIN_GRENADE_CLEAR_DIST 256
