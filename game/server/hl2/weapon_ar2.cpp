@@ -27,6 +27,7 @@
 #include "npc_combine.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
+#include "basehlcombatweapon_shared.h" //added for simple alt reloading
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -34,6 +35,7 @@
 ConVar sk_weapon_ar2_alt_fire_radius("sk_weapon_ar2_alt_fire_radius", "10");
 ConVar sk_weapon_ar2_alt_fire_duration("sk_weapon_ar2_alt_fire_duration", "2");
 ConVar sk_weapon_ar2_alt_fire_mass("sk_weapon_ar2_alt_fire_mass", "150");
+extern ConVar    sde_simple_alt_reload;
 
 //=========================================================
 //=========================================================
@@ -299,7 +301,24 @@ void CWeaponAR2::DelayedAttack(void)
 	}*/
 
 	Msg("SDE AR2 reload empty \n");
-	SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if ((pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 1) & (sde_simple_alt_reload.GetInt() == 1))
+	{
+		DisableIronsights();
+		SendWeaponAnim(ACT_VM_SECONDARYATTACK_RELOAD);
+		//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+		//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+		m_bSecondaryEjectPending = true;
+		m_bSecondaryEjectPending2 = true;
+		m_flSecondaryEjectTime = gpGlobals->curtime + 1.5f; //new
+		m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.5f; //new
+	}
+	else
+	{
+		SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+		//m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
+		//m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+	}
 
 	m_bShotDelayed = false;
 
@@ -442,13 +461,68 @@ void CWeaponAR2::PrimaryAttack(void)
 
 void CWeaponAR2::SecondaryAttack(void)
 {
-	if (m_bShotDelayed)
-		return;
-
-	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-	if (pHL2Player->Get_AR2_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
+	if (sde_simple_alt_reload.GetInt() == 0)
 	{
+		if (m_bShotDelayed)
+			return;
+
+		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+		if (pHL2Player->Get_AR2_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
+		{
+			// Cannot fire underwater
+			if (GetOwner() && GetOwner()->GetWaterLevel() == 3)
+			{
+				SendWeaponAnim(ACT_VM_DRYFIRE);
+				BaseClass::WeaponSound(EMPTY);
+				m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+				return;
+			}
+
+			m_bShotDelayed = true;
+			m_flDelayedFire = gpGlobals->curtime + 0.5f;
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.6f;
+
+			SetSkin(0);
+			// m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 2.7f;
+			// m_flNextPrimaryAttack = gpGlobals->curtime + 2.7f; // m_flNextSecondaryAttack is set in DelayedAttack()
+
+			CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+			if (pPlayer)
+			{
+				pPlayer->RumbleEffect(RUMBLE_AR2_ALT_FIRE, 0, RUMBLE_FLAG_RESTART);
+			}
+
+			SendWeaponAnim(ACT_VM_FIDGET);
+			WeaponSound(SPECIAL1);
+
+			m_iSecondaryAttacks++;
+			gamestats->Event_WeaponFired(pPlayer, false, GetClassname());
+		}
+
+		else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
+		{
+			DisableIronsights();
+			SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
+			//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+			//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
+			m_bSecondaryEjectPending = true; //new
+			m_bSecondaryEjectPending2 = true; //new
+			m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
+			m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
+			pHL2Player->AR2_GL_Load();
+			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
+
+			//secondary_ammo_recolor_crutch = true;
+		}
+	}
+	else
+	{
+		if (m_bShotDelayed)
+			return;
+
 		// Cannot fire underwater
 		if (GetOwner() && GetOwner()->GetWaterLevel() == 3)
 		{
@@ -459,12 +533,7 @@ void CWeaponAR2::SecondaryAttack(void)
 		}
 
 		m_bShotDelayed = true;
-		m_flDelayedFire = gpGlobals->curtime + 0.5f;
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.6f;
-
-		SetSkin(0);
-		// m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 2.7f;
-		// m_flNextPrimaryAttack = gpGlobals->curtime + 2.7f; // m_flNextSecondaryAttack is set in DelayedAttack()
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flDelayedFire = gpGlobals->curtime + 0.5f;
 
 		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 		if (pPlayer)
@@ -478,25 +547,6 @@ void CWeaponAR2::SecondaryAttack(void)
 		m_iSecondaryAttacks++;
 		gamestats->Event_WeaponFired(pPlayer, false, GetClassname());
 	}
-
-	else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
-	{
-		DisableIronsights();
-		SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
-		//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
-		//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
-		m_bSecondaryEjectPending = true; //new
-		m_bSecondaryEjectPending2 = true; //new
-		m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
-		m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
-		pHL2Player->AR2_GL_Load();
-		pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
-		//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
-
-		//secondary_ammo_recolor_crutch = true;
-	}
-
 }
 
 /* стандартный код подствола
