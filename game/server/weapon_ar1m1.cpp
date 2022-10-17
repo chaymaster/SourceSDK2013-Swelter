@@ -19,12 +19,13 @@
 #include "gamestats.h"
 #include <player.h>
 #include <hl2_player.h>
-//#include <GrenadeLaunchersLoaded.h>
+#include "basehlcombatweapon_shared.h" //added for simple alt reloading
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
+extern ConVar    sde_simple_alt_reload;
 
 class CWeaponar1m1 : public CHLSelectFireMachineGun
 {
@@ -371,16 +372,116 @@ void CWeaponar1m1::AddViewKick(void)
 //-----------------------------------------------------------------------------
 void CWeaponar1m1::SecondaryAttack(void)
 {
-	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 
-	if (pPlayer == NULL)
-		return;
-
-	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-
-	if (pHL2Player->Get_AR1M1_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
+	if (sde_simple_alt_reload.GetInt() == 0)
 	{
+		// Only the player fires this way so we can cast
+		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+
+		if (pPlayer == NULL)
+			return;
+
+		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
+		if (pHL2Player->Get_AR1M1_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
+		{
+
+			//Must have ammo
+			if ((pPlayer->GetAmmoCount(m_iSecondaryAmmoType) <= 0) || (pPlayer->GetWaterLevel() == 3))
+			{
+				SendWeaponAnim(ACT_VM_DRYFIRE);
+				BaseClass::WeaponSound(EMPTY);
+				m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+				return;
+			}
+
+			if (m_bInReload)
+				m_bInReload = false;
+
+			// MUST call sound before removing a round from the clip of a CMachineGun
+			BaseClass::WeaponSound(WPN_DOUBLE);
+
+			pPlayer->RumbleEffect(RUMBLE_357, 0, RUMBLE_FLAGS_NONE);
+
+			Vector vecSrc = pPlayer->Weapon_ShootPosition();
+			Vector	vecThrow;
+			// Don't autoaim on grenade tosses
+			AngleVectors(pPlayer->EyeAngles() + pPlayer->GetPunchAngle(), &vecThrow);
+			VectorScale(vecThrow, 2000.0f, vecThrow);
+
+			//Create the grenade
+			QAngle angles;
+			VectorAngles(vecThrow, angles);
+			CGrenadeAR2 *pGrenade = (CGrenadeAR2*)Create("grenade_ar2", vecSrc, angles, pPlayer);
+			pGrenade->SetAbsVelocity(vecThrow);
+
+			//pGrenade->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
+			pGrenade->SetLocalAngularVelocity(RandomAngle(-5, 5));
+			pGrenade->SetMoveType(MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE);
+			pGrenade->SetThrower(GetOwner());
+			pGrenade->SetDamage(sk_plr_dmg_smg1_grenade.GetFloat());
+
+			//WeaponSound(RELOAD);
+			CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), 1000, 0.2, GetOwner(), SOUNDENT_CHANNEL_WEAPON);
+
+			// player "shoot" animation
+			//pPlayer->SetAnimation( PLAYER_ATTACK1 );
+
+			//HERE ENABLE ONLY ONE PART OF THE CYCLE WHICH CORRESPONDS TO FALSE BRANCH - HEVcrab
+
+			/*if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 1)
+			{
+
+			DisableIronsights();
+			SendWeaponAnim(ACT_VM_SECONDARYATTACK_RELOAD);
+			m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+			m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+
+			}*/
+			//else
+			//{
+			SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+			m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
+			m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+			//}
+
+
+			// Grenade launcher gets unloaded
+			pHL2Player->AR1M1_GL_Unload();
+			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryDecreasedUnloaded");
+
+			// Can shoot again immediately
+			// Decrease ammo
+			pPlayer->RemoveAmmo(1, m_iSecondaryAmmoType);
+
+			// Register a muzzleflash for the AI.
+			pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5);
+
+			m_iSecondaryAttacks++;
+			gamestats->Event_WeaponFired(pPlayer, false, GetClassname());
+
+		}
+
+		else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
+		{
+			DisableIronsights();
+			SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
+			m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+			m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+			pHL2Player->AR1M1_GL_Load();
+			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
+
+			//secondary_ammo_recolor_crutch = true;
+		}
+	}
+	else
+	{
+		// Only the player fires this way so we can cast
+		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+
+		if (pPlayer == NULL)
+			return;
 
 		//Must have ammo
 		if ((pPlayer->GetAmmoCount(m_iSecondaryAmmoType) <= 0) || (pPlayer->GetWaterLevel() == 3))
@@ -422,53 +523,31 @@ void CWeaponar1m1::SecondaryAttack(void)
 
 		// player "shoot" animation
 		//pPlayer->SetAnimation( PLAYER_ATTACK1 );
-
-		//HERE ENABLE ONLY ONE PART OF THE CYCLE WHICH CORRESPONDS TO FALSE BRANCH - HEVcrab
-
-		/*if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 1)
+		if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 1)
 		{
+			DisableIronsights();
+			SendWeaponAnim(ACT_VM_SECONDARYATTACK_RELOAD);
+			m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+			m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+		}
+		else
+		{
+			SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+			m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
+			m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+		}
 
-		DisableIronsights();
-		SendWeaponAnim(ACT_VM_SECONDARYATTACK_RELOAD);
-		m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
-		m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
-
-		}*/
-		//else
-		//{
-		SendWeaponAnim(ACT_VM_SECONDARYATTACK);
-		m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
-		m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
-		//}
-
-
-		// Grenade launcher gets unloaded
-		pHL2Player->AR1M1_GL_Unload();
-		//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryDecreasedUnloaded");
-
-		// Can shoot again immediately
 		// Decrease ammo
 		pPlayer->RemoveAmmo(1, m_iSecondaryAmmoType);
+
+		// Can shoot again immediately
+
 
 		// Register a muzzleflash for the AI.
 		pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5);
 
 		m_iSecondaryAttacks++;
 		gamestats->Event_WeaponFired(pPlayer, false, GetClassname());
-
-	}
-
-	else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
-	{
-		DisableIronsights();
-		SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
-		m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
-		m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
-		pHL2Player->AR1M1_GL_Load();
-		pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
-		//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
-
-		//secondary_ammo_recolor_crutch = true;
 	}
 
 }

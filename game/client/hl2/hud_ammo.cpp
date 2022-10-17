@@ -16,6 +16,7 @@
 #include <vgui/ISurface.h>
 #include "ihudlcd.h"
 #include <c_basehlplayer.h>
+#include "basehlcombatweapon_shared.h" //added for simple alt reloading
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -68,6 +69,7 @@ CHudAmmo::CHudAmmo( const char *pElementName ) : BaseClass(NULL, "HudAmmo"), CHu
 	hudlcd->SetGlobalStat( "(weapon_print_name)", "" );
 	hudlcd->SetGlobalStat( "(weapon_name)", "" );
 }
+
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -351,6 +353,8 @@ void CHudAmmo::Paint( void )
 	}
 #endif // HL2MP
 }
+//ConVar	sde_simple_alt_reload2("sde_simple_alt_reload2", "0", FCVAR_CLIENTDLL);
+ConVar extern sde_simple_alt_reload;
 
 //-----------------------------------------------------------------------------
 // Purpose: Displays the secondary ammunition level
@@ -393,65 +397,66 @@ public:
 	bool AR1M1_GL_Loaded;
 
 	bool AR2_GL_Loaded;
-
+	
 	void SetAmmo(int ammo, C_BaseHLPlayer *HLPlayer, const char* ActiveWeaponName, bool AR1M1_GL_Loaded, bool AR2_GL_loaded)
 	{
-		/*if (ammo != m_iAmmo)
+		if (sde_simple_alt_reload.GetInt() == 0)
 		{
+			DevMsg("SDE_HUD_simple off\n");
 			if (ammo == 0)
 			{
 				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryEmpty");
 			}
-			else if (ammo < m_iAmmo)
-			{
-				// ammo has decreased
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreased");
-			}
-			else
-			{
-				// ammunition has increased
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreased");
-			}
 
-			m_iAmmo = ammo;
-		}*/
-
-		if (ammo == 0)
-		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryEmpty");
+			if (ammo != m_iAmmo /*|| m_iSMG1_GL_Loaded != SMG1_GL_Loaded*/ || m_bAR1M1_GL_Loaded != AR1M1_GL_Loaded || m_bAR2_GL_loaded != AR2_GL_Loaded) // ammo amount changed or the player reloaded the grenade launcher means we call the animation
+			{
+				if (ammo < m_iAmmo && (/*strcmp(ActiveWeaponName, "weapon_smg1") == 0 ||*/ strcmp(ActiveWeaponName, "weapon_ar1m1") == 0 || strcmp(ActiveWeaponName, "weapon_ar2") == 0))
+				{
+					// ammo has decreased and current weapon is SMG1 or AR1M1 means that its grenade launcher is unloaded
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreasedUnloaded");
+					//engine->ClientCmd("testhudanim AmmoSecondaryDecreasedUnloaded");
+				}
+				else if (ammo < m_iAmmo)
+				{
+					// ammo has decreased
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreased");
+					//engine->ClientCmd("testhudanim AmmoSecondaryDecreased");
+				}
+				else if (/*(SMG1_GL_Loaded == false && (strcmp(ActiveWeaponName, "weapon_smg1") == 0)) ||*/ (AR1M1_GL_Loaded == false && strcmp(ActiveWeaponName, "weapon_ar1m1") == 0) || (AR2_GL_Loaded == false && strcmp(ActiveWeaponName, "weapon_ar2") == 0))
+				{
+					// ammunition has increased but active weapon is SMG1 or AR1M1 and its grenade launcher is unloaded
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreasedUnloaded");
+					//engine->ClientCmd("testhudanim AmmoSecondaryIncreasedUnloaded");
+				}
+				else
+				{
+					// ammunition has increased or grenade launcher has been loaded
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreased");
+					//engine->ClientCmd("testhudanim AmmoSecondaryIncreased");
+				}
+			}
 		}
-
-		if (ammo != m_iAmmo /*|| m_iSMG1_GL_Loaded != SMG1_GL_Loaded*/ || m_bAR1M1_GL_Loaded != AR1M1_GL_Loaded || m_bAR2_GL_loaded != AR2_GL_Loaded) // ammo amount changed or the player reloaded the grenade launcher means we call the animation
+		else
 		{
+			DevMsg("SDE_HUD_simple on\n");
+			if (ammo != m_iAmmo)
+			{
+				if (ammo == 0)
+				{
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryEmptySimple");
+				}
+				else if (ammo < m_iAmmo)
+				{
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreasedSimple");
+				}
+				else
+				{
+					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreasedSimple");
+				}
 
-			if (ammo < m_iAmmo && (/*strcmp(ActiveWeaponName, "weapon_smg1") == 0 ||*/ strcmp(ActiveWeaponName, "weapon_ar1m1") == 0 || strcmp(ActiveWeaponName, "weapon_ar2") == 0))
-			{
-				// ammo has decreased and current weapon is SMG1 or AR1M1 means that its grenade launcher is unloaded
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreasedUnloaded");
-				//engine->ClientCmd("testhudanim AmmoSecondaryDecreasedUnloaded");
+				m_iAmmo = ammo;
 			}
-			else if (ammo < m_iAmmo)
-			{
-				// ammo has decreased
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryDecreased");
-				//engine->ClientCmd("testhudanim AmmoSecondaryDecreased");
-			}
-			else if (/*(SMG1_GL_Loaded == false && (strcmp(ActiveWeaponName, "weapon_smg1") == 0)) ||*/ (AR1M1_GL_Loaded == false && strcmp(ActiveWeaponName, "weapon_ar1m1") == 0) || (AR2_GL_Loaded == false && strcmp(ActiveWeaponName, "weapon_ar2") == 0))
-			{
-				// ammunition has increased but active weapon is SMG1 or AR1M1 and its grenade launcher is unloaded
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreasedUnloaded");
-				//engine->ClientCmd("testhudanim AmmoSecondaryIncreasedUnloaded");
-			}
-			else
-			{
-				// ammunition has increased or grenade launcher has been loaded
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoSecondaryIncreased");
-				//engine->ClientCmd("testhudanim AmmoSecondaryIncreased");
-			}
-
 		}
-
-		//}
 
 		if (m_iAmmo != ammo)
 		{
@@ -546,11 +551,17 @@ protected:
 
 				if (/*(SMG1_GL_Loaded == false && (strcmp(ActiveWeaponName, "weapon_smg1") == 0)) ||*/ (AR1M1_GL_Loaded == false && strcmp(ActiveWeaponName, "weapon_ar1m1") == 0) || (AR2_GL_Loaded == false && strcmp(ActiveWeaponName, "weapon_ar2") == 0))
 				{
-					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmoUnloaded");
+					if (sde_simple_alt_reload.GetInt() == 0)
+						g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmoUnloaded");
+					else
+						g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmoSimple");
 				}
 				else
 				{
-					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmo");
+					if (sde_simple_alt_reload.GetInt() == 0)
+						g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmo");
+					else
+						g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponUsesSecondaryAmmoSimple");
 				}
 
 			}
