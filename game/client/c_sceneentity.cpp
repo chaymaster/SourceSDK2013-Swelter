@@ -664,7 +664,7 @@ void C_SceneEntity::DispatchStartSpeak( CChoreoScene *scene, C_BaseFlex *actor, 
 
 		EmitSound_t es;
 		es.m_nChannel = CHAN_VOICE;
-		es.m_flVolume = 1;
+		es.m_flVolume = 2;
 		es.m_SoundLevel = iSoundlevel;
 		es.m_flSoundTime = soundtime;
 

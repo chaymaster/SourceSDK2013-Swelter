@@ -275,7 +275,7 @@ bool CWeaponSOS::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	DisplaySDEHudHint();
+	// DisplaySDEHudHint();
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------
