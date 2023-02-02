@@ -360,8 +360,8 @@ void CWeaponStunStick::ItemPostFrame(void)
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
 	if ((GetActivity() == ACT_VM_HOLSTER) || (GetActivity() == ACT_VM_DRAW)) //new, to prevent melee attack when carrying a physics prop
-		// m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f; //new
-		m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration(); //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 0.06125f; //new
+	//	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration(); //new
 
 	SetStunState(true);
 
