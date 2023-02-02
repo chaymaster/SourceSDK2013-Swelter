@@ -149,7 +149,7 @@ bool CWeaponAR2::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	//DisplaySDEHudHint();
+	DisplaySDEHudHint();
 	SetSkin(0);
 
 	//if (pPlayer)
