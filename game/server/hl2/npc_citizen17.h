@@ -202,7 +202,7 @@ public:
 	float 			GetNextScannerInspectTime() { return m_fNextInspectTime; }
 	void			SetNextScannerInspectTime( float flTime ) { m_fNextInspectTime = flTime; }
 	bool			HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt);
-	
+	//WeaponProficiency_t CalcWeaponProficiency(CBaseCombatWeapon *pWeapon); // Added by 1upD - Citizen proficiency should be configurable !!!!cole line from EZ2	
 	//---------------------------------
 	// Hints
 	//---------------------------------

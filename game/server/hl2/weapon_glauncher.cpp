@@ -40,6 +40,7 @@ public:
 	void	SecondaryAttack( void );
 	void	ItemPostFrame( void );
 	void	SetSkin(int skinNum);
+	void	ShellEject(void);
 	bool Deploy(void);
 
 	int		GetMinBurst() { return 2; }
@@ -80,6 +81,9 @@ protected:
 
 	Vector	m_vecTossVelocity;
 	float	m_flNextGrenadeCheck;
+
+	float	m_flShellEjectTime; //new
+	bool	m_bShellEjectPending; //new
 };
 
 IMPLEMENT_SERVERCLASS_ST(CWeaponGlauncher, DT_WeaponGlauncher)
@@ -92,6 +96,8 @@ BEGIN_DATADESC( CWeaponGlauncher )
 
 	DEFINE_FIELD( m_vecTossVelocity, FIELD_VECTOR ),
 	DEFINE_FIELD( m_flNextGrenadeCheck, FIELD_TIME ),
+	DEFINE_FIELD(m_flShellEjectTime, FIELD_TIME), //new
+	DEFINE_FIELD(m_bShellEjectPending, FIELD_BOOLEAN), //new
 
 END_DATADESC()
 
@@ -164,6 +170,7 @@ CWeaponGlauncher::CWeaponGlauncher( )
 void CWeaponGlauncher::Precache( void )
 {
 	UTIL_PrecacheOther("grenade_ar2");
+	PrecacheModel("models/items/ar3_grenade_shell.mdl");
 
 	BaseClass::Precache();
 }
@@ -260,6 +267,11 @@ void CWeaponGlauncher::ItemPostFrame(void)
 
 	}
 
+	if (m_bShellEjectPending && gpGlobals->curtime > m_flShellEjectTime) //new
+	{
+		ShellEject();
+	}
+
 	BaseClass::ItemPostFrame();
 }
 //-----------------------------------------------------------------------------
@@ -353,6 +365,8 @@ bool CWeaponGlauncher::Reload(void)
 		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 		if (pPlayer)
 		{
+			m_bShellEjectPending = true; //new
+			m_flShellEjectTime = gpGlobals->curtime + 1.2f; //new
 			if (m_iClip1 < 1)
 			{
 				Msg("SDE_R+ \n");
@@ -659,5 +673,40 @@ CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	{
 		m_iPrimaryAttacks++;
 		gamestats->Event_WeaponFired(pOwner, true, GetClassname());
+	}
+}
+
+
+void CWeaponGlauncher::ShellEject(void)
+{
+	m_bShellEjectPending = false;
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		Vector SpawnHeight(0, 0, 36); // высота спауна гильзы
+		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
+		Vector vecForward, vecRight, vecUp;
+		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
+		Vector vecEject = SpawnHeight + 10 * vecRight - 10 * vecUp;
+
+		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
+
+		if (pEjectProp)
+		{
+			// Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, -8, 16);
+			// Vector vecOrigin = pPlayer->GetAbsOrigin() + Vector(-16, -8, 16);
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecEject;
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
+			pEjectProp->SetAbsOrigin(vecOrigin);
+			pEjectProp->SetAbsAngles(vecAngles);
+			pEjectProp->KeyValue("model", "models/items/ar3_grenade_shell.mdl");
+			pEjectProp->KeyValue("solid", "1");
+			pEjectProp->KeyValue("targetname", "EjectProp");
+			pEjectProp->KeyValue("spawnflags", "260");
+			pEjectProp->SetAbsVelocity(vecForward);
+			DispatchSpawn(pEjectProp);
+			pEjectProp->Activate();
+			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+		}
 	}
 }

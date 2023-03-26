@@ -975,15 +975,19 @@ void CWeaponAR2::SecondaryEjectSpawn(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 	{
-		Vector vecForward;
-		AngleVectors(pPlayer->EyeAngles() + pPlayer->GetPunchAngle(), &vecForward);
+		Vector SpawnHeight(0, 0, 36); // высота спауна энергосферного контейнера
+		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
+		Vector vecForward, vecRight, vecUp;
+		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
+		Vector vecEject = SpawnHeight + 10 * vecForward + 30 * vecRight;
 
 		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
 
 		if (pEjectProp)
 		{
 			// Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 32 + Vector(0, -8, 16);
-			Vector vecOrigin = pPlayer->GetAbsOrigin() + Vector(-16, -48, 16);
+			// Vector vecOrigin = pPlayer->GetAbsOrigin() + Vector(-16, -48, 16);
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecEject;
 			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
 			pEjectProp->SetAbsOrigin(vecOrigin);
 			pEjectProp->SetAbsAngles(vecAngles);

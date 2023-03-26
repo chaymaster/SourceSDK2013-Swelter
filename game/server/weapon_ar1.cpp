@@ -367,6 +367,7 @@ void CWeaponar1::AddViewKick(void)
 //-----------------------------------------------------------------------------
 void CWeaponar1::SecondaryAttack(void)
 {
+	/*
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 
@@ -428,6 +429,8 @@ void CWeaponar1::SecondaryAttack(void)
 
 	m_iSecondaryAttacks++;
 	gamestats->Event_WeaponFired(pPlayer, false, GetClassname());
+	*/
+	return;
 }
 
 

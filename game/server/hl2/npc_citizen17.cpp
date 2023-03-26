@@ -69,7 +69,7 @@ ConVar	npc_citizen_squad_marker( "npc_citizen_squad_marker", "0" );
 ConVar	npc_citizen_explosive_resist( "npc_citizen_explosive_resist", "0" );
 ConVar	npc_citizen_auto_player_squad( "npc_citizen_auto_player_squad", "1" );
 ConVar	npc_citizen_auto_player_squad_allow_use( "npc_citizen_auto_player_squad_allow_use", "0" );
-
+ConVar  sde_citizen_gun_skill_level("sde_citizen_gun_skill_level", "2"); //EZ2 code copypaste
 
 ConVar	npc_citizen_dont_precache_all( "npc_citizen_dont_precache_all", "0" );
 
@@ -3861,6 +3861,40 @@ bool CNPC_Citizen::UseSemaphore( void )
 
 	return BaseClass::UseSemaphore();
 }
+
+
+//next based on EZ2 code/
+//------------------------------------------------------------------------------
+// Added by 1upD. Citizen weapon proficiency should be configurable
+//------------------------------------------------------------------------------
+/* HIDED FOR NEXT PROJECTS
+WeaponProficiency_t CNPC_Citizen::CalcWeaponProficiency(CBaseCombatWeapon *pWeapon)
+{
+	int proficiency;
+	proficiency = sde_citizen_gun_skill_level.GetInt();
+	// Clamp the upper range of the ConVar to "perfect"
+	// Could also cast the int to the enum if you're feeling dangerous
+	if (proficiency > 4) {
+		return WEAPON_PROFICIENCY_PERFECT;
+	}
+	Msg("SDE citizen gun skill:		%i \n", proficiency);
+	// Switch values to enum. You could cast the int to the enum here,
+	// but I'm not sure how 'safe' that is since the enum values are
+	// not explicity defined. This also clamps the range.
+	switch (proficiency) {
+	case 4:
+		return WEAPON_PROFICIENCY_PERFECT;
+	case 3:
+		return WEAPON_PROFICIENCY_VERY_GOOD;
+	case 2:
+		return WEAPON_PROFICIENCY_GOOD;
+	case 1:
+		return WEAPON_PROFICIENCY_AVERAGE;
+	default:
+		return WEAPON_PROFICIENCY_POOR;
+	}
+}
+*/
 
 //-----------------------------------------------------------------------------
 //
