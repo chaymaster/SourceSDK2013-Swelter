@@ -65,9 +65,11 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	m_ccLang = new ComboBox(this, "ccLang", 6, false);
 	m_ccLang->AddItem("#pht_option_lang_english", NULL);
 	m_ccLang->AddItem("#pht_option_lang_russian", NULL);
-	m_ccLang->AddItem("#pht_option_lang_german", NULL);
-	m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
-	
+	//m_ccLang->AddItem("#pht_option_lang_german", NULL);
+	//m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
+
+
+	/*
 	if (printf("%s", var3.GetString()) == printf("english"))
 		m_ccLang->ActivateItem(0);
 	else if (printf("%s", var3.GetString()) == printf("russian"))
@@ -76,6 +78,21 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		m_ccLang->ActivateItem(2);
 	else if (printf("%s", var3.GetString()) == printf("schinese"))
 		m_ccLang->ActivateItem(3);
+	*/
+
+
+
+	if (FStrEq(var3.GetString(), "english"))
+		m_ccLang->ActivateItem(0);
+	else if (FStrEq(var3.GetString(), "russian"))
+		m_ccLang->ActivateItem(1);
+	else if (FStrEq(var3.GetString(), "german"))
+		m_ccLang->ActivateItem(2);
+	else if (FStrEq(var3.GetString(), "schinese"))
+		m_ccLang->ActivateItem(3);
+
+
+
 
 
 
