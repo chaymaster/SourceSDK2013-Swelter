@@ -707,6 +707,7 @@ void CWeaponGlauncher::ShellEject(void)
 			DispatchSpawn(pEjectProp);
 			pEjectProp->Activate();
 			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(30, false);
 		}
 	}
 }

@@ -165,12 +165,12 @@ void CBaseHLBludgeonWeapon::Hit( trace_t &traceHit, Activity nHitActivity, bool 
 		{
 			if((printf("%s", GetClassname()) == printf("weapon_kulak2")))
 			{
-				Msg("\n SDE_ETO_KULAK \n");
+				DevMsg("\n SDE_ETO_KULAK \n");
 				CTakeDamageInfo info(GetOwner(), GetOwner(), GetDamageForActivity(nHitActivity), DMG_SLASH);
 			}
 			else
 			{
-				Msg("\n SDE_ETO_NE_KULAK \n");
+				DevMsg("\n SDE_ETO_NE_KULAK \n");
 				CTakeDamageInfo info( GetOwner(), GetOwner(), GetDamageForActivity( nHitActivity ), DMG_CLUB );
 			}
 		}
