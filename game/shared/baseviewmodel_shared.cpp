@@ -95,12 +95,12 @@ void CBaseViewModel::CalcIronsights(Vector &pos, QAngle &ang)
 			//Msg("SDE_ADJUST 3 %f \n", ViewModelFov);
 			if (ViewModelFov == 62)
 			{
-				Msg("SDE_ADJUST	62	fov: %f	coefficent: %f\n", ViewModelFov, fovCoeff62);
+				DevMsg("SDE_ADJUST	62	fov: %f	coefficent: %f\n", ViewModelFov, fovCoeff62);
 				fovCoeff = -15;
 			}
 			else if (ViewModelFov == 70)
 			{
-				Msg("SDE_ADJUST	70	fov: %f	coefficent: %f\n", ViewModelFov, fovCoeff70);
+				DevMsg("SDE_ADJUST	70	fov: %f	coefficent: %f\n", ViewModelFov, fovCoeff70);
 				fovCoeff = -21;
 			}
 		}

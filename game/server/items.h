@@ -18,7 +18,7 @@
 
 
 // Armor given by a battery
-#define MAX_NORMAL_BATTERY	100
+#define MAX_NORMAL_BATTERY	15
 
 // Ammo counts given by ammo items
 #define SIZE_AMMO_PISTOL			20
@@ -26,6 +26,7 @@
 #define SIZE_AMMO_SMG1				50
 #define SIZE_AMMO_SMG1_LARGE		225
 #define SIZE_AMMO_AR1				30
+#define SIZE_AMMO_AR1_LARGE			60
 #define SIZE_AMMO_AR2				30
 #define SIZE_AMMO_AR2_LARGE			100
 #define SIZE_AMMO_RPG_ROUND			1
