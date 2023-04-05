@@ -57,6 +57,10 @@ public:
 	int		WeaponRangeAttack2Condition(float flDot, float flDist);
 	Activity	GetPrimaryAttackActivity(void);
 
+	bool shouldDropMag; //drop mag
+	float dropMagTime; //drop mag
+	void DropMag(void); //drop mag
+
 	virtual const Vector& GetBulletSpread(void)
 	{
 		{
@@ -171,7 +175,7 @@ CWeaponar1m1::CWeaponar1m1()
 void CWeaponar1m1::Precache(void)
 {
 	UTIL_PrecacheOther("grenade_ar2");
-
+	PrecacheModel("models/items/empty_mag_ak.mdl");
 	BaseClass::Precache();
 }
 
@@ -199,6 +203,7 @@ bool CWeaponar1m1::Deploy(void)
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
+	shouldDropMag = false;
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------
@@ -328,6 +333,8 @@ bool CWeaponar1m1::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
+				shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -339,6 +346,8 @@ bool CWeaponar1m1::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
+				shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -575,6 +584,10 @@ void CWeaponar1m1::ItemPostFrame(void)
 	// Allow  Ironsight
 	HoldIronsight();
 
+	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
+	{
+		DropMag();
+	}
 
 	BaseClass::ItemPostFrame();
 }
@@ -787,4 +800,37 @@ void CWeaponar1m1::PrimaryAttack(void)
 
 	// Register a muzzleflash for the AI
 	pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5);
+}
+
+void CWeaponar1m1::DropMag(void) //drop mag
+{
+	shouldDropMag = false;
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		Vector SpawnHeight(0, 0, 50); // высота спауна энергосферного контейнера
+		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
+		Vector vecForward, vecRight, vecUp;
+		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
+		Vector vecEject = SpawnHeight + 10 * vecRight - 20 * vecUp;
+
+		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
+
+		if (pEjectProp)
+		{
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecEject;
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
+			pEjectProp->SetAbsOrigin(vecOrigin);
+			pEjectProp->SetAbsAngles(vecAngles);
+			pEjectProp->KeyValue("model", "models/items/empty_mag_ak.mdl");
+			pEjectProp->KeyValue("solid", "1");
+			pEjectProp->KeyValue("targetname", "EjectProp");
+			pEjectProp->KeyValue("spawnflags", "516");
+			pEjectProp->SetAbsVelocity(vecForward);
+			DispatchSpawn(pEjectProp);
+			pEjectProp->Activate();
+			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(30, false);
+		}
+	}
 }

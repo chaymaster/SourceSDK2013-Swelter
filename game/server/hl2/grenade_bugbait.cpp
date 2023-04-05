@@ -14,6 +14,7 @@
 #include "entitylist.h"
 #include "antlion_maker.h"
 #include "eventqueue.h"
+#include "gib.h"
 
 #ifdef PORTAL
 	#include "portal_util_shared.h"
@@ -130,6 +131,10 @@ void CGrenadeBugBait::Precache( void )
 
 	PrecacheScriptSound( "GrenadeBugBait.Splat" );
 
+	PrecacheModel("models/props_se/bottle_beer_gib1.mdl");
+	PrecacheModel("models/props_se/bottle_beer_gib2.mdl");
+	PrecacheModel("models/props_se/bottle_beer_gib3.mdl");
+
 	BaseClass::Precache();
 }
 
@@ -203,6 +208,7 @@ void CGrenadeBugBait::BugBaitTouch( CBaseEntity *pOther )
 	Vector vecForward;
 	AngleVectors(this->EyeAngles(), &vecForward);
 
+	/* old gib spawner 
 	CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics");
 	CBaseEntity *pEjectProp2 = (CBaseEntity *)CreateEntityByName("prop_physics");
 	CBaseEntity *pEjectProp3 = (CBaseEntity *)CreateEntityByName("prop_physics");
@@ -249,6 +255,12 @@ void CGrenadeBugBait::BugBaitTouch( CBaseEntity *pOther )
 		pEjectProp3->Activate();
 		pEjectProp3->Teleport(&vecOrigin, &vecAngles, NULL);
 	}
+	*/
+
+	//new correct gib spawner 
+	CGib::SpawnSpecificGibs(this, 1, 50, 25, "models/props_se/bottle_beer_gib1.mdl");
+	CGib::SpawnSpecificGibs(this, 1, 50, 25, "models/props_se/bottle_beer_gib2.mdl");
+	CGib::SpawnSpecificGibs(this, 1, 50, 25, "models/props_se/bottle_beer_gib3.mdl");
 
 	//Go away
 	UTIL_Remove( this );

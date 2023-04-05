@@ -619,7 +619,7 @@ LINK_ENTITY_TO_CLASS(item_ammo_alyxgun, CItem_AlyxGun);
 // ======================================================================== 
 // >> AR1 Ammo 
 // ======================================================================== 
-#define SIZE_AMMO_AR1 30
+
 
 class CItem_AR1 : public CItem
 {
@@ -638,7 +638,7 @@ public:
 	}
 	bool MyTouch(CBasePlayer *pPlayer)
 	{
-		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_AR1, "AR1"))
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_AR1_LARGE, "AR1"))
 		{
 			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
 			{
@@ -651,6 +651,37 @@ public:
 };
 LINK_ENTITY_TO_CLASS(item_box_ar1, CItem_AR1);
 LINK_ENTITY_TO_CLASS(item_ammo_ar1, CItem_AR1);
+
+class CItem_AR1_clip : public CItem
+{
+public:
+	DECLARE_CLASS(CItem_AR1_clip, CItem);
+
+	void Spawn(void)
+	{
+		Precache();
+		SetModel("models/items/box_ak_clip.mdl");
+		BaseClass::Spawn();
+	}
+	void Precache(void)
+	{
+		PrecacheModel("models/items/box_ak_clip.mdl");
+	}
+	bool MyTouch(CBasePlayer *pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_AR1, "AR1"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_ar1_clip, CItem_AR1_clip);
+
 // ======================================================================== 
 // >> Flaregun Ammo 
 // ======================================================================== 

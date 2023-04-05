@@ -53,6 +53,9 @@ public:
 	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
 	int		WeaponRangeAttack2Condition(float flDot, float flDist);
 	Activity	GetPrimaryAttackActivity(void);
+	bool shouldDropMag; //drop mag
+	float dropMagTime; //drop mag
+	void DropMag(void); //drop mag
 
 	virtual const Vector& GetBulletSpread(void)
 	{
@@ -165,7 +168,7 @@ CWeaponSMG1::CWeaponSMG1()
 void CWeaponSMG1::Precache(void)
 {
 	UTIL_PrecacheOther("grenade_ar2");
-
+	PrecacheModel("models/items/empty_mag_mp7.mdl");
 	BaseClass::Precache();
 }
 
@@ -193,6 +196,7 @@ bool CWeaponSMG1::Deploy(void)
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
+	shouldDropMag = false;
 	return BaseClass::Deploy();
 }
 
@@ -245,6 +249,12 @@ void CWeaponSMG1::ItemPostFrame(void)
 		m_nShotsFired = 0;
 	}
 
+	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
+	{
+		DropMag();
+	}
+
+	/* тут закоменчен дальноер из SDE
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (!pPlayer)
 		return;
@@ -252,6 +262,7 @@ void CWeaponSMG1::ItemPostFrame(void)
 	{
 		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
+		
 		// подготавливаем вектора и трасировщики
 		trace_t tr;
 		Vector	vecStart, vecStop, vecDir;
@@ -311,11 +322,9 @@ void CWeaponSMG1::ItemPostFrame(void)
 				SetSkin(9);
 			}
 		}
-
-
-
+		
 	}
-
+	*/
 	BaseClass::ItemPostFrame();
 }
 //-----------------------------------------------------------------------------
@@ -430,6 +439,8 @@ bool CWeaponSMG1::Reload(void)
 				{
 					WeaponSound(RELOAD);
 					m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+					dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
+					shouldDropMag = true; //drop mag
 				}
 				return fRet;
 			}
@@ -441,6 +452,8 @@ bool CWeaponSMG1::Reload(void)
 				{
 					WeaponSound(RELOAD);
 					m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+					dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
+					shouldDropMag = true; //drop mag
 				}
 				return fRet;
 			}
@@ -778,5 +791,38 @@ void CWeaponSMG1::HoldIronsight(void)
 	{
 		DisableIronsights();
 		pPlayer->ShowCrosshair(true);
+	}
+}
+
+void CWeaponSMG1::DropMag(void) //drop mag
+{
+	shouldDropMag = false;
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		Vector SpawnHeight(0, 0, 50); // высота спауна энергосферного контейнера
+		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
+		Vector vecForward, vecRight, vecUp;
+		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
+		Vector vecEject = SpawnHeight + 10 * vecRight - 10 * vecUp;
+
+		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
+
+		if (pEjectProp)
+		{
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecEject;
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
+			pEjectProp->SetAbsOrigin(vecOrigin);
+			pEjectProp->SetAbsAngles(vecAngles);
+			pEjectProp->KeyValue("model", "models/items/empty_mag_mp7.mdl");
+			pEjectProp->KeyValue("solid", "1");
+			pEjectProp->KeyValue("targetname", "EjectProp");
+			pEjectProp->KeyValue("spawnflags", "516");
+			pEjectProp->SetAbsVelocity(vecForward);
+			DispatchSpawn(pEjectProp);
+			pEjectProp->Activate();
+			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(15, false);
+		}
 	}
 }

@@ -2077,6 +2077,7 @@ bool CHL2_Player::ApplyBattery(float powerMultiplier)
 			DispatchSpawn(pEjectProp);
 			pEjectProp->Activate();
 			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(30, false);
 		}
 
 		return true;

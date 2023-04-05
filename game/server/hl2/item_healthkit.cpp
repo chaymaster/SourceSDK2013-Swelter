@@ -102,6 +102,7 @@ bool CHealthKit::MyTouch( CBasePlayer *pPlayer )
 			DispatchSpawn(pEjectProp);
 			pEjectProp->Activate();
 			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(30, false);
 		}
 
 
@@ -186,6 +187,7 @@ public:
 				DispatchSpawn(pEjectProp);
 				pEjectProp->Activate();
 				pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+				pEjectProp->SUB_StartFadeOut(30, false);
 			}
 
 			return true;
@@ -261,6 +263,7 @@ public:
 				DispatchSpawn(pEjectProp);
 				pEjectProp->Activate();
 				pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+				pEjectProp->SUB_StartFadeOut(30, false);
 			}
 
 			return true;

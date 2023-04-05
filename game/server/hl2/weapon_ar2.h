@@ -53,6 +53,10 @@ public:
 	bool	CanHolster(void);
 	bool	Reload(void);
 
+	bool shouldDropMag; //drop mag
+	float dropMagTime; //drop mag
+	void DropMag(void); //drop mag
+
 	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
 
 	Activity	GetPrimaryAttackActivity(void);

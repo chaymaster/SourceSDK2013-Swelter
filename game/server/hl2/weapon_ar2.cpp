@@ -138,6 +138,7 @@ void CWeaponAR2::Precache(void)
 	UTIL_PrecacheOther("prop_combine_ball");
 	UTIL_PrecacheOther("env_entity_dissolver");
 	PrecacheModel("models/items/combine_rifle_ammo01_off.mdl");
+	PrecacheModel("models/items/empty_mag_ar2.mdl");
 }
 
 //-----------------------------------------------------------------------------
@@ -151,7 +152,7 @@ bool CWeaponAR2::Deploy(void)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
 	SetSkin(0);
-
+	shouldDropMag = false; //drop mag
 	//if (pPlayer)
 	//{
 	//	CBaseViewModel *pVM = pPlayer->GetViewModel();
@@ -190,6 +191,10 @@ void CWeaponAR2::ItemPostFrame(void)
 		SecondaryEjectSpawn();
 	}
 
+	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
+	{
+		DropMag();
+	}
 
 	// Update our pose parameter for the vents
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
@@ -735,6 +740,8 @@ bool CWeaponAR2::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
+				shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -745,6 +752,8 @@ bool CWeaponAR2::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
+				shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -999,6 +1008,40 @@ void CWeaponAR2::SecondaryEjectSpawn(void)
 			DispatchSpawn(pEjectProp);
 			pEjectProp->Activate();
 			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(30, false);
+		}
+	}
+}
+
+void CWeaponAR2::DropMag(void) //drop mag
+{
+	shouldDropMag = false;
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		Vector SpawnHeight(0, 0, 20); // высота спауна энергосферного контейнера
+		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
+		Vector vecForward, vecRight, vecUp;
+		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
+		Vector vecEject = SpawnHeight + 10 * vecRight - 20 * vecUp;
+
+		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
+
+		if (pEjectProp)
+		{
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecEject;
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
+			pEjectProp->SetAbsOrigin(vecOrigin);
+			pEjectProp->SetAbsAngles(vecAngles);
+			pEjectProp->KeyValue("model", "models/items/empty_mag_ar2.mdl");
+			pEjectProp->KeyValue("solid", "1");
+			pEjectProp->KeyValue("targetname", "EjectProp");
+			pEjectProp->KeyValue("spawnflags", "260");
+			pEjectProp->SetAbsVelocity(vecForward);
+			DispatchSpawn(pEjectProp);
+			pEjectProp->Activate();
+			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(15, false);
 		}
 	}
 }
