@@ -1239,7 +1239,8 @@ void CHL2_Player::StopSprinting(void)
 	}
 	else
 	{
-		SetMaxSpeed(HL2_WALK_SPEED);
+		//SetMaxSpeed(HL2_WALK_SPEED);
+		SetMaxSpeed(HL2_NORM_SPEED); //we always need normalspeed
 	}
 
 	m_fIsSprinting = false;
@@ -2028,7 +2029,12 @@ ConVar	sk_battery("sk_battery", "15");
 bool CHL2_Player::ApplyBattery(float powerMultiplier)
 {
 	const float MAX_NORMAL_BATTERY = 100;
-	if ((ArmorValue() < MAX_NORMAL_BATTERY) && IsSuitEquipped())
+	if (GetVehicle() != NULL)
+	{
+		Msg("SDE: cant pick up battery coz you in a car \n");  //added vehicle check
+		return false;
+	}
+	if ((ArmorValue() < MAX_NORMAL_BATTERY) && IsSuitEquipped() && (GetVehicle() == NULL)) //added vehicle check
 	{
 		int pct;
 		char szcharge[64];
@@ -2658,6 +2664,11 @@ bool CHL2_Player::ShouldKeepLockedAutoaimTarget(EHANDLE hLockedTarget)
 //-----------------------------------------------------------------------------
 int CHL2_Player::GiveAmmo(int nCount, int nAmmoIndex, bool bSuppressSound)
 {
+	if (GetVehicle() != NULL)
+	{
+		Msg("SDE: cant pick up ammo coz you in a car \n");  //added vehicle check
+		return 0;
+	}
 	// Don't try to give the player invalid ammo indices.
 	if (nAmmoIndex < 0)
 		return 0;

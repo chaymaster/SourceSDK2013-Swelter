@@ -330,7 +330,7 @@ void CWeaponPistol::ItemBusyFrame(void)
 void CWeaponPistol::ItemPostFrame(void)
 {
 
-	//HoldIronsight();
+	HoldIronsight();
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 	
@@ -383,6 +383,7 @@ bool CWeaponPistol::Reload(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 	{
+		pPlayer->ShowCrosshair(true);  // show crosshair to fix crosshair for reloading weapons in toggle ironsight
 		if (m_iClip1 < 1)
 		{
 			//Msg("SDE_R+ \n");

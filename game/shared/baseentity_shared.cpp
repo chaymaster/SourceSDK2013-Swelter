@@ -2175,10 +2175,22 @@ void CBaseEntity::ComputeTracerStartPosition( const Vector &vecShotSrc, Vector *
 	if ( IsPlayer() )
 	{
 		// adjust tracer position for player
-		Vector forward, right;
+		Vector forward, right, up;
 		CBasePlayer *pPlayer = ToBasePlayer( this );
-		pPlayer->EyeVectors( &forward, &right, NULL );
-		*pVecTracerStart = vecShotSrc + Vector ( 0 , 0 , -4 ) + right * 2 + forward * 16;
+		pPlayer->EyeVectors( &forward, &right, &up ); //pPlayer->EyeVectors( &forward, &right, NULL );
+		
+		CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
+		if ( pWeapon->IsIronsighted())
+		{
+			*pVecTracerStart = vecShotSrc + Vector(0, 0, 0) + right * 0 + forward * 0 + up * -16;
+			DevMsg("SDE: trace test: ironsight on\n");
+		}
+		else
+		{
+			*pVecTracerStart = vecShotSrc + Vector(0, 0, -4) + right * 2 + forward * 16;
+			DevMsg("SDE: trace test: not ironsight\n");
+		}
+		
 	}
 	else
 	{
