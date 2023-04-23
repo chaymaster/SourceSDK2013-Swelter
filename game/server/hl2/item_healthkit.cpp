@@ -72,6 +72,11 @@ void CHealthKit::Precache( void )
 //-----------------------------------------------------------------------------
 bool CHealthKit::MyTouch( CBasePlayer *pPlayer )
 {
+	if (pPlayer->GetVehicle() != NULL)
+	{
+		Msg("SDE: cant pick up healthkit coz you in a car \n");  //added vehicle check
+		return false;
+	}
 	if ( pPlayer->TakeHealth( sk_healthkit.GetFloat(), DMG_GENERIC ) )
 	{
 		CSingleUserRecipientFilter user( pPlayer );
@@ -147,6 +152,11 @@ public:
 
 	bool MyTouch( CBasePlayer *pPlayer )
 	{
+		if (pPlayer->GetVehicle() != NULL)
+		{
+			Msg("SDE: cant pick up healthvial coz you in a car \n");  //added vehicle check
+			return false;
+		}
 		if ( pPlayer->TakeHealth( sk_healthvial.GetFloat(), DMG_GENERIC ) )
 		{
 			CSingleUserRecipientFilter user( pPlayer );
@@ -223,6 +233,11 @@ public:
 
 	bool MyTouch(CBasePlayer *pPlayer)
 	{
+		if (pPlayer->GetVehicle() != NULL)
+		{
+			Msg("SDE: cant pick up healthvial coz you in a car \n");  //added vehicle check
+			return false;
+		}
 		if (pPlayer->TakeHealth(sk_healthvial.GetFloat(), DMG_GENERIC))
 		{
 			CSingleUserRecipientFilter user(pPlayer);

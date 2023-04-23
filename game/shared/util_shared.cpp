@@ -754,7 +754,6 @@ void UTIL_Tracer( const Vector &vecStart, const Vector &vecEnd, int iEntIndex,
 	{
 		data.m_fFlags |= TRACER_FLAG_WHIZ;
 	}
-
 	if ( iAttachment != TRACER_DONT_USE_ATTACHMENT )
 	{
 		data.m_fFlags |= TRACER_FLAG_USEATTACHMENT;

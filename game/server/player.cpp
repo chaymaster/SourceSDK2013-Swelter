@@ -6284,7 +6284,8 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveAmmo(32, "357" );
 		GiveAmmo(32, "356" );
 		GiveAmmo(16, "XBowBolt" );
-		GiveAmmo(3, "bugbottle" );	
+		GiveAmmo(3, "bugbottle" );
+		GiveAmmo(5, "FlareRound"); 
 		GiveNamedItem( "weapon_smg1" );
 		GiveNamedItem( "weapon_smg2" );
 		GiveNamedItem( "weapon_frag" );
@@ -6299,11 +6300,17 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_356" );
 		GiveNamedItem( "weapon_357" );
 		GiveNamedItem( "weapon_ar1m1" );
+		GiveNamedItem( "weapon_ar1" );
 		GiveNamedItem( "weapon_annabelle" );
 		GiveNamedItem( "weapon_bugbottle" );
 		GiveNamedItem( "weapon_glauncher" );
 		GiveNamedItem( "weapon_adot" );
 		GiveNamedItem( "weapon_rpg" );
+		GiveNamedItem( "weapon_flaregun" );
+		GiveNamedItem( "weapon_alyxgun" );
+		GiveNamedItem( "weapon_alyxgun_s" );
+		GiveNamedItem( "weapon_wrench" );
+		GiveNamedItem( "weapon_wrench2" );
 
 		if (GetHealth() < 100)
 		{

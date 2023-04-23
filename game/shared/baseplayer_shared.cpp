@@ -1809,6 +1809,7 @@ void CBasePlayer::MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int
 {
 	if ( GetActiveWeapon() )
 	{
+		//Msg("SDE: trace test 1\n"); trace debug
 		GetActiveWeapon()->MakeTracer( vecTracerSrc, tr, iTracerType );
 		return;
 	}

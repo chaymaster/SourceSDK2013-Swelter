@@ -902,6 +902,7 @@ void CFuncTank::Precache( void )
 		PrecacheScriptSound( STRING(m_soundLoopRotate) );
 
 	PrecacheScriptSound( "Func_Tank.BeginUse" );
+	PrecacheSound("^weapons/ar1/ar1_dist1.wav");
 	
 	// Precache the combine cannon
 	if ( m_iEffectHandling == EH_COMBINE_CANNON )
