@@ -754,10 +754,8 @@ void UTIL_Tracer( const Vector &vecStart, const Vector &vecEnd, int iEntIndex,
 	{
 		data.m_fFlags |= TRACER_FLAG_WHIZ;
 	}
-	//Msg("SDE: trace test 2\n"); trace debug
-	if (true) //if ( iAttachment != TRACER_DONT_USE_ATTACHMENT )
+	if ( iAttachment != TRACER_DONT_USE_ATTACHMENT )
 	{
-		//Msg("SDE: trace test 3\n"); trace debug
 		data.m_fFlags |= TRACER_FLAG_USEATTACHMENT;
 		data.m_nAttachmentIndex = iAttachment;
 	}
