@@ -6365,7 +6365,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 }
 
 
-bool CBasePlayer::ClientCommand( const CCommand &args )
+bool CBasePlayer::ClientCommand(const CCommand &args)
 {
 	const char *cmd = args[0];
 #ifdef _DEBUG
@@ -6393,221 +6393,221 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 	}
 	else
 #endif // _DEBUG
-	if( stricmp( cmd, "vehicleRole" ) == 0 )
+	if (stricmp(cmd, "vehicleRole") == 0)
 	{
 		// Get the vehicle role value.
-		if ( args.ArgC() == 2 )
+		if (args.ArgC() == 2)
 		{
 			// Check to see if a player is in a vehicle.
-			if ( IsInAVehicle() )
+			if (IsInAVehicle())
 			{
-				int nRole = atoi( args[1] );
+				int nRole = atoi(args[1]);
 				IServerVehicle *pVehicle = GetVehicle();
-				if ( pVehicle )
+				if (pVehicle)
 				{
 					// Only switch roles if role is empty!
-					if ( !pVehicle->GetPassenger( nRole ) )
+					if (!pVehicle->GetPassenger(nRole))
 					{
 						LeaveVehicle();
-						GetInVehicle( pVehicle, nRole );
+						GetInVehicle(pVehicle, nRole);
 					}
-				}			
+				}
 			}
 
 			return true;
 		}
 	}
-	else if ( HandleVoteCommands( args ) )
+	else if (HandleVoteCommands(args))
 	{
 		return true;
 	}
-	else if ( stricmp( cmd, "spectate" ) == 0 ) // join spectator team & start observer mode
+	else if (stricmp(cmd, "spectate") == 0) // join spectator team & start observer mode
 	{
-		if ( GetTeamNumber() == TEAM_SPECTATOR )
+		if (GetTeamNumber() == TEAM_SPECTATOR)
 			return true;
 
-		ConVarRef mp_allowspectators( "mp_allowspectators" );
-		if ( mp_allowspectators.IsValid() )
+		ConVarRef mp_allowspectators("mp_allowspectators");
+		if (mp_allowspectators.IsValid())
 		{
-			if ( ( mp_allowspectators.GetBool() == false ) && !IsHLTV() && !IsReplay() )
+			if ((mp_allowspectators.GetBool() == false) && !IsHLTV() && !IsReplay())
 			{
-				ClientPrint( this, HUD_PRINTCENTER, "#Cannot_Be_Spectator" );
+				ClientPrint(this, HUD_PRINTCENTER, "#Cannot_Be_Spectator");
 				return true;
 			}
 		}
 
-		if ( !IsDead() )
+		if (!IsDead())
 		{
 			CommitSuicide();	// kill player
 		}
 
-		RemoveAllItems( true );
+		RemoveAllItems(true);
 
-		ChangeTeam( TEAM_SPECTATOR );
+		ChangeTeam(TEAM_SPECTATOR);
 
-		StartObserverMode( OBS_MODE_ROAMING );
+		StartObserverMode(OBS_MODE_ROAMING);
 		return true;
 	}
-	else if ( stricmp( cmd, "spec_mode" ) == 0 ) // new observer mode
+	else if (stricmp(cmd, "spec_mode") == 0) // new observer mode
 	{
 		int mode;
 
-		if ( GetObserverMode() == OBS_MODE_FREEZECAM )
+		if (GetObserverMode() == OBS_MODE_FREEZECAM)
 		{
 			AttemptToExitFreezeCam();
 			return true;
 		}
 
 		// not allowed to change spectator modes when mp_fadetoblack is being used
-		if ( mp_fadetoblack.GetBool() )
+		if (mp_fadetoblack.GetBool())
 		{
-			if ( GetTeamNumber() > TEAM_SPECTATOR )
+			if (GetTeamNumber() > TEAM_SPECTATOR)
 				return true;
 		}
 
 		// check for parameters.
-		if ( args.ArgC() >= 2 )
+		if (args.ArgC() >= 2)
 		{
-			mode = atoi( args[1] );
+			mode = atoi(args[1]);
 
-			if ( mode < OBS_MODE_IN_EYE || mode > LAST_PLAYER_OBSERVERMODE )
+			if (mode < OBS_MODE_IN_EYE || mode > LAST_PLAYER_OBSERVERMODE)
 				mode = OBS_MODE_IN_EYE;
 		}
 		else
 		{
 			// switch to next spec mode if no parameter given
- 			mode = GetObserverMode() + 1;
-			
-			if ( mode > LAST_PLAYER_OBSERVERMODE )
+			mode = GetObserverMode() + 1;
+
+			if (mode > LAST_PLAYER_OBSERVERMODE)
 			{
 				mode = OBS_MODE_IN_EYE;
 			}
-			else if ( mode < OBS_MODE_IN_EYE )
+			else if (mode < OBS_MODE_IN_EYE)
 			{
 				mode = OBS_MODE_ROAMING;
 			}
 
 		}
-	
+
 		// don't allow input while player or death cam animation
-		if ( GetObserverMode() > OBS_MODE_DEATHCAM )
+		if (GetObserverMode() > OBS_MODE_DEATHCAM)
 		{
 			// set new spectator mode, don't allow OBS_MODE_NONE
-			if ( !SetObserverMode( mode ) )
-				ClientPrint( this, HUD_PRINTCONSOLE, "#Spectator_Mode_Unkown");
+			if (!SetObserverMode(mode))
+				ClientPrint(this, HUD_PRINTCONSOLE, "#Spectator_Mode_Unkown");
 			else
-				engine->ClientCommand( edict(), "cl_spec_mode %d", mode );
+				engine->ClientCommand(edict(), "cl_spec_mode %d", mode);
 		}
 		else
 		{
 			// remember spectator mode for later use
 			m_iObserverLastMode = mode;
-			engine->ClientCommand( edict(), "cl_spec_mode %d", mode );
+			engine->ClientCommand(edict(), "cl_spec_mode %d", mode);
 		}
 
 		return true;
 	}
-	else if ( stricmp( cmd, "spec_next" ) == 0 ) // chase next player
+	else if (stricmp(cmd, "spec_next") == 0) // chase next player
 	{
-		if ( GetObserverMode() > OBS_MODE_FIXED )
+		if (GetObserverMode() > OBS_MODE_FIXED)
 		{
 			// set new spectator mode
-			CBaseEntity * target = FindNextObserverTarget( false );
-			if ( target )
+			CBaseEntity * target = FindNextObserverTarget(false);
+			if (target)
 			{
-				SetObserverTarget( target );
+				SetObserverTarget(target);
 			}
 		}
-		else if ( GetObserverMode() == OBS_MODE_FREEZECAM )
+		else if (GetObserverMode() == OBS_MODE_FREEZECAM)
 		{
 			AttemptToExitFreezeCam();
 		}
-		
+
 		return true;
 	}
-	else if ( stricmp( cmd, "spec_prev" ) == 0 ) // chase prevoius player
+	else if (stricmp(cmd, "spec_prev") == 0) // chase prevoius player
 	{
-		if ( GetObserverMode() > OBS_MODE_FIXED )
+		if (GetObserverMode() > OBS_MODE_FIXED)
 		{
 			// set new spectator mode
-			CBaseEntity * target = FindNextObserverTarget( true );
-			if ( target )
+			CBaseEntity * target = FindNextObserverTarget(true);
+			if (target)
 			{
-				SetObserverTarget( target );
+				SetObserverTarget(target);
 			}
 		}
-		else if ( GetObserverMode() == OBS_MODE_FREEZECAM )
+		else if (GetObserverMode() == OBS_MODE_FREEZECAM)
 		{
 			AttemptToExitFreezeCam();
 		}
-		
+
 		return true;
 	}
-	
-	else if ( stricmp( cmd, "spec_player" ) == 0 ) // chase next player
+
+	else if (stricmp(cmd, "spec_player") == 0) // chase next player
 	{
-		if ( GetObserverMode() > OBS_MODE_FIXED && args.ArgC() == 2 )
+		if (GetObserverMode() > OBS_MODE_FIXED && args.ArgC() == 2)
 		{
-			int index = atoi( args[1] );
+			int index = atoi(args[1]);
 
 			CBasePlayer * target;
 
-			if ( index == 0 )
+			if (index == 0)
 			{
-				target = UTIL_PlayerByName( args[1] );
+				target = UTIL_PlayerByName(args[1]);
 			}
 			else
 			{
-				target = UTIL_PlayerByIndex( index );
+				target = UTIL_PlayerByIndex(index);
 			}
 
-			if ( IsValidObserverTarget( target ) )
+			if (IsValidObserverTarget(target))
 			{
-				SetObserverTarget( target );
+				SetObserverTarget(target);
 			}
 		}
-		
+
 		return true;
 	}
 
-	else if ( stricmp( cmd, "spec_goto" ) == 0 ) // chase next player
+	else if (stricmp(cmd, "spec_goto") == 0) // chase next player
 	{
-		if ( ( GetObserverMode() == OBS_MODE_FIXED ||
-			   GetObserverMode() == OBS_MODE_ROAMING ) &&
-			 args.ArgC() == 6 )
+		if ((GetObserverMode() == OBS_MODE_FIXED ||
+			GetObserverMode() == OBS_MODE_ROAMING) &&
+			args.ArgC() == 6)
 		{
 			Vector origin;
-			origin.x = atof( args[1] );
-			origin.y = atof( args[2] );
-			origin.z = atof( args[3] );
+			origin.x = atof(args[1]);
+			origin.y = atof(args[2]);
+			origin.z = atof(args[3]);
 
 			QAngle angle;
-			angle.x = atof( args[4] );
-			angle.y = atof( args[5] );
+			angle.x = atof(args[4]);
+			angle.y = atof(args[5]);
 			angle.z = 0.0f;
 
-			JumptoPosition( origin, angle );
-		}
-		
-		return true;
-	}
-	else if ( stricmp( cmd, "playerperf" ) == 0 )
-	{
-		int nRecip = entindex();
-		if ( args.ArgC() >= 2 )
-		{
-			nRecip = clamp( Q_atoi( args.Arg( 1 ) ), 1, gpGlobals->maxClients );
-		}
-		int nRecords = -1; // all
-		if ( args.ArgC() >= 3 )
-		{
-			nRecords = MAX( Q_atoi( args.Arg( 2 ) ), 1 );
+			JumptoPosition(origin, angle);
 		}
 
-		CBasePlayer *pl = UTIL_PlayerByIndex( nRecip );
-		if ( pl )
+		return true;
+	}
+	else if (stricmp(cmd, "playerperf") == 0)
+	{
+		int nRecip = entindex();
+		if (args.ArgC() >= 2)
 		{
-			pl->DumpPerfToRecipient( this, nRecords );
+			nRecip = clamp(Q_atoi(args.Arg(1)), 1, gpGlobals->maxClients);
+		}
+		int nRecords = -1; // all
+		if (args.ArgC() >= 3)
+		{
+			nRecords = MAX(Q_atoi(args.Arg(2)), 1);
+		}
+
+		CBasePlayer *pl = UTIL_PlayerByIndex(nRecip);
+		if (pl)
+		{
+			pl->DumpPerfToRecipient(this, nRecords);
 		}
 		return true;
 	}
@@ -6616,9 +6616,28 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 		CBaseCombatWeapon *pWeapon = GetActiveWeapon();
 		if (pWeapon != NULL)
 		{
-			pWeapon->ToggleIronsights();
-			ToggleCrosshair();
+			const char* ActiveWeaponName = pWeapon->GetName();
+			if (strcmp(ActiveWeaponName, "weapon_pistol") == 0 || strcmp(ActiveWeaponName, "weapon_356") == 0 ||
+				strcmp(ActiveWeaponName, "weapon_alyxgun") == 0 || strcmp(ActiveWeaponName, "weapon_alyxgun_s") == 0 ||
+				strcmp(ActiveWeaponName, "weapon_smg1") == 0 || strcmp(ActiveWeaponName, "weapon_smg2") == 0 ||
+				strcmp(ActiveWeaponName, "weapon_ar1") == 0 || strcmp(ActiveWeaponName, "weapon_ar1m1") == 0 ||
+				strcmp(ActiveWeaponName, "weapon_annabelle") == 0 || strcmp(ActiveWeaponName, "weapon_357") == 0 ||
+				strcmp(ActiveWeaponName, "weapon_shotgun") == 0 || strcmp(ActiveWeaponName, "weapon_ar2") == 0)
+			{
+				pWeapon->ToggleIronsights();
+				ToggleCrosshair();
+			}
 		}
+		return true;
+	}
+	else if (stricmp(cmd, "crosshair_on") == 0)
+	{
+		ShowCrosshair(true);
+		return true;
+	}
+	else if (stricmp(cmd, "crosshair_off") == 0)
+	{
+		ShowCrosshair(false);
 		return true;
 	}
 	return false;

@@ -496,19 +496,17 @@ void CWeaponShotgun::PrimaryAttack(void)
 	if (!m_DoDouble)
 	{
 		WeaponSound(SINGLE);
-		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+		// SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 	}	
 	else
 	{
 		WeaponSound(WPN_DOUBLE);
-		SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+		// SendWeaponAnim(ACT_VM_SECONDARYATTACK);
 	}
 		
-
+	SendWeaponAnim(ACT_VM_PRIMARYATTACK); // primary attack or second shot in burst doesn't eject shell, pump does that
+	// animations of the first and second shots in a burst were swapped in the code before
 	pPlayer->DoMuzzleFlash();
-
-
-	
 
 	// player "shoot" animation
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
@@ -570,7 +568,7 @@ void CWeaponShotgun::HoldIronsight(void)
 //
 //
 //-----------------------------------------------------------------------------
-void CWeaponShotgun::SecondaryAttack(void)
+void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject shell immediately
 {
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 
@@ -588,16 +586,20 @@ void CWeaponShotgun::SecondaryAttack(void)
 		m_bInReload = false;
 		return;
 	}
-
+	
+	// have loaded rounds and no need to pump, fire double, as the check for m_iClip <= 1 is performed in ItemPostFrame() 
+	
 	WeaponSound(WPN_DOUBLE);
 
-	m_DoDouble = true;
-
 	pPlayer->DoMuzzleFlash();
-	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+	SendWeaponAnim(ACT_VM_SECONDARYATTACK); // first shot of the burst ejects shell, animations of shots are swapped in the model
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
 	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;//SequenceDuration();
 	m_iClip1 -= 1;
+
+
+	m_DoDouble = true;
+	m_bNeedPump = false;
 
 	Vector	vecSrc = pPlayer->Weapon_ShootPosition();
 	Vector	vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
@@ -617,13 +619,7 @@ void CWeaponShotgun::SecondaryAttack(void)
 		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 	}
 
-	if (m_iClip1)
-	{
-		// pump so long as some rounds are left.
-		m_bNeedPump = false;
-	}
-
-	m_iPrimaryAttacks++;
+	m_iSecondaryAttacks++;
 	gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
 }
 
@@ -652,7 +648,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
 		}
-		// If I'm secondary firing and have one round stop reloading and fire
+		// If I'm secondary firing and have two rounds stop reloading and fire
 		else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_iClip1 >= 2))
 		{
 			m_bInReload = false;
@@ -692,8 +688,11 @@ void CWeaponShotgun::ItemPostFrame(void)
 		Pump();
 		return;
 	}
-	if (m_DoDouble && m_iClip1 >= 1 && (m_flNextPrimaryAttack <= gpGlobals->curtime)) //double shoot
+	if (m_DoDouble && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // second shot of secondary attack
+	{
 		PrimaryAttack();
+		m_bDelayedFire2 = false;
+	}
 	// Shotgun uses same timing and ammo for secondary attack
 	if ((m_bDelayedFire2 || pOwner->m_nButtons & IN_ATTACK2) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
 	{
@@ -757,8 +756,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 		else
 		{
 			// If the firing button was just pressed, reset the firing time
-			CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-			if (pPlayer && pPlayer->m_afButtonPressed & IN_ATTACK)
+			if (pOwner->m_afButtonPressed & IN_ATTACK)
 			{
 				m_flNextPrimaryAttack = gpGlobals->curtime;
 			}

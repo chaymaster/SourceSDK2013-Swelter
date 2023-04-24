@@ -348,6 +348,11 @@ bool CWeaponStunStick::Deploy(void)
 {
 	SetStunState(false);
 
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer == NULL)
+		return false;
+	pPlayer->ShowCrosshair(false);
+
 	return BaseClass::Deploy();
 }
 
@@ -358,6 +363,9 @@ bool CWeaponStunStick::Deploy(void)
 void CWeaponStunStick::ItemPostFrame(void)
 {
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	if (pOwner->m_bIsCrosshaired)
+		pOwner->ShowCrosshair(true);
 
 	if ((GetActivity() == ACT_VM_HOLSTER) || (GetActivity() == ACT_VM_DRAW)) //new, to prevent melee attack when carrying a physics prop
 		m_flNextPrimaryAttack = gpGlobals->curtime + 0.125f; //new

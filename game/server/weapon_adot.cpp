@@ -122,8 +122,9 @@ void CWeaponAdot::Precache(void)
 bool CWeaponAdot::Deploy(void)
 {
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-	if (pPlayer)
-		pPlayer->ShowCrosshair(true);
+	if (pPlayer == NULL)
+		return false;
+	pPlayer->ShowCrosshair(false);
 	DisplaySDEHudHint();
 	m_bRedraw = false;
 	m_fDrawbackFinished = false;
@@ -214,7 +215,19 @@ void CWeaponAdot::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatChara
 //-----------------------------------------------------------------------------
 bool CWeaponAdot::Reload(void)
 {
-	DisableIronsights();
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+	if (!pOwner)
+	{
+		return false;
+	}
+	if (m_bIsIronsighted)
+	{
+		DisableIronsights();
+	}
+
+	if (!pOwner->m_bIsCrosshaired)
+		pOwner->ShowCrosshair(false);
+
 	if (!HasPrimaryAmmo())
 		return false;
 
@@ -325,10 +338,19 @@ void CWeaponAdot::DecrementAmmo(CBaseCombatCharacter *pOwner)
 //-----------------------------------------------------------------------------
 void CWeaponAdot::ItemPostFrame(void)
 {
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+	if (!pOwner)
+	{
+		return;
+	}
 	if (m_bIsIronsighted)
 	{
 		DisableIronsights();
 	}
+
+	if (!pOwner->m_bIsCrosshaired)
+		pOwner->ShowCrosshair(false);
+	
 	if (m_fDrawbackFinished)
 	{
 		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
