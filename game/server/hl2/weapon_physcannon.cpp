@@ -1587,6 +1587,11 @@ bool CWeaponPhysCannon::Deploy( void )
 	CloseElements();
 	DoEffect( EFFECT_READY );
 
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer == NULL)
+		return false;
+	pPlayer->ShowCrosshair(false);
+
 	// Unbloat our bounds
 	if ( IsMegaPhysCannon() )
 	{
@@ -3292,6 +3297,9 @@ void CWeaponPhysCannon::ItemPostFrame()
 		m_nAttack2Debounce = 0;
 		return;
 	}
+
+	if (pOwner->m_bIsCrosshaired)
+		pOwner->ShowCrosshair(true);
 
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new

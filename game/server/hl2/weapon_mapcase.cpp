@@ -279,6 +279,8 @@ void CWeaponMapcase::ItemPostFrame(void)
 		DisableIronsights();
 		SecondaryAttack();
 	}
+	if (!pOwner->m_bIsCrosshaired)
+		pOwner->ShowCrosshair(false);
 
 	DevMsg("PDA:	paper group id	%d \n", FindBodygroupByName("paper"));
 	DevMsg("PDA:	badge group id	%d \n", FindBodygroupByName("badge"));
@@ -294,12 +296,10 @@ void CWeaponMapcase::ItemPostFrame(void)
 //-----------------------------------------------------------------------------
 bool CWeaponMapcase::Deploy(void)
 {
-	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
-	if (pOwner == NULL)
-		return false;
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-	if (pPlayer)
-		pPlayer->ShowCrosshair(false);
+	if (pPlayer == NULL)
+		return false;
+	pPlayer->ShowCrosshair(false);
 	DisplaySDEHudHint(); //added
 	SetSkin();
 
