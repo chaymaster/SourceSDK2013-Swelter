@@ -351,7 +351,7 @@ bool CWeaponStunStick::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer == NULL)
 		return false;
-	pPlayer->ShowCrosshair(false);
+	pPlayer->ShowCrosshair(true);
 
 	return BaseClass::Deploy();
 }
@@ -363,6 +363,12 @@ bool CWeaponStunStick::Deploy(void)
 void CWeaponStunStick::ItemPostFrame(void)
 {
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	if (pOwner == NULL)
+		return;
+
+	if (m_bIsIronsighted)
+		DisableIronsights();
 
 	if (pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(true);

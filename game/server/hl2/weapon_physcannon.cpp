@@ -1590,7 +1590,7 @@ bool CWeaponPhysCannon::Deploy( void )
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer == NULL)
 		return false;
-	pPlayer->ShowCrosshair(false);
+	pPlayer->ShowCrosshair(true);
 
 	// Unbloat our bounds
 	if ( IsMegaPhysCannon() )
@@ -3297,6 +3297,9 @@ void CWeaponPhysCannon::ItemPostFrame()
 		m_nAttack2Debounce = 0;
 		return;
 	}
+
+	if (m_bIsIronsighted)
+		DisableIronsights();
 
 	if (pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(true);
