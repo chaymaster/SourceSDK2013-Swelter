@@ -19,7 +19,11 @@
 #define DECLARE_SWELTER_MAP_EVENT_ACHIEVEMENT_HIDDEN( achievementID, achievementName, iPointValue )					\
 	DECLARE_MAP_EVENT_ACHIEVEMENT_(achievementID, achievementName, "Swelter", iPointValue, true)
 
-
+//CON_COMMAND(sde_levelcontrol, "control level status")
+//{
+//
+//}
+//ConVar   sde_levelcontrol("sde_levelcontrol", "0");
 
 class CAchievementSwelterFindAllRadarCaches : public CBaseAchievement
 {
@@ -39,7 +43,19 @@ class CAchievementSwelterFindAllRadarCaches : public CBaseAchievement
 };
 DECLARE_ACHIEVEMENT(CAchievementSwelterFindAllRadarCaches, ACHIEVEMENT_ACH_SWELTER_RADAR, "ACH_SWELTER_RADAR", 10);
 
-
+//class CAchievementSwelterHardcoreEnding : public CBaseAchievement
+//{
+//	virtual void Init()
+//	{
+//		ConVarRef var_skill("skill");
+//		if (sde_levelcontrol.GetInt() == 1)
+//		{
+//			Msg("SDE level control - fire!\n");
+//			sde_levelcontrol.SetValue(0);
+//		}
+//	}
+//};
+//DECLARE_ACHIEVEMENT(CAchievementSwelterHardcoreEnding, ACHIEVEMENT_ACH_SWELTER_HARD, "ACH_SWELTER_HARD", 10);
 
 // achievements which are won by a map event firing once
 DECLARE_SWELTER_MAP_EVENT_ACHIEVEMENT(ACHIEVEMENT_ACH_SWELTER_END_ANARCHY, "ACH_SWELTER_END_ANARCHY", 10);
