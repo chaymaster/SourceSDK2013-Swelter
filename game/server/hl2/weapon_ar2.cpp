@@ -171,8 +171,9 @@ bool CWeaponAR2::Deploy(void)
 void CWeaponAR2::ItemPostFrame(void)
 {
 
-	// Ironsight declare
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
 
 	if (m_flNextPrimaryAttack <= gpGlobals->curtime + 0.07)
 		SetSkin(0);
@@ -1019,7 +1020,7 @@ void CWeaponAR2::DropMag(void) //drop mag
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 	{
-		Vector SpawnHeight(0, 0, 20); // высота спауна энергосферного контейнера
+		Vector SpawnHeight(0, 0, 50); // высота спауна энергосферного контейнера
 		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
 		Vector vecForward, vecRight, vecUp;
 		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);

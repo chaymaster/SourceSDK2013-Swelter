@@ -330,7 +330,10 @@ void CWeaponPistol::ItemBusyFrame(void)
 void CWeaponPistol::ItemPostFrame(void)
 {
 
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
+
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 	

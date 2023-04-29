@@ -464,7 +464,9 @@ void CWeaponar1::HoldIronsight(void)
 void CWeaponar1::ItemPostFrame(void)
 {
 	// Allow  Ironsight
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
 
 	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
 	{

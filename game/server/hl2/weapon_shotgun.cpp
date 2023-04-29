@@ -37,7 +37,6 @@ private:
 	bool	m_bNeedPump;		// When emptied completely
 	bool	m_bDelayedFire1;	// Fire primary when finished reloading
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
-	bool	m_bBoltRequired;
 	bool	m_DoDouble;
 
 public:
@@ -628,7 +627,10 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 //-----------------------------------------------------------------------------
 void CWeaponShotgun::ItemPostFrame(void)
 {
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
+
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	if (!pOwner)
 	{

@@ -509,7 +509,9 @@ bool CWeaponAlyxGun_s::Reload(void)
 void CWeaponAlyxGun_s::ItemPostFrame(void)
 {
 	// Allow Ironsight
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
 
 
 	BaseClass::ItemPostFrame();

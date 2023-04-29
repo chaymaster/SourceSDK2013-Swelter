@@ -237,7 +237,10 @@ void CWeaponSMG1::SetSkin(int skinNum)
 }
 void CWeaponSMG1::ItemPostFrame(void)
 {
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
+
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
 	if (pOwner == NULL)

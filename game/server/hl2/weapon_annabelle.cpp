@@ -574,12 +574,13 @@ void CWeaponAnnabelle::HoldIronsight(void)
 void CWeaponAnnabelle::SecondaryAttack(void)
 {
 	//// Only the player fires this way so we can cast
-	//CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-	//
-	//if (!pPlayer)
-	//{
-	return;
-	//}
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+	if (!pOwner)
+	{
+		return;
+	}
+	ToggleIronsights();
+	pOwner->ToggleCrosshair();
 	//
 	//pPlayer->m_nButtons &= ~IN_ATTACK2;
 	//// MUST call sound before removing a round from the clip of a CMachineGun
@@ -628,17 +629,16 @@ void CWeaponAnnabelle::SecondaryAttack(void)
 //-----------------------------------------------------------------------------
 void CWeaponAnnabelle::ItemPostFrame(void)
 {
-	HoldIronsight();
+	// HoldIronsight(); // moved to where the weapon is not in reload
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	if (!pOwner)
 	{
 		return;
 	}
-	if (m_iClip1 == 0)
-		DisableIronsights();
 	DisplaySDEHudHint(); //added
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+
 
 	if (pOwner->m_afButtonReleased & IN_IRONSIGHT)
 	{
@@ -660,13 +660,6 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 			m_bInReload = false;
 			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
-		}
-		// If I'm secondary firing and have one round stop reloading and fire
-		else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_iClip1 >= 2))
-		{
-			m_bInReload = false;
-			m_bNeedPump = false;
-			m_bDelayedFire2 = true;
 		}
 		else if (m_flNextPrimaryAttack <= gpGlobals->curtime)
 		{
@@ -694,6 +687,12 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 	{
 		// Make shotgun shell invisible
 		SetBodygroup(1, 1);
+		HoldIronsight();
+		
+		if (pOwner->m_afButtonPressed & IN_ATTACK2) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
+		{
+			SecondaryAttack();
+		}
 	}
 
 	if ((m_bNeedPump) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
@@ -702,48 +701,8 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		return;
 	}
 
-	// Shotgun uses same timing and ammo for secondary attack
-	if ((m_bDelayedFire2 || pOwner->m_nButtons & IN_ATTACK2) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	if ((m_bDelayedFire1 || pOwner->m_nButtons & IN_ATTACK ) && m_flNextPrimaryAttack <= gpGlobals->curtime)
 	{
-		m_bDelayedFire2 = false;
-
-		if ((m_iClip1 <= 1 && UsesClipsForAmmo1()))
-		{
-			// If only one shell is left, do a single shot instead	
-			if (m_iClip1 == 1)
-			{
-				PrimaryAttack();
-			}
-			else if (!pOwner->GetAmmoCount(m_iPrimaryAmmoType))
-			{
-				DryFire();
-			}
-			else
-			{
-				StartReload();
-			}
-		}
-
-		// Fire underwater?
-		else if (GetOwner()->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
-		{
-			WeaponSound(EMPTY);
-			m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;
-			return;
-		}
-		else
-		{
-			// If the firing button was just pressed, reset the firing time
-			if (pOwner->m_afButtonPressed & IN_ATTACK)
-			{
-				m_flNextPrimaryAttack = gpGlobals->curtime;
-			}
-			SecondaryAttack();
-		}
-	}
-	else if ((m_bDelayedFire1 || pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime)
-	{
-		m_bDelayedFire1 = false;
 		if ((m_iClip1 <= 0 && UsesClipsForAmmo1()) || (!UsesClipsForAmmo1() && !pOwner->GetAmmoCount(m_iPrimaryAmmoType)))
 		{
 			if (!pOwner->GetAmmoCount(m_iPrimaryAmmoType))
@@ -764,13 +723,21 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		}
 		else
 		{
-			// If the firing button was just pressed, reset the firing time
-			CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-			if (pPlayer && pPlayer->m_afButtonPressed & IN_ATTACK)
+			if (m_bDelayedFire1)
 			{
-				m_flNextPrimaryAttack = gpGlobals->curtime;
+				m_bDelayedFire1 = false;
+				FinishReload();
+				return;
 			}
-			PrimaryAttack();
+			else
+			{
+				// If the firing button was just pressed, reset the firing time
+				if (pOwner->m_afButtonPressed & IN_ATTACK)
+				{
+					m_flNextPrimaryAttack = gpGlobals->curtime;
+				}
+				PrimaryAttack();
+			}
 		}
 	}
 

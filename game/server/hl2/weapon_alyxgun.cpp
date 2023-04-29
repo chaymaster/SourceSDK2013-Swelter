@@ -510,7 +510,9 @@ bool CWeaponAlyxGun::Reload(void)
 void CWeaponAlyxGun::ItemPostFrame(void)
 {
 	// Allow zoom toggling & Ironsight
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
 
 
 	BaseClass::ItemPostFrame();

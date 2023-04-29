@@ -34,6 +34,7 @@ private:
 	CheckButton *ccButton;
 	ComboBox *m_weaponFOV;
 	ComboBox *m_ccLang;
+	ComboBox *m_reloadingMag;
 
 	bool b_hintButton;
 	bool b_altButton;
@@ -92,7 +93,23 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		m_ccLang->ActivateItem(3);
 
 
+	ConVarRef var6("reload_mag_drop");
+	m_reloadingMag = new ComboBox(this, "reloadingMag", 6, false);
+	m_reloadingMag->AddItem("#pht_option_reloading_0", NULL);
+	m_reloadingMag->AddItem("#pht_option_reloading_1", NULL);
+	m_reloadingMag->AddItem("#pht_option_reloading_2", NULL);
 
+	//switch (var6.GetInt())
+	//{
+	//case 0:
+	//	m_weaponFOV->ActivateItem(0);
+	//	break;
+	//case 1:
+	//	m_weaponFOV->ActivateItem(1);
+	//	break;
+	//case 2:
+	//	m_weaponFOV->ActivateItem(2);
+	//}
 
 
 

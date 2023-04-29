@@ -367,7 +367,7 @@ public:
 	virtual const char		*GetViewModel(int viewmodelindex = 0) const;
 	virtual const char		*GetWorldModel(void) const;
 	virtual const char		*GetAnimPrefix(void) const;
-	virtual int				GetMaxClip1(void) const;
+	virtual int				GetMaxClip1(void);
 	virtual int				GetMaxClip2(void) const;
 	virtual int				GetDefaultClip1(void) const;
 	virtual int				GetDefaultClip2(void) const;
@@ -382,7 +382,7 @@ public:
 	virtual char const		*GetPrintName(void) const;
 	virtual char const		*GetShootSound(int iIndex) const;
 	virtual int				GetRumbleEffect() const;
-	virtual bool			UsesClipsForAmmo1(void) const;
+	virtual bool			UsesClipsForAmmo1(void);
 	virtual bool			UsesClipsForAmmo2(void) const;
 	bool					IsMeleeWeapon() const;
 
@@ -583,6 +583,9 @@ public:
 	bool					m_bInReload;			// Are we in the middle of a reload;
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
 	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;
+	bool					m_bBoltRequired = false; // Always false for all weapons except the shotgun that, as a one-by-one-shell loaded weapon
+	// capable of chambered round in reload, needs this to keep GetMaxClip1() returning not "clip+1" value when reloading from empty magazine
+	
 	// Weapon art
 	CNetworkVar(int, m_iViewModelIndex);
 	CNetworkVar(int, m_iWorldModelIndex);

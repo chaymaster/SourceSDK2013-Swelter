@@ -422,7 +422,7 @@ const char *CBaseCombatWeapon::GetPrintName(void) const
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CBaseCombatWeapon::GetMaxClip1(void) const
+int CBaseCombatWeapon::GetMaxClip1(void)
 {
 #if defined ( TF_DLL ) || defined ( TF_CLIENT_DLL )
 	int iModMaxClipOverride = 0;
@@ -430,8 +430,22 @@ int CBaseCombatWeapon::GetMaxClip1(void) const
 	if (iModMaxClipOverride != 0)
 		return iModMaxClipOverride;
 #endif
+	const char* WeaponName = GetName();
+	int return_value;
 
-	return GetWpnData().iMaxClip1;
+	if (m_iClip1 > 0 && !m_bBoltRequired && (strcmp(WeaponName, "weapon_pistol") == 0 || // weapons that can have a chambered round while reloading
+		strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 ||
+		strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 ||
+		strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 ||
+		strcmp(WeaponName, "weapon_ar2") == 0 || strcmp(WeaponName, "weapon_shotgun") == 0))
+	{
+		return_value = GetWpnData().iMaxClip1 + 1;
+	}
+	else
+	{
+		return_value = GetWpnData().iMaxClip1;
+	}
+	return return_value;
 }
 
 //-----------------------------------------------------------------------------
@@ -461,7 +475,7 @@ int CBaseCombatWeapon::GetDefaultClip2(void) const
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CBaseCombatWeapon::UsesClipsForAmmo1(void) const
+bool CBaseCombatWeapon::UsesClipsForAmmo1(void) // removed const as GetMaxClip1() is not const anymore
 {
 	return (GetMaxClip1() != WEAPON_NOCLIP);
 }
@@ -2374,6 +2388,7 @@ char *CBaseCombatWeapon::GetDeathNoticeName(void)
 //====================================================================================
 void CBaseCombatWeapon::CheckReload(void)
 {
+
 	if (m_bReloadsSingly)
 	{
 		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
@@ -2382,6 +2397,7 @@ void CBaseCombatWeapon::CheckReload(void)
 
 		//		if (GetMaxClip1() == 6 && m_iClip1>0)
 		//			return;
+
 
 		if ((m_bInReload) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
 		{
@@ -2432,7 +2448,7 @@ void CBaseCombatWeapon::CheckReload(void)
 //-----------------------------------------------------------------------------
 // Purpose: Reload has finished.
 //-----------------------------------------------------------------------------
-void CBaseCombatWeapon::FinishReload(void)
+void CBaseCombatWeapon::FinishReload ()
 {
 	CBaseCombatCharacter *pOwner = GetOwner();
 
