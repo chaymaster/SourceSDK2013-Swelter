@@ -581,6 +581,7 @@ public:
 	CNetworkVar(float, m_flIronsightedTime);
 	// Weapon state
 	bool					m_bInReload;			// Are we in the middle of a reload;
+	bool					m_bInSecondaryReload = false;	// in the middle of a secondary reload, always false except AR1M1 and AR2;
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
 	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;
 	bool					m_bBoltRequired = false; // Always false for all weapons except the shotgun that, as a one-by-one-shell loaded weapon

@@ -80,6 +80,8 @@ protected:
 	bool					m_bShotDelayed;
 	int						m_nVentPose;
 
+	float m_flSecondaryReloadActivationTime; //new
+	float m_flSecondaryReloadDeactivationTime; //new
 	float m_flSecondaryEjectTime; //new
 	bool m_bSecondaryEjectPending; //new
 	float m_flSecondaryEjectTime2; //new

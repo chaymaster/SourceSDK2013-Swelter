@@ -37,8 +37,11 @@ private:
 	bool	m_bNeedPump;		// When emptied completely
 	bool	m_bDelayedFire1;	// Fire primary when finished reloading
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
-	bool	m_BoldRequred;
-	bool	m_snipering;
+	bool	m_bTriggerCatchEjectedRound;
+	float	m_flTimeToCatchEjectedRound;
+	bool	m_bCompensateEjectedRoundForFullAmmoSupply;
+	bool	m_bReactivateIronsightAfterBolt;
+	float	m_flIronsightAfterBoltReactivatingTime;
 
 public:
 	void	Precache(void);
@@ -277,7 +280,6 @@ bool CWeapon357::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	m_snipering = false;
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------
@@ -299,7 +301,6 @@ bool CWeapon357::StartReload(void)
 		return false;
 
 	DisableIronsights();
-	m_snipering = false;
 
 	// If shotgun totally emptied then a pump animation is needed
 
@@ -321,9 +322,17 @@ bool CWeapon357::StartReload(void)
 	// Make shotgun shell visible
 	SetBodygroup(1, 0);
 
+	m_bTriggerCatchEjectedRound = m_bCompensateEjectedRoundForFullAmmoSupply = false; // initialize trigger chain each reload
+
+	if (m_iClip1 >= 1)
+	{ //don't split this trick into eject-catch separated in time if player has maximum spare ammo, not to lose a round 
+		m_flTimeToCatchEjectedRound = gpGlobals->curtime + 0.7f; // catch the ejected round as it flies out
+		m_bTriggerCatchEjectedRound = true;
+	}
+
 	if (m_iClip1 < 1)
 	{
-		m_BoldRequred = true;
+		m_bBoltRequired = true;
 	}
 
 	pOwner->m_flNextAttack = gpGlobals->curtime;
@@ -362,7 +371,6 @@ bool CWeapon357::Reload(void)
 		return false;
 
 	DisableIronsights();
-	m_snipering = false;
 
 	int j = MIN(1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
 
@@ -398,7 +406,6 @@ void CWeapon357::FinishReload(void)
 	m_bInReload = false;
 	m_bNeedPump = false;
 	DisableIronsights();
-	m_snipering = false;
 
 	// Finish reload animation
 	SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH);
@@ -424,7 +431,15 @@ void CWeapon357::FillClip(void)
 		if (Clip1() < GetMaxClip1())
 		{
 			m_iClip1++;
-			pOwner->RemoveAmmo(1, m_iPrimaryAmmoType);
+			if (m_bCompensateEjectedRoundForFullAmmoSupply && pOwner->GetAmmoCount(m_iPrimaryAmmoType) >= pOwner->GetMaxCarry(m_iPrimaryAmmoType))
+			// bolt action realism in case of full supply of spare ammo, no place for compensation round - just don't subtract it
+			{
+				m_bCompensateEjectedRoundForFullAmmoSupply = false;
+			}
+			else
+			{
+				pOwner->RemoveAmmo(1, m_iPrimaryAmmoType);
+			}
 		}
 	}
 }
@@ -441,6 +456,9 @@ void CWeapon357::Pump(void)
 
 	if (pOwner == NULL)
 		return;
+
+	m_bReactivateIronsightAfterBolt = m_bIsIronsighted; // remember ironsight state to restore after bolting
+
 	DisableIronsights();
 	m_bNeedPump = false;
 
@@ -448,17 +466,11 @@ void CWeapon357::Pump(void)
 
 	// Finish reload animation
 
-	if (m_bIsIronsighted)
-	{
-		SendWeaponAnim(ACT_SHOTGUN_PUMP);
-	}
-	else
-	{
-		SendWeaponAnim(ACT_SHOTGUN_PUMP);
-	}
+	SendWeaponAnim(ACT_SHOTGUN_PUMP);
 
 	pOwner->m_flNextAttack = gpGlobals->curtime + SequenceDuration();
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flIronsightAfterBoltReactivatingTime = gpGlobals->curtime + SequenceDuration();
 }
 
 //-----------------------------------------------------------------------------
@@ -499,14 +511,11 @@ void CWeapon357::PrimaryAttack(void)
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
 		pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
 		//pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); punch off
-		m_snipering = true;
 	}
 	else
 	{
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
-		m_snipering = false;
-
 	}
 
 	// player "shoot" animation
@@ -579,8 +588,10 @@ void CWeapon357::SecondaryAttack(void)
 	{
 		return;
 	}
+
 	ToggleIronsights();
 	pOwner->ToggleCrosshair();
+	
 	//
 	//pPlayer->m_nButtons &= ~IN_ATTACK2;
 	//// MUST call sound before removing a round from the clip of a CMachineGun
@@ -636,21 +647,32 @@ void CWeapon357::ItemPostFrame(void)
 		return;
 	}
 	DisplaySDEHudHint(); //added
-	if (GetActivity() == ACT_VM_HOLSTER) //new
-		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
-
-	if (pOwner->m_afButtonReleased & IN_IRONSIGHT)
-	{
-		m_snipering = false;
-		DisableIronsights();
-	}
-
-	if (m_snipering)
+	if (m_bReactivateIronsightAfterBolt && gpGlobals->curtime >= m_flIronsightAfterBoltReactivatingTime)
 	{
 		EnableIronsights();
-		//m_snipering = false;
+		pOwner->ShowCrosshair(false);
+		m_bReactivateIronsightAfterBolt = false;
 	}
+
+	if (m_bTriggerCatchEjectedRound && gpGlobals->curtime >= m_flTimeToCatchEjectedRound)
+	{
+		m_iClip1--;
+		m_bTriggerCatchEjectedRound = false;
+		// the bolt ejects the chambered round even if it's not an empty casing.
+		// Spare that ejected round to re-insert it later
+		if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) < pOwner->GetMaxCarry(m_iPrimaryAmmoType))
+		{ // if ammo supply is full, just don't decrease it later when loading the first round
+			pOwner->GiveAmmo(1, m_iPrimaryAmmoType, true); // Realism of bolt-action rifle mechanics: when you start reloading
+		}
+		else
+		{
+			m_bCompensateEjectedRoundForFullAmmoSupply = true;
+		}
+	}
+
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	if (m_bInReload)
 	{
