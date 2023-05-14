@@ -42,6 +42,8 @@ public:
 	CNetworkVar( bool,	m_bAutoAimTarget );
 	CNetworkVar( bool, m_bAR1M1_GL_Loaded );
 	CNetworkVar( bool, m_bAR2_GL_Loaded);
+	CNetworkVar( bool, m_bR357_Round_Chambered);
+	CNetworkVar( bool, m_bAnnabelle_Round_Chambered);
 #ifdef HL2_EPISODIC
 	CNetworkVar( float, m_flFlashBattery );
 	CNetworkVar( Vector, m_vecLocatorOrigin );

@@ -23,6 +23,8 @@
 
 using namespace vgui;
 
+ConVar extern sde_simple_rifle_bolt;
+
 //-----------------------------------------------------------------------------
 // Purpose: Displays current ammunition level
 //-----------------------------------------------------------------------------
@@ -36,8 +38,16 @@ public:
 	void VidInit( void );
 	void Reset();
 
-	void SetAmmo(int ammo, bool playAnimation);
+	int Simple_Rifle_Bolt;
+
+	bool Annabelle_Round_Chambered;
+
+	bool R357_Round_Chambered;
+
+	void SetAmmo(int ammo, bool playAnimation, const char* ActiveWeaponName);
 	void SetAmmo2(int ammo2, bool playAnimation);
+	void SetVehicleAmmo(int ammo, bool playAnimation);
+	void SetVehicleAmmo2(int ammo2, bool playAnimation);
 	virtual void Paint( void );
 
 protected:
@@ -53,6 +63,10 @@ private:
 	int		m_iAmmo;
 	int		m_iAmmo2;
 	CHudTexture *m_iconPrimaryAmmo;
+
+	int		m_iSimple_Rifle_Bolt;
+	bool	m_bAnnabelle_Round_Chambered;
+	bool	m_bR357_Round_Chambered;
 };
 
 DECLARE_HUDELEMENT( CHudAmmo );
@@ -62,6 +76,13 @@ DECLARE_HUDELEMENT( CHudAmmo );
 //-----------------------------------------------------------------------------
 CHudAmmo::CHudAmmo( const char *pElementName ) : BaseClass(NULL, "HudAmmo"), CHudElement( pElementName )
 {
+
+	m_iSimple_Rifle_Bolt = 1;
+
+	m_bAnnabelle_Round_Chambered = true;
+
+	m_bR357_Round_Chambered = true;
+
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT | HIDEHUD_WEAPONSELECTION );
 
 	hudlcd->SetGlobalStat( "(ammo_primary)", "0" );
@@ -122,7 +143,22 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 	// Clear out the vehicle entity
 	m_hCurrentVehicle = NULL;
 
+	C_BaseHLPlayer *HLPlayer = (C_BaseHLPlayer *)player;
+
+	if (HLPlayer)
+	{
+		Annabelle_Round_Chambered = HLPlayer->Get_Annabelle_Chamber();
+		R357_Round_Chambered = HLPlayer->Get_R357_Chamber();
+	}
+
+	Simple_Rifle_Bolt = sde_simple_rifle_bolt.GetInt();
+
 	C_BaseCombatWeapon *wpn = GetActiveWeapon();
+
+	const char* ActiveWeaponName = NULL;
+
+	if (wpn)
+		ActiveWeaponName = wpn->GetName();
 
 	hudlcd->SetGlobalStat( "(weapon_print_name)", wpn ? wpn->GetPrintName() : " " );
 	hudlcd->SetGlobalStat( "(weapon_name)", wpn ? wpn->GetName() : " " );
@@ -164,13 +200,13 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 	if (wpn == m_hCurrentActiveWeapon)
 	{
 		// same weapon, just update counts
-		SetAmmo(ammo1, true);
+		SetAmmo(ammo1, true, ActiveWeaponName);
 		SetAmmo2(ammo2, true);
 	}
 	else
 	{
 		// different weapon, change without triggering
-		SetAmmo(ammo1, false);
+		SetAmmo(ammo1, false, ActiveWeaponName);
 		SetAmmo2(ammo2, false);
 
 		// update whether or not we show the total ammo display
@@ -185,7 +221,7 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 			SetShouldDisplaySecondaryValue(false);
 		}
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged");
+		//g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged"); //prevent the ammo coloring override
 		m_hCurrentActiveWeapon = wpn;
 	}
 }
@@ -223,14 +259,14 @@ void CHudAmmo::UpdateVehicleAmmo( C_BasePlayer *player, IClientVehicle *pVehicle
 	if (pVehicleEnt == m_hCurrentVehicle)
 	{
 		// same weapon, just update counts
-		SetAmmo(ammo1, true);
-		SetAmmo2(ammo2, true);
+		SetVehicleAmmo(ammo1, true);
+		SetVehicleAmmo2(ammo2, true);
 	}
 	else
 	{
 		// diferent weapon, change without triggering
-		SetAmmo(ammo1, false);
-		SetAmmo2(ammo2, false);
+		SetVehicleAmmo(ammo1, false);
+		SetVehicleAmmo2(ammo2, false);
 
 		// update whether or not we show the total ammo display
 		if (pVehicle->PrimaryAmmoUsesClips())
@@ -278,7 +314,87 @@ void CHudAmmo::UpdateAmmoDisplays()
 //-----------------------------------------------------------------------------
 // Purpose: Updates ammo display
 //-----------------------------------------------------------------------------
-void CHudAmmo::SetAmmo(int ammo, bool playAnimation)
+void CHudAmmo::SetAmmo(int ammo, bool playAnimation, const char* ActiveWeaponName)
+{
+	if (ammo == 0)
+	{
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
+	}
+	else if (ammo != m_iAmmo || Simple_Rifle_Bolt != m_iSimple_Rifle_Bolt ||
+		Annabelle_Round_Chambered != m_bAnnabelle_Round_Chambered || R357_Round_Chambered != m_bR357_Round_Chambered)
+	{
+		if (!Simple_Rifle_Bolt && (strcmp(ActiveWeaponName, "weapon_357") == 0 || strcmp(ActiveWeaponName, "weapon_annabelle") == 0))
+		{
+			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && R357_Round_Chambered == false) ||
+				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && Annabelle_Round_Chambered == false))
+				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionNoRoundInChamber");
+			else
+				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionRoundChambered");
+		}
+		else if (ammo < m_iAmmo)
+		{
+			// ammo has decreased
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoDecreased");
+		}
+		else
+		{
+			// ammunition has increased
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoIncreased");
+		}
+	}
+
+	if (m_iAmmo != ammo)
+	{
+		m_iAmmo = ammo;
+	}
+
+	if (m_iSimple_Rifle_Bolt != Simple_Rifle_Bolt)
+	{
+		m_iSimple_Rifle_Bolt = Simple_Rifle_Bolt;
+	}
+
+	if (m_bAnnabelle_Round_Chambered != Annabelle_Round_Chambered)
+	{
+		m_bAnnabelle_Round_Chambered = Annabelle_Round_Chambered;
+	}
+
+	if (m_bR357_Round_Chambered != R357_Round_Chambered)
+	{
+		m_bR357_Round_Chambered = R357_Round_Chambered;
+	}
+
+	SetDisplayValue(ammo);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Updates 2nd ammo display
+//-----------------------------------------------------------------------------
+void CHudAmmo::SetAmmo2(int ammo2, bool playAnimation)
+{
+	if (ammo2 != m_iAmmo2)
+	{
+		if (ammo2 == 0)
+		{
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("Ammo2Empty");
+		}
+		else if (ammo2 < m_iAmmo2)
+		{
+			// ammo has decreased
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("Ammo2Decreased");
+		}
+		else
+		{
+			// ammunition has increased
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("Ammo2Increased");
+		}
+
+		m_iAmmo2 = ammo2;
+	}
+
+	SetSecondaryValue(ammo2);
+}
+
+void CHudAmmo::SetVehicleAmmo(int ammo, bool playAnimation)
 {
 	if (ammo != m_iAmmo)
 	{
@@ -302,11 +418,10 @@ void CHudAmmo::SetAmmo(int ammo, bool playAnimation)
 
 	SetDisplayValue(ammo);
 }
-
 //-----------------------------------------------------------------------------
 // Purpose: Updates 2nd ammo display
 //-----------------------------------------------------------------------------
-void CHudAmmo::SetAmmo2(int ammo2, bool playAnimation)
+void CHudAmmo::SetVehicleAmmo2(int ammo2, bool playAnimation)
 {
 	if (ammo2 != m_iAmmo2)
 	{
@@ -404,7 +519,6 @@ public:
 	
 	void SetAmmo(int ammo, C_BaseHLPlayer *HLPlayer, const char* ActiveWeaponName)
 	{
-
 		if (Simple_Alt_Reload)
 		{
 			DevMsg("SDE_HUD_simple on\n");

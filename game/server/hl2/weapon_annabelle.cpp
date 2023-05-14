@@ -13,6 +13,7 @@
 #include "basecombatcharacter.h"
 #include "ai_basenpc.h"
 #include "player.h"
+#include <hl2_player.h>
 #include "gamerules.h"		// For g_pGameRules
 #include "in_buttons.h"
 #include "soundent.h"
@@ -24,6 +25,7 @@
 
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
+extern ConVar sde_simple_rifle_bolt;
 
 class CWeaponAnnabelle : public CBaseHLCombatWeapon
 {
@@ -37,8 +39,8 @@ private:
 	bool	m_bNeedPump;		// When emptied completely
 	bool	m_bDelayedFire1;	// Fire primary when finished reloading
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
-	bool	m_bTriggerCatchEjectedRound;
-	float	m_flTimeToCatchEjectedRound;
+	bool	m_bEjectChamberedRound;
+	float	m_bTimeToSubtractEjectedChamberedRound;
 	bool	m_bCompensateEjectedRoundForFullAmmoSupply;
 	bool	m_bReactivateIronsightAfterBolt;
 	float	m_flIronsightAfterBoltReactivatingTime;
@@ -299,6 +301,15 @@ bool CWeaponAnnabelle::StartReload(void)
 	if (m_iClip1 >= GetMaxClip1())
 		return false;
 
+	CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	if (!pPlayer)
+	{
+		return false;
+	}
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 	DisableIronsights();
 
 	// If shotgun totally emptied then a pump animation is needed
@@ -321,12 +332,15 @@ bool CWeaponAnnabelle::StartReload(void)
 	// Make shotgun shell visible
 	SetBodygroup(1, 0);
 
-	m_bTriggerCatchEjectedRound = m_bCompensateEjectedRoundForFullAmmoSupply = false; // initialize trigger chain each reload
+	m_bEjectChamberedRound = m_bCompensateEjectedRoundForFullAmmoSupply = false; // initialize trigger chain each reload
 
-	if (m_iClip1 >= 1)
+	if (m_iClip1 >= 1 && (sde_simple_rifle_bolt.GetInt() || (!sde_simple_rifle_bolt.GetInt() && pHL2Player->Get_Annabelle_Chamber())))
 	{ //don't split this trick into eject-catch separated in time if player has maximum spare ammo, not to lose a round 
-		m_flTimeToCatchEjectedRound = gpGlobals->curtime + 0.7f; // catch the ejected round as it flies out
-		m_bTriggerCatchEjectedRound = true;
+		m_bTimeToSubtractEjectedChamberedRound = gpGlobals->curtime + 0.5f;
+		// the ejected round will be caught to the inventory in case of simple bolting or discarded in case of manual bolting
+		m_bEjectChamberedRound = true;
+		if (!sde_simple_rifle_bolt.GetInt())
+			pHL2Player->Annabelle_Round_Unchamber();
 	}
 
 	if (m_iClip1 < 1)
@@ -402,8 +416,21 @@ void CWeaponAnnabelle::FinishReload(void)
 	if (pOwner == NULL)
 		return;
 
+	CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	if (!pPlayer)
+	{
+		return;
+	}
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 	m_bInReload = false;
 	m_bNeedPump = false;
+
+	if (!sde_simple_rifle_bolt.GetInt())
+		pHL2Player->Annabelle_Round_Chamber();
+
 	DisableIronsights();
 
 	// Finish reload animation
@@ -456,10 +483,22 @@ void CWeaponAnnabelle::Pump(void)
 	if (pOwner == NULL)
 		return;
 
+	CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	if (!pPlayer)
+	{
+		return;
+	}
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 	m_bReactivateIronsightAfterBolt = m_bIsIronsighted; // remember ironsight state to restore after bolting
 
 	DisableIronsights();
 	m_bNeedPump = false;
+
+	if (!sde_simple_rifle_bolt.GetInt())
+		pHL2Player->Annabelle_Round_Chamber();
 
 	WeaponSound(SPECIAL1);
 
@@ -500,63 +539,77 @@ void CWeaponAnnabelle::PrimaryAttack(void)
 		return;
 	}
 
-	// MUST call sound before removing a round from the clip of a CMachineGun
-	WeaponSound(SINGLE);
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
-	pPlayer->DoMuzzleFlash();
-
-	if (m_bIsIronsighted)
+	if (!sde_simple_rifle_bolt.GetInt() && !pHL2Player->Get_Annabelle_Chamber())
 	{
-		SendWeaponAnim(ACT_VM_IRONSHOOT);
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
-		//pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); punch off
+		Pump();
 	}
+
 	else
 	{
-		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
 
+		// MUST call sound before removing a round from the clip of a CMachineGun
+		WeaponSound(SINGLE);
+
+		pPlayer->DoMuzzleFlash();
+
+		if (m_bIsIronsighted)
+		{
+			SendWeaponAnim(ACT_VM_IRONSHOOT);
+			pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
+			//pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); punch off
+		}
+		else
+		{
+			SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+			pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
+
+		}
+
+		// player "shoot" animation
+		pPlayer->SetAnimation(PLAYER_ATTACK1);
+
+		// Don't fire again until fire animation has completed
+		m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+		m_iClip1 -= 1;
+
+		Vector	vecSrc = pPlayer->Weapon_ShootPosition();
+		Vector	vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
+
+		pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 1.0); //suda posmitret pPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 1.0 );
+
+		// Fire the bullets, and force the first shot to be perfectly accuracy
+		if (m_bIsIronsighted)
+		{
+			pPlayer->FireBullets(1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
+		}
+		else
+		{
+			pPlayer->FireBullets(1, vecSrc, vecAiming, VECTOR_CONE_2DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
+		}
+
+
+		CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2, GetOwner());
+
+		if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
+		{
+			// HEV suit - indicate out of ammo condition
+			pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
+		}
+
+		if (m_iClip1 && sde_simple_rifle_bolt.GetInt())
+		{
+			// pump so long as some rounds are left.
+			m_bNeedPump = true;
+		}
+
+		if (!sde_simple_rifle_bolt.GetInt())
+			pHL2Player->Annabelle_Round_Unchamber(); //even if 0 ammo remains, after shot there is no chambered round
+
+		m_iPrimaryAttacks++;
+		gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
 	}
-
-	// player "shoot" animation
-	pPlayer->SetAnimation(PLAYER_ATTACK1);
-
-	// Don't fire again until fire animation has completed
-	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
-	m_iClip1 -= 1;
-
-	Vector	vecSrc = pPlayer->Weapon_ShootPosition();
-	Vector	vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
-
-	pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 1.0); //suda posmitret pPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 1.0 );
-
-	// Fire the bullets, and force the first shot to be perfectly accuracy
-	if (m_bIsIronsighted)
-	{
-		pPlayer->FireBullets(1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
-	}
-	else
-	{
-		pPlayer->FireBullets(1, vecSrc, vecAiming, VECTOR_CONE_2DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
-	}
-	
-
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2, GetOwner());
-
-	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
-	{
-		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
-	}
-
-	if (m_iClip1)
-	{
-		// pump so long as some rounds are left.
-		m_bNeedPump = true;
-	}
-
-	m_iPrimaryAttacks++;
-	gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
 }
 
 void CWeaponAnnabelle::HoldIronsight(void)
@@ -636,7 +689,7 @@ void CWeaponAnnabelle::SecondaryAttack(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Override so shotgun can do mulitple reloads in a row
+// Purpose: Override so shotgun can do multiple reloads in a row
 //-----------------------------------------------------------------------------
 void CWeaponAnnabelle::ItemPostFrame(void)
 {
@@ -654,19 +707,22 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		m_bReactivateIronsightAfterBolt = false;
 	}
 
-	if (m_bTriggerCatchEjectedRound && gpGlobals->curtime >= m_flTimeToCatchEjectedRound)
+	if (m_bEjectChamberedRound && gpGlobals->curtime >= m_bTimeToSubtractEjectedChamberedRound)
 	{
 		m_iClip1--;
-		m_bTriggerCatchEjectedRound = false;
+		m_bEjectChamberedRound = false;
 		// the bolt ejects the chambered round even if it's not an empty casing.
-		// Spare that ejected round to re-insert it later
-		if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) < pOwner->GetMaxCarry(m_iPrimaryAmmoType))
-		{ // if ammo supply is full, just don't decrease it later when loading the first round
-			pOwner->GiveAmmo(1, m_iPrimaryAmmoType, true); // Realism of bolt-action rifle mechanics: when you start reloading
-		}
-		else
+		// In case of simple bolting spare that ejected round to re-insert it later
+		if (sde_simple_rifle_bolt.GetInt())
 		{
-			m_bCompensateEjectedRoundForFullAmmoSupply = true;
+			if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) < pOwner->GetMaxCarry(m_iPrimaryAmmoType))
+			{ // if ammo supply is full, just don't decrease it later when loading the first round
+					pOwner->GiveAmmo(1, m_iPrimaryAmmoType, true); // Realism of bolt-action rifle mechanics: when you start reloading
+			}
+			else
+			{
+				m_bCompensateEjectedRoundForFullAmmoSupply = true;
+			}
 		}
 	}
 
@@ -717,7 +773,7 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		}
 	}
 
-	if ((m_bNeedPump) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	if (m_bNeedPump && sde_simple_rifle_bolt.GetInt() && (m_flNextPrimaryAttack <= gpGlobals->curtime))
 	{
 		Pump();
 		return;

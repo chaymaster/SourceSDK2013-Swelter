@@ -31,6 +31,7 @@ private:
 
 	CheckButton *hintButton;
 	CheckButton *altButton;
+	CheckButton *boltButton;
 	CheckButton *ccButton;
 	ComboBox *m_weaponFOV;
 	ComboBox *m_ccLang;
@@ -38,6 +39,7 @@ private:
 
 	bool b_hintButton;
 	bool b_altButton;
+	bool b_boltButton;
 	bool b_ccButton;
 };
 
@@ -111,7 +113,19 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	//	m_weaponFOV->ActivateItem(2);
 	//}
 
-
+	ConVarRef var7("sde_simple_rifle_bolt");
+	boltButton = new CheckButton(this, "boltButton", "Turn on/off the game bolting the rifles for you");
+	if (var7.GetInt() == 0)
+	{
+		boltButton->SetSelected(true);
+		b_boltButton = true;
+	}
+	else
+	{
+		boltButton->SetSelected(false);
+		b_boltButton = false;
+	}
+	b_boltButton = boltButton->IsSelected();
 
 	ConVarRef var("sde_weaponhint");
 	hintButton = new CheckButton(this, "hintButton", "Turn on/off weapon hud hint");
@@ -192,6 +206,9 @@ void COptionsSwelter::OnApplyChanges()
 
 	ConVarRef var2("sde_simple_alt_reload");
 	var2.SetValue(!altButton->IsSelected());
+
+	ConVarRef var7("sde_simple_rifle_bolt");
+	var7.SetValue(!boltButton->IsSelected());
 
 	ConVarRef var3("closecaption");
 	ConVarRef var4("cc_subtitles");

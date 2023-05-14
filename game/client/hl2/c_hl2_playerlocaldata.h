@@ -43,6 +43,8 @@ public:
 	bool	m_bAutoAimTarget;
 	bool	m_bAR1M1_GL_Loaded;
 	bool	m_bAR2_GL_Loaded;
+	bool	m_bR357_Round_Chambered;
+	bool	m_bAnnabelle_Round_Chambered;
 #ifdef HL2_EPISODIC
 	float	m_flFlashBattery;
 	Vector	m_vecLocatorOrigin;

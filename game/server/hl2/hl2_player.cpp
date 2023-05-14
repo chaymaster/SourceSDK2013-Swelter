@@ -1565,6 +1565,34 @@ bool				CHL2_Player::Get_AR2_GLL(void)
 	return m_HL2Local.m_bAR2_GL_Loaded;
 }
 
+// Bolt-action rifles' statuses
+
+void				CHL2_Player::R357_Round_Chamber(void)
+{
+	m_HL2Local.m_bR357_Round_Chambered = true;
+}
+void				CHL2_Player::R357_Round_Unchamber(void)
+{
+	m_HL2Local.m_bR357_Round_Chambered = false;
+}
+bool				CHL2_Player::Get_R357_Chamber(void)
+{
+	return m_HL2Local.m_bR357_Round_Chambered;
+}
+
+void				CHL2_Player::Annabelle_Round_Chamber(void)
+{
+	m_HL2Local.m_bAnnabelle_Round_Chambered = true;
+}
+void				CHL2_Player::Annabelle_Round_Unchamber(void)
+{
+	m_HL2Local.m_bAnnabelle_Round_Chambered = false;
+}
+bool				CHL2_Player::Get_Annabelle_Chamber(void)
+{
+	return m_HL2Local.m_bAnnabelle_Round_Chambered;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHL2_Player::CommanderUpdate()
