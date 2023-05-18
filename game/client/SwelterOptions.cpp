@@ -33,6 +33,7 @@ private:
 	CheckButton *altButton;
 	CheckButton *boltButton;
 	CheckButton *ccButton;
+	CheckButton *subtitlesButton;
 	ComboBox *m_weaponFOV;
 	ComboBox *m_ccLang;
 	ComboBox *m_reloadingMag;
@@ -41,6 +42,7 @@ private:
 	bool b_altButton;
 	bool b_boltButton;
 	bool b_ccButton;
+	bool b_subtitlesButton;
 };
 
 COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NULL)
@@ -95,23 +97,23 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		m_ccLang->ActivateItem(3);
 
 
-	ConVarRef var6("reload_mag_drop");
+	ConVarRef var6("sde_drop_mag");
 	m_reloadingMag = new ComboBox(this, "reloadingMag", 6, false);
 	m_reloadingMag->AddItem("#pht_option_reloading_0", NULL);
 	m_reloadingMag->AddItem("#pht_option_reloading_1", NULL);
 	m_reloadingMag->AddItem("#pht_option_reloading_2", NULL);
 
-	//switch (var6.GetInt())
-	//{
-	//case 0:
-	//	m_weaponFOV->ActivateItem(0);
-	//	break;
-	//case 1:
-	//	m_weaponFOV->ActivateItem(1);
-	//	break;
-	//case 2:
-	//	m_weaponFOV->ActivateItem(2);
-	//}
+	switch (var6.GetInt())
+	{
+	case 0:
+		m_reloadingMag->ActivateItem(0);
+		break;
+	case 1:
+		m_reloadingMag->ActivateItem(1);
+		break;
+	case 2:
+		m_reloadingMag->ActivateItem(2);
+	}
 
 	ConVarRef var7("sde_simple_rifle_bolt");
 	boltButton = new CheckButton(this, "boltButton", "Turn on/off the game bolting the rifles for you");
@@ -157,7 +159,6 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	b_altButton = altButton->IsSelected();
 
 	ConVarRef var4("closecaption");
-	ConVarRef var5("cc_subtitles");
 	ccButton = new CheckButton(this, "ccButton", "Turn on/off closedcaption");
 	if (var4.GetInt() == 1)
 	{
@@ -171,8 +172,19 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	}
 	b_ccButton = ccButton->IsSelected();
 
-
-
+	ConVarRef var5("cc_subtitles");
+	subtitlesButton = new CheckButton(this, "subtitlesButton", "Limit subtitles to dialog only");
+	if (var5.GetInt() == 1)
+	{
+		subtitlesButton->SetSelected(true);
+		b_subtitlesButton = true;
+	}
+	else
+	{
+		subtitlesButton->SetSelected(false);
+		b_subtitlesButton = false;
+	}
+	b_subtitlesButton = subtitlesButton->IsSelected();
 
 
 
@@ -210,10 +222,12 @@ void COptionsSwelter::OnApplyChanges()
 	ConVarRef var7("sde_simple_rifle_bolt");
 	var7.SetValue(!boltButton->IsSelected());
 
-	ConVarRef var3("closecaption");
-	ConVarRef var4("cc_subtitles");
-	var3.SetValue(ccButton->IsSelected());
-	var4.SetValue(1);
+	//ConVarRef var3("closecaption");
+	ConVarRef var4("closecaption");
+	var4.SetValue(ccButton->IsSelected());
+
+	ConVarRef var5("cc_subtitles");
+	var5.SetValue(subtitlesButton->IsSelected());
 
 	switch (m_ccLang->GetActiveItem())
 	{
@@ -229,6 +243,19 @@ void COptionsSwelter::OnApplyChanges()
 	case 3:
 		engine->ClientCmd("cc_lang schinese\n");
 	}
+
+	switch (m_reloadingMag->GetActiveItem())
+	{
+	case 0:
+		ApplyChangesToConVar("sde_drop_mag", 0);
+		break;
+	case 1:
+		ApplyChangesToConVar("sde_drop_mag", 1);
+		break;
+	case 2:
+		ApplyChangesToConVar("sde_drop_mag", 2);
+	}
+
 }
 
 void COptionsSwelter::OnCheckButtonChecked(Panel* panel)

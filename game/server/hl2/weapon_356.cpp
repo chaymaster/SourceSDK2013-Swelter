@@ -23,6 +23,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+// extern ConVar	sde_drop_mag;
+
 //-----------------------------------------------------------------------------
 // CWeapon356
 //-----------------------------------------------------------------------------
@@ -78,18 +80,20 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 	{
 		case EVENT_WEAPON_RELOAD:
 			{
-				CEffectData data;
+				//regardless of sde_drop_mag value, eject only spent casings 
+				//if (sde_drop_mag.GetInt())
+				//{
+					CEffectData data;
+					// Eject (six minus remaining ammo) spent casings (even for realistic mag drop, let the player keep rounds remaining in the drum) 
+					for (int i = 0; i < 6-m_iClip1; i++)
+					{
+						data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector(-4, 4);
+						data.m_vAngles = QAngle(90, random->RandomInt(0, 360), 0);
+						data.m_nEntIndex = entindex();
 
-				// Emit six spent shells
-				for ( int i = 0; i < 6; i++ )
-				{
-					data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector( -4, 4 );
-					data.m_vAngles = QAngle( 90, random->RandomInt( 0, 360 ), 0 );
-					data.m_nEntIndex = entindex();
-
-					DispatchEffect( "ShellEject", data );
-				}
-
+						DispatchEffect("ShellEject", data);
+					}
+				//}
 				break;
 			}
 	}

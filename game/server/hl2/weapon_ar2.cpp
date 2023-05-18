@@ -36,6 +36,7 @@ ConVar sk_weapon_ar2_alt_fire_radius("sk_weapon_ar2_alt_fire_radius", "10");
 ConVar sk_weapon_ar2_alt_fire_duration("sk_weapon_ar2_alt_fire_duration", "2");
 ConVar sk_weapon_ar2_alt_fire_mass("sk_weapon_ar2_alt_fire_mass", "150");
 extern ConVar    sde_simple_alt_reload;
+extern ConVar	sde_drop_mag;
 
 //=========================================================
 //=========================================================
@@ -768,7 +769,8 @@ bool CWeaponAR2::Reload(void)
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -780,7 +782,8 @@ bool CWeaponAR2::Reload(void)
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}

@@ -26,6 +26,7 @@
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
 extern ConVar    sde_simple_alt_reload;
+extern ConVar	sde_drop_mag;
 
 class CWeaponar1m1 : public CHLSelectFireMachineGun
 {
@@ -341,7 +342,8 @@ bool CWeaponar1m1::Reload(void)
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -354,7 +356,8 @@ bool CWeaponar1m1::Reload(void)
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}

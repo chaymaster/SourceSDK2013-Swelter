@@ -29,6 +29,8 @@
 
 ConVar	pistol_use_new_accuracy("pistol_use_new_accuracy", "1");
 
+extern ConVar	sde_drop_mag;
+
 //-----------------------------------------------------------------------------
 // CWeaponPistol
 //-----------------------------------------------------------------------------
@@ -396,7 +398,8 @@ bool CWeaponPistol::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				dropMagTime = (gpGlobals->curtime + 0.5f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -408,7 +411,8 @@ bool CWeaponPistol::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				dropMagTime = (gpGlobals->curtime + 0.5f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}

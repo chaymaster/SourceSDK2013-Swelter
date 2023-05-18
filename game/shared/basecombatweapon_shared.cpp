@@ -14,7 +14,7 @@
 #include "physics_saverestore.h"
 #include "datacache/imdlcache.h"
 #include "activitylist.h"
-
+#include <swelter_convars.h>
 //#include "baseviewmodel_shared.h"
 
 // NVNT start extra includes
@@ -54,9 +54,11 @@
 // The minimum time a hud hint for a weapon should be on screen. If we switch away before
 // this, then teh hud hint counter will be deremented so the hint will be shown again, as
 // if it had never been seen. The total display time for a hud hint is specified in client
-// script HudAnimations.txt (which I can't read here). 
+// script HudAnimations.txt (which I can't read here).
+
+//#define MIN_HUDHINT_DISPLAY_TIME 3.0f // original value
 #define MIN_HUDHINT_DISPLAY_TIME 3.0f
-#define SDE_HUDHINT_DISPLAY_TIME 3.5f
+//#define SDE_HUDHINT_DISPLAY_TIME 3.5f // original value
 #define HIDEWEAPON_THINK_CONTEXT			"BaseCombatWeapon_HideThink"
 
 extern bool UTIL_ItemCanBeTouchedByPlayer(CBaseEntity *pItem, CBasePlayer *pPlayer);
@@ -82,8 +84,6 @@ ConVar viewmodel_adjust_yaw("viewmodel_adjust_yaw", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_roll("viewmodel_adjust_roll", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_fov("viewmodel_adjust_fov", "0", FCVAR_REPLICATED, "Note: this feature is not available during any kind of zoom", vm_adjust_fov_callback);
 ConVar viewmodel_adjust_enabled("viewmodel_adjust_enabled", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "enabled viewmodel adjusting", vm_adjust_enable_callback);
-ConVar sde_weaponhint("sde_weaponhint", "0", FCVAR_ARCHIVE);
-
 
 #ifdef CLIENT_DLL
 void RecvProxy_ToggleSights(const CRecvProxyData* pData, void* pStruct, void* pOut)
@@ -1001,6 +1001,19 @@ void CBaseCombatWeapon::DisplaySDEHudHint()
 #endif//CLIENT_DLL
 	}
 }
+
+void CBaseCombatWeapon::DisplayCannotReloadHudHint()
+{
+#if !defined( CLIENT_DLL )
+		CFmtStr hint;
+		hint.sprintf("#sde_hint_weapon_cannot_reload");
+		UTIL_HudHintText(GetOwner(), hint.Access());
+		m_iCannotReloadHudHintCount++;
+		m_bCannotReloadHudHintDisplayed = true;
+		m_flHudHintMinDisplayTime = gpGlobals->curtime + MIN_HUDHINT_DISPLAY_TIME;
+#endif//CLIENT_DLL
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::RescindAltFireHudHint()
@@ -2269,7 +2282,41 @@ bool CBaseCombatWeapon::DefaultReload(int iClipSize1, int iClipSize2, int iActiv
 	if (UsesClipsForAmmo1())
 	{
 		// need to reload primary clip?
-		int primary = MIN(iClipSize1 - m_iClip1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
+		const char* WeaponName = GetName();
+		int AmmoPool = pOwner->GetAmmoCount(m_iPrimaryAmmoType);
+		int AmmoToDecreasePool = 0; // shut up with your 'uninitialized variable' warnings treated as errors, compiler
+
+		// don't lose ammo while reloading revolver, as you get all separate rounds/casings unloading the drum
+		if (sde_drop_mag.GetInt() == 2 && (strcmp(WeaponName, "weapon_pistol") == 0 || /*strcmp(WeaponName, "weapon_356") == 0 || */
+			strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 ||
+			strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 || strcmp(WeaponName, "weapon_ar2") == 0))
+			// realistic magazine drop discarding remains of ammo
+		{
+			int ExtraChamberedRound;
+			
+			if (m_iClip1 == 0 /*|| strcmp(WeaponName, "weapon_356") == 0*/)
+				ExtraChamberedRound = 0;
+			else
+				ExtraChamberedRound = 1;
+
+			AmmoToDecreasePool = MIN(iClipSize1 - ExtraChamberedRound, AmmoPool);
+			
+			if (m_iClip1 - ExtraChamberedRound >= AmmoToDecreasePool) // if you have less or equal ammo in ammo pool subtraction than in the magazine		
+			{
+				if (m_iClip1 < iClipSize1) // the case of hitting reload with full clip and any supply still passes condition 1,
+					DisplayCannotReloadHudHint(); // so add the other condition to display the hint: the clip to be non-full
+				return false;
+			}
+			m_iClip1 = ExtraChamberedRound; // chambered round shows up in the HUD until the weapon is reloaded
+
+		}
+		else
+		{
+			AmmoToDecreasePool = MIN(iClipSize1 - m_iClip1, AmmoPool);
+		}
+
+		int primary = AmmoToDecreasePool;
+
 		if (primary != 0)
 		{
 			bReload = true;

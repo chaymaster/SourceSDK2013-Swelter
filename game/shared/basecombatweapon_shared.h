@@ -199,6 +199,7 @@ public:
 	virtual bool			ShouldDisplayAltFireHUDHint();
 	virtual void			DisplayAltFireHudHint();
 	virtual void			DisplaySDEHudHint();
+	virtual void			DisplayCannotReloadHudHint();
 	virtual void			RescindAltFireHudHint(); ///< undisplay the hud hint and pretend it never showed.
 
 	virtual bool			ShouldDisplayReloadHUDHint();
@@ -648,8 +649,10 @@ private:
 
 	int						m_iAltFireHudHintCount;		// How many times has this weapon displayed its alt-fire HUD hint?
 	int						m_iReloadHudHintCount;		// How many times has this weapon displayed its reload HUD hint?
+	int						m_iCannotReloadHudHintCount;// How many times has this weapon displayed its 'cannot reload' HUD hint?
 	bool					m_bAltFireHudHintDisplayed;	// Have we displayed an alt-fire HUD hint since this weapon was deployed?
 	bool					m_bReloadHudHintDisplayed;	// Have we displayed a reload HUD hint since this weapon was deployed?
+	bool					m_bCannotReloadHudHintDisplayed;// Have we displayed a 'cannot reload' HUD hint since this weapon was deployed?
 	float					m_flHudHintPollTime;	// When to poll the weapon again for whether it should display a hud hint.
 	float					m_flHudHintMinDisplayTime; // if the hint is squelched before this, reset my counter so we'll display it again.
 

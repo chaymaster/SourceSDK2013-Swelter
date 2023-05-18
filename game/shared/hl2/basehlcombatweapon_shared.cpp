@@ -8,6 +8,7 @@
 #include "basehlcombatweapon_shared.h"
 
 #include "hl2_player_shared.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -51,8 +52,6 @@ BEGIN_PREDICTION_DATA( CBaseHLCombatWeapon )
 END_PREDICTION_DATA()
 
 ConVar sk_auto_reload_time( "sk_auto_reload_time", "3", FCVAR_REPLICATED );
-ConVar sde_simple_alt_reload("sde_simple_alt_reload", "0", FCVAR_REPLICATED | FCVAR_ARCHIVE);
-ConVar sde_simple_rifle_bolt("sde_simple_rifle_bolt", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE);
 
 //-----------------------------------------------------------------------------
 // Purpose: 
