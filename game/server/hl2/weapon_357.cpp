@@ -282,6 +282,7 @@ bool CWeapon357::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
+	DisplaySDEHudHint();
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------
@@ -699,7 +700,6 @@ void CWeapon357::ItemPostFrame(void)
 	{
 		return;
 	}
-	DisplaySDEHudHint(); //added
 
 	if (m_bReactivateIronsightAfterBolt && gpGlobals->curtime >= m_flIronsightAfterBoltReactivatingTime)
 	{

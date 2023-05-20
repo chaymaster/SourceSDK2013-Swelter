@@ -316,14 +316,14 @@ void CHudAmmo::UpdateAmmoDisplays()
 //-----------------------------------------------------------------------------
 void CHudAmmo::SetAmmo(int ammo, bool playAnimation, const char* ActiveWeaponName)
 {
-	if (ammo == 0)
-	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
-	}
-	else if (ammo != m_iAmmo || Simple_Rifle_Bolt != m_iSimple_Rifle_Bolt ||
+	if (ammo != m_iAmmo || Simple_Rifle_Bolt != m_iSimple_Rifle_Bolt ||
 		Annabelle_Round_Chambered != m_bAnnabelle_Round_Chambered || R357_Round_Chambered != m_bR357_Round_Chambered)
 	{
-		if (!Simple_Rifle_Bolt && (strcmp(ActiveWeaponName, "weapon_357") == 0 || strcmp(ActiveWeaponName, "weapon_annabelle") == 0))
+		if (ammo == 0)
+		{
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
+		}
+		else if (!Simple_Rifle_Bolt && (strcmp(ActiveWeaponName, "weapon_357") == 0 || strcmp(ActiveWeaponName, "weapon_annabelle") == 0))
 		{
 			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && R357_Round_Chambered == false) ||
 				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && Annabelle_Round_Chambered == false))

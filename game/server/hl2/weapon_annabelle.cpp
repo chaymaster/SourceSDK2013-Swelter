@@ -281,6 +281,7 @@ bool CWeaponAnnabelle::Deploy(void)
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
+	DisplaySDEHudHint();
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------
@@ -726,7 +727,6 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		}
 	}
 
-	DisplaySDEHudHint(); //added
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 

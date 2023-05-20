@@ -28,11 +28,14 @@ public:
 	void SetShouldDisplayValue(bool state);
 	void SetShouldDisplaySecondaryValue(bool state);
 	void SetLabelText(const wchar_t *text);
+	void SetTextOrigin(double value);
 	void SetIndent(bool state);
 	void SetIsTime(bool state);
 
 	bool ShouldDisplayValue( void ) { return m_bDisplayValue; }
 	bool ShouldDisplaySecondaryValue( void ) { return m_bDisplaySecondaryValue; }
+
+	int posX, posY, tall, wide;
 
 	virtual void Reset();
 

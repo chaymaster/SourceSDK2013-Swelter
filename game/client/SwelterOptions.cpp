@@ -22,6 +22,7 @@ public:
 	~COptionsSwelter() {}
 
 	virtual void OnApplyChanges();
+	virtual void OnCommand(char const *cmd);
 
 //protected:
 //	virtual void ApplySchemeSettings(vgui::IScheme* pScheme);
@@ -33,25 +34,33 @@ private:
 	CheckButton *altButton;
 	CheckButton *boltButton;
 	CheckButton *ccButton;
-	CheckButton *subtitlesButton;
 	ComboBox *m_weaponFOV;
 	ComboBox *m_ccLang;
 	ComboBox *m_reloadingMag;
+	ComboBox *m_pCloseCaptionCombo;
+	Button	*m_setDefault;
+	Button	*m_setClassic;
+	Button	*m_setRealism;
 
 	bool b_hintButton;
 	bool b_altButton;
 	bool b_boltButton;
 	bool b_ccButton;
-	bool b_subtitlesButton;
 };
 
 COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NULL)
-{
+{	
+	m_pCloseCaptionCombo = new ComboBox(this, "CloseCaptionCheck", 6, false);
+	m_pCloseCaptionCombo->AddItem("#GameUI_NoClosedCaptions", NULL);
+	m_pCloseCaptionCombo->AddItem("#GameUI_SubtitlesAndSoundEffects", NULL);
+	m_pCloseCaptionCombo->AddItem("#GameUI_Subtitles", NULL);
+
 	ConVarRef var0("viewmodel_fov");
 	m_weaponFOV = new ComboBox(this, "weaponFOV", 6, false);
 	m_weaponFOV->AddItem("#pht_option_weapon_close", NULL);
 	m_weaponFOV->AddItem("#pht_option_weapon_medium", NULL);
 	m_weaponFOV->AddItem("#pht_option_weapon_far", NULL);
+
 
 	switch (var0.GetInt())
 	{
@@ -73,17 +82,6 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	//m_ccLang->AddItem("#pht_option_lang_german", NULL);
 	//m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
 
-
-	/*
-	if (printf("%s", var3.GetString()) == printf("english"))
-		m_ccLang->ActivateItem(0);
-	else if (printf("%s", var3.GetString()) == printf("russian"))
-		m_ccLang->ActivateItem(1);
-	else if (printf("%s", var3.GetString()) == printf("german"))
-		m_ccLang->ActivateItem(2);
-	else if (printf("%s", var3.GetString()) == printf("schinese"))
-		m_ccLang->ActivateItem(3);
-	*/
 
 
 
@@ -158,7 +156,11 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	}
 	b_altButton = altButton->IsSelected();
 
+
+	//close caption old
+	/*
 	ConVarRef var4("closecaption");
+	ConVarRef var5("cc_subtitles");
 	ccButton = new CheckButton(this, "ccButton", "Turn on/off closedcaption");
 	if (var4.GetInt() == 1)
 	{
@@ -171,20 +173,33 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		b_ccButton = false;
 	}
 	b_ccButton = ccButton->IsSelected();
+	*/
 
-	ConVarRef var5("cc_subtitles");
-	subtitlesButton = new CheckButton(this, "subtitlesButton", "Limit subtitles to dialog only");
-	if (var5.GetInt() == 1)
+	// close captions new
+	ConVarRef closecaption("closecaption");
+	ConVarRef cc_subtitles("cc_subtitles");
+	if (closecaption.GetBool())
 	{
-		subtitlesButton->SetSelected(true);
-		b_subtitlesButton = true;
+		if (cc_subtitles.GetBool())
+		{
+			m_pCloseCaptionCombo->ActivateItem(2);
+		}
+		else
+		{
+			m_pCloseCaptionCombo->ActivateItem(1);
+		}
 	}
 	else
 	{
-		subtitlesButton->SetSelected(false);
-		b_subtitlesButton = false;
+		m_pCloseCaptionCombo->ActivateItem(0);
 	}
-	b_subtitlesButton = subtitlesButton->IsSelected();
+
+
+	//preset buttons
+	m_setDefault = new Button(this, "setDefault", "#pht_option_preset_default", this, "setDefault");
+	m_setClassic = new Button(this, "setClassic", "#pht_option_preset_classic", this, "setClassic");
+	m_setRealism = new Button(this, "setRealism", "#pht_option_preset_realism", this, "setRealism");
+
 
 
 
@@ -222,12 +237,43 @@ void COptionsSwelter::OnApplyChanges()
 	ConVarRef var7("sde_simple_rifle_bolt");
 	var7.SetValue(!boltButton->IsSelected());
 
-	//ConVarRef var3("closecaption");
-	ConVarRef var4("closecaption");
-	var4.SetValue(ccButton->IsSelected());
 
-	ConVarRef var5("cc_subtitles");
-	var5.SetValue(subtitlesButton->IsSelected());
+	/* close caption old
+	ConVarRef var3("closecaption");
+	ConVarRef var4("cc_subtitles");
+	var3.SetValue(ccButton->IsSelected());
+	var4.SetValue(1);
+	*/
+	int closecaption_value = 0;
+
+	// close caption new
+	ConVarRef cc_subtitles("cc_subtitles");
+	switch (m_pCloseCaptionCombo->GetActiveItem())
+	{
+	default:
+	case 0:
+		closecaption_value = 0;
+		cc_subtitles.SetValue(0);
+		break;
+	case 1:
+		closecaption_value = 1;
+		cc_subtitles.SetValue(0);
+		break;
+	case 2:
+		closecaption_value = 1;
+		cc_subtitles.SetValue(1);
+		break;
+	}
+
+	// Stuff the close caption change to the console so that it can be
+	//  sent to the server (FCVAR_USERINFO) so that you don't have to restart
+	//  the level for the change to take effect.
+	char cmd[64];
+	Q_snprintf(cmd, sizeof(cmd), "closecaption %i\n", closecaption_value);
+	engine->ClientCmd_Unrestricted(cmd);
+	// close caption end
+
+
 
 	switch (m_ccLang->GetActiveItem())
 	{
@@ -244,6 +290,8 @@ void COptionsSwelter::OnApplyChanges()
 		engine->ClientCmd("cc_lang schinese\n");
 	}
 
+
+
 	switch (m_reloadingMag->GetActiveItem())
 	{
 	case 0:
@@ -255,7 +303,6 @@ void COptionsSwelter::OnApplyChanges()
 	case 2:
 		ApplyChangesToConVar("sde_drop_mag", 2);
 	}
-
 }
 
 void COptionsSwelter::OnCheckButtonChecked(Panel* panel)
@@ -273,6 +320,7 @@ public:
 
 	virtual void Activate();
 
+
 protected:
 	virtual void OnTick();
 	virtual void OnClose();
@@ -284,14 +332,16 @@ private:
 CSwelterMenu::CSwelterMenu(vgui::VPANEL parent) : BaseClass(NULL, "CSwelterMenu")
 {
 	SetDeleteSelfOnClose(true);
-	SetBounds(0, 0, 512, 406);
+	SetBounds(0, 0, 512, 426);
 	SetSizeable(false);
 	MoveToCenterOfScreen();
+	ActivateMinimized();
 
 	SetTitle("#pht_options_title", true);
 
 	m_SwelterOptions = new COptionsSwelter(this);
 	AddPage(m_SwelterOptions, "#pht_options_title");
+	AddPage(m_SwelterOptions, "#GameUI_Keyboard"); //test
 
 	SetApplyButtonVisible(true);
 	GetPropertySheet()->SetTabWidth(84);
@@ -320,6 +370,39 @@ void CSwelterMenu::OnClose()
 	BaseClass::OnClose();
 	isSwelterOptionActive = false;
 }
+
+void COptionsSwelter::OnCommand(char const *cmd)
+{
+	if (!Q_stricmp(cmd, "setDefault"))
+	{
+		m_weaponFOV->ActivateItem(0);
+		m_reloadingMag->ActivateItem(1);
+		hintButton->SetSelected(true);
+		altButton->SetSelected(true);
+		boltButton->SetSelected(false);
+	}
+	if (!Q_stricmp(cmd, "setClassic"))
+	{
+		m_weaponFOV->ActivateItem(1);
+		m_reloadingMag->ActivateItem(0);
+		hintButton->SetSelected(true);
+		altButton->SetSelected(false);
+		boltButton->SetSelected(false);
+	}
+	if (!Q_stricmp(cmd, "setRealism"))
+	{
+		m_weaponFOV->ActivateItem(2);
+		m_reloadingMag->ActivateItem(2);
+		hintButton->SetSelected(false);
+		altButton->SetSelected(true);
+		boltButton->SetSelected(true);
+	}
+	else
+	{
+		BaseClass::OnCommand(cmd);
+	}
+}
+
 
 CSwelterMenu* SwelterMenu = NULL;
 
