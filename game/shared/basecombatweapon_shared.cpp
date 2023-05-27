@@ -154,6 +154,7 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 
 	//added
 	m_bIsIronsighted = false;
+	m_bBoltRequired = false;
 	m_flIronsightedTime = 0.0f;
 
 #if defined( CLIENT_DLL )
@@ -1702,7 +1703,7 @@ Activity CBaseCombatWeapon::GetDrawActivity(void)
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
-	DisableIronsights(); //added 228
+	DisableIronsights(); //added
 	MDLCACHE_CRITICAL_SECTION();
 
 	// cancel any reload in progress.
@@ -1740,7 +1741,7 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	}
 
 	Msg("SDE_HOLSTER\n");
-	//disable attack when holstered 1337
+	//disable attack when holstered
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 	{
@@ -2749,7 +2750,6 @@ static ConCommand crosshair_on("crosshair_on", CC_CrosshairOn);
 
 void CBaseCombatWeapon::EnableIronsights(void)
 {
-	//228
 
 
 	if (!HasIronsights() || m_bIsIronsighted)
@@ -3068,6 +3068,8 @@ DEFINE_PRED_FIELD(m_iClip2, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD( m_bIsIronsighted, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 DEFINE_PRED_FIELD( m_flIronsightedTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 
+DEFINE_PRED_FIELD( m_bBoltRequired, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+
 DEFINE_PRED_FIELD(m_nViewModelIndex, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 
 // Not networked
@@ -3094,6 +3096,7 @@ DEFINE_FIELD(m_iSecondaryAmmoCount, FIELD_INTEGER),
 //added
 DEFINE_FIELD( m_bIsIronsighted, FIELD_BOOLEAN ),
 DEFINE_FIELD( m_flIronsightedTime, FIELD_FLOAT ),
+DEFINE_FIELD( m_bBoltRequired, FIELD_BOOLEAN ),
 
 //DEFINE_PHYSPTR( m_pConstraint ),
 
@@ -3334,6 +3337,7 @@ SendPropInt(SENDINFO(m_iState), 8, SPROP_UNSIGNED),
 SendPropEHandle(SENDINFO(m_hOwner)),
 SendPropBool( SENDINFO( m_bIsIronsighted ) ),
 SendPropFloat( SENDINFO( m_flIronsightedTime ) ),
+SendPropBool(SENDINFO(m_bBoltRequired)),
 #else
 RecvPropDataTable("LocalWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalWeaponData)),
 RecvPropDataTable("LocalActiveWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalActiveWeaponData)),
@@ -3343,5 +3347,6 @@ RecvPropInt(RECVINFO(m_iState)),
 RecvPropEHandle(RECVINFO(m_hOwner)),
 RecvPropInt(RECVINFO(m_bIsIronsighted), 0, RecvProxy_ToggleSights), //note: RecvPropBool is actually RecvPropInt (see its implementation), but we need a proxy
 RecvPropFloat(RECVINFO(m_flIronsightedTime)),
+RecvPropBool(RECVINFO(m_bBoltRequired)),
 #endif
 END_NETWORK_TABLE()

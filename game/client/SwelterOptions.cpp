@@ -341,7 +341,6 @@ CSwelterMenu::CSwelterMenu(vgui::VPANEL parent) : BaseClass(NULL, "CSwelterMenu"
 
 	m_SwelterOptions = new COptionsSwelter(this);
 	AddPage(m_SwelterOptions, "#pht_options_title");
-	AddPage(m_SwelterOptions, "#GameUI_Keyboard"); //test
 
 	SetApplyButtonVisible(true);
 	GetPropertySheet()->SetTabWidth(84);

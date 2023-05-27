@@ -222,6 +222,20 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 		}
 
 		//g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged"); //prevent the ammo coloring override
+
+		if (ammo1 == 0)
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
+		else if (!Simple_Rifle_Bolt && (strcmp(ActiveWeaponName, "weapon_357") == 0 || strcmp(ActiveWeaponName, "weapon_annabelle") == 0))
+		{
+			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && R357_Round_Chambered == false) ||
+				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && Annabelle_Round_Chambered == false))
+				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionNoRoundInChamber");
+			else
+				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionRoundChambered");
+		}
+		else
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("WeaponChanged");
+
 		m_hCurrentActiveWeapon = wpn;
 	}
 }

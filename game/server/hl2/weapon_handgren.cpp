@@ -278,7 +278,6 @@ void CWeaponHandgren::SecondaryAttack( void )
 //-----------------------------------------------------------------------------
 void CWeaponHandgren::PrimaryAttack( void )
 {
-	//228
 	if ( m_bRedraw )
 		return;
 

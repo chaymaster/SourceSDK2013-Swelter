@@ -3863,7 +3863,7 @@ bool CNPC_Citizen::UseSemaphore( void )
 }
 
 
-//next based on EZ2 code/
+//next snippet based on EZ2 code (unused in game, just testing)
 //------------------------------------------------------------------------------
 // Added by 1upD. Citizen weapon proficiency should be configurable
 //------------------------------------------------------------------------------

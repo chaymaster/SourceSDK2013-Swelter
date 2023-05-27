@@ -225,7 +225,6 @@ bool CWeaponLopata::Reload( void )
 //-----------------------------------------------------------------------------
 void CWeaponLopata::PrimaryAttack( void )
 {
-	//228
 	if ( m_bRedraw )
 		return;
 

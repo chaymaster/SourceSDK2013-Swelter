@@ -7793,7 +7793,6 @@ CBaseEntity *CreatePlayerLoadSave( Vector vOrigin, float flDuration, float flHol
 	pRevertSaved->SetDuration( flDuration );
 	pRevertSaved->SetHoldTime( flHoldTime );
 	pRevertSaved->SetLoadTime( flLoadTime );
-	//228
 
 	//CBaseCombatCharacter *pOwner = GetOwner();
 	//if (pOwner->IsPlayer())

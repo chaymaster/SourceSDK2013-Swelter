@@ -276,7 +276,6 @@ void CWeaponFrag::SecondaryAttack( void )
 //-----------------------------------------------------------------------------
 void CWeaponFrag::PrimaryAttack( void )
 {
-	//228
 	if ( m_bRedraw )
 		return;
 

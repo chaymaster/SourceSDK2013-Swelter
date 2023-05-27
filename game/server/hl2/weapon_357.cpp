@@ -430,8 +430,8 @@ void CWeapon357::FinishReload(void)
 	m_bInReload = false;
 	m_bNeedPump = false;
 
-	if (!sde_simple_rifle_bolt.GetInt())
-		pHL2Player->R357_Round_Chamber();
+	//if (!sde_simple_rifle_bolt.GetInt())
+	pHL2Player->R357_Round_Chamber(); // always chamber the round on finishing reload, to prevent glitch on switching auto/manual bolt
 
 	DisableIronsights();
 
@@ -499,8 +499,8 @@ void CWeapon357::Pump(void)
 	DisableIronsights();
 	m_bNeedPump = false;
 
-	if (!sde_simple_rifle_bolt.GetInt())
-		pHL2Player->R357_Round_Chamber();
+	//if (!sde_simple_rifle_bolt.GetInt())
+	pHL2Player->R357_Round_Chamber();
 
 	WeaponSound(SPECIAL1);
 
@@ -599,7 +599,7 @@ void CWeapon357::PrimaryAttack(void)
 			pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 		}
 
-		if (m_iClip1 && sde_simple_rifle_bolt.GetInt())
+		if (m_iClip1 /*&& sde_simple_rifle_bolt.GetInt()*/)
 		{
 			// pump so long as some rounds are left.
 			m_bNeedPump = true;
