@@ -41,6 +41,7 @@ public:
 
 	void	Precache(void);
 	void	AddViewKick(void);
+	void	LoadGrenade(CHL2_Player *pHL2Player);
 	void	SecondaryAttack(void);
 	void	HoldIronsight(void);
 	void	PrimaryAttack(void);
@@ -386,6 +387,21 @@ void CWeaponar1m1::AddViewKick(void)
 	DoMachineGunKick(pPlayer, EASY_DAMPEN, MAX_VERTICAL_KICK, m_fFireDuration, SLIDE_LIMIT);
 }
 
+void CWeaponar1m1::LoadGrenade(CHL2_Player *pHL2Player)
+{
+	if (!pHL2Player)
+		return;
+
+	DisableIronsights();
+	SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
+	//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+	//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+	m_flSecondaryReloadActivationTime = gpGlobals->curtime; // signal the secondary reload to ItemPostFrame() immediately to forbid ironsight
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
+	pHL2Player->AR1M1_GL_Load();
+	pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -486,7 +502,8 @@ void CWeaponar1m1::SecondaryAttack(void)
 
 		else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
 		{
-			DisableIronsights();
+			LoadGrenade(pHL2Player);
+			/*DisableIronsights();
 			SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
 			//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
 			//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
@@ -496,7 +513,7 @@ void CWeaponar1m1::SecondaryAttack(void)
 			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
 			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
 
-			//secondary_ammo_recolor_crutch = true;
+			//secondary_ammo_recolor_crutch = true; */
 		}
 	}
 	else
@@ -598,16 +615,31 @@ void CWeaponar1m1::HoldIronsight(void)
 
 void CWeaponar1m1::ItemPostFrame(void)
 {
-	if (gpGlobals->curtime >= m_flSecondaryReloadActivationTime)
-	{
-		m_bInSecondaryReload = true;
-	}
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 
-	if (gpGlobals->curtime >= m_flSecondaryReloadDeactivationTime)
-	{
-		m_bInSecondaryReload = false;
-	}
+	if (pPlayer == NULL)
+		return;
 
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
+	if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) >= 1 && pHL2Player->Get_AR1M1_GLL() == false &&
+		sde_simple_alt_reload.GetInt() && (m_flNextSecondaryAttack <= gpGlobals->curtime))
+	{
+		LoadGrenade(pHL2Player);
+		return;
+	}
+	else
+	{
+		if (gpGlobals->curtime >= m_flSecondaryReloadActivationTime)
+		{
+			m_bInSecondaryReload = true;
+		}
+
+		if (gpGlobals->curtime >= m_flSecondaryReloadDeactivationTime)
+		{
+			m_bInSecondaryReload = false;
+		}
+	}
 	// forbid ironsight if secondary reload has been activated but non deactivated yet
 
 	// Ironsight if not reloading

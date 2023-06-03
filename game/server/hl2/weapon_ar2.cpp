@@ -18,7 +18,7 @@
 #include "in_buttons.h"
 #include "ai_memory.h"
 #include "soundent.h"
-#include "hl2_player.h"
+//#include "hl2_player.h"  // moved to weapon_ar2.h for ChargeEnergySphere()
 #include "EntityFlame.h"
 #include "weapon_flaregun.h"
 #include "te_effect_dispatch.h"
@@ -173,17 +173,32 @@ bool CWeaponAR2::Deploy(void)
 }
 void CWeaponAR2::ItemPostFrame(void)
 {
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
-	if (gpGlobals->curtime >= m_flSecondaryReloadActivationTime)
+	if (pOwner == NULL)
+		return;
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pOwner);
+
+	if (pOwner->GetAmmoCount(m_iSecondaryAmmoType) >= 1 && pHL2Player->Get_AR2_GLL() == false &&
+		sde_simple_alt_reload.GetInt() && (m_flNextSecondaryAttack <= gpGlobals->curtime))
 	{
-		m_bInSecondaryReload = true;
+		ChargeEnergySphere(pHL2Player);
+		return;
 	}
 
-	if (gpGlobals->curtime >= m_flSecondaryReloadDeactivationTime)
+	else
 	{
-		m_bInSecondaryReload = false;
-	}
+		if (gpGlobals->curtime >= m_flSecondaryReloadActivationTime)
+		{
+			m_bInSecondaryReload = true;
+		}
 
+		if (gpGlobals->curtime >= m_flSecondaryReloadDeactivationTime)
+		{
+			m_bInSecondaryReload = false;
+		}
+	}
 	// forbid ironsight if secondary reload has been activated but non deactivated yet
 
 	// Ironsight if not reloading
@@ -213,7 +228,7 @@ void CWeaponAR2::ItemPostFrame(void)
 	}
 
 	// Update our pose parameter for the vents
-	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+	// CBasePlayer *pOwner = ToBasePlayer(GetOwner()); //moved to start
 
 	if (pOwner)
 	{
@@ -485,6 +500,25 @@ void CWeaponAR2::PrimaryAttack(void)
 	AddViewKick();
 }
 
+void CWeaponAR2::ChargeEnergySphere(CHL2_Player *pHL2Player)
+{
+	if (!pHL2Player)
+		return;
+
+	DisableIronsights();
+	SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
+	//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+	//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+	m_flSecondaryReloadActivationTime = gpGlobals->curtime; // signal the secondary reload to ItemPostFrame() immediately to forbid ironsight
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
+	m_bSecondaryEjectPending = true; //new
+	m_bSecondaryEjectPending2 = true; //new
+	m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
+	m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
+	pHL2Player->AR2_GL_Load();
+	pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+}
+
 void CWeaponAR2::SecondaryAttack(void)
 {
 	if (m_bInReload)
@@ -496,7 +530,11 @@ void CWeaponAR2::SecondaryAttack(void)
 			return;
 
 		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+		if (!pPlayer)
+			return;
+
 		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 		if (pHL2Player->Get_AR2_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
 		{
 			// Cannot fire underwater
@@ -531,7 +569,8 @@ void CWeaponAR2::SecondaryAttack(void)
 
 		else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
 		{
-			DisableIronsights();
+			ChargeEnergySphere(pHL2Player);
+			/*DisableIronsights();
 			SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
 			//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
 			//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
@@ -542,7 +581,7 @@ void CWeaponAR2::SecondaryAttack(void)
 			m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
 			m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
 			pHL2Player->AR2_GL_Load();
-			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight */
 			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
 
 			//secondary_ammo_recolor_crutch = true;
@@ -566,6 +605,9 @@ void CWeaponAR2::SecondaryAttack(void)
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flDelayedFire = gpGlobals->curtime + 0.5f;
 
 		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+		if (!pPlayer)
+			return;
+
 		if (pPlayer)
 		{
 			pPlayer->RumbleEffect(RUMBLE_AR2_ALT_FIRE, 0, RUMBLE_FLAG_RESTART);

@@ -16,6 +16,7 @@
 
 #include "basegrenade_shared.h"
 #include "basehlcombatweapon.h"
+#include "hl2_player.h"
 
 class CWeaponAR2 : public CHLMachineGun
 {
@@ -32,6 +33,7 @@ public:
 
 	void	PrimaryAttack(void);
 	void	SecondaryAttack(void);
+	void	ChargeEnergySphere(CHL2_Player *pHL2Player);
 	void	HoldIronsight(void);
 	void	DelayedAttack(void);
 	void	SecondaryEject(void); //new

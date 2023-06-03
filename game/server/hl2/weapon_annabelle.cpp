@@ -815,11 +815,13 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		else
 		{
 			if (m_bDelayedFire1)
+				m_bDelayedFire1 = false;
+			/*if (m_bDelayedFire1)
 			{
 				m_bDelayedFire1 = false;
-				FinishReload();
+				FinishReload();  // FinishReload() is called on m_bNeedToCloseChamber whem interrupting reload
 				return;
-			}
+			} */
 			else
 			{
 				// If the firing button was just pressed, reset the firing time

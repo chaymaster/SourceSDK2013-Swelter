@@ -1703,7 +1703,7 @@ Activity CBaseCombatWeapon::GetDrawActivity(void)
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
-	DisableIronsights(); //added
+	DisableIronsights(); //added 228
 	MDLCACHE_CRITICAL_SECTION();
 
 	// cancel any reload in progress.
@@ -1741,7 +1741,7 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	}
 
 	Msg("SDE_HOLSTER\n");
-	//disable attack when holstered
+	//disable attack when holstered 1337
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 	{
@@ -2750,6 +2750,7 @@ static ConCommand crosshair_on("crosshair_on", CC_CrosshairOn);
 
 void CBaseCombatWeapon::EnableIronsights(void)
 {
+	//228
 
 
 	if (!HasIronsights() || m_bIsIronsighted)
