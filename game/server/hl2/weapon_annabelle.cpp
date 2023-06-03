@@ -36,10 +36,11 @@ public:
 	DECLARE_SERVERCLASS();
 
 private:
-	bool	m_bNeedPump;		// When emptied completely
+	bool	m_bNeedPump;		// After shot
 	bool	m_bDelayedFire1;	// Fire primary when finished reloading
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
 	bool	m_bEjectChamberedRound;
+	bool	m_bNeedToCloseChamber;
 	float	m_bTimeToSubtractEjectedChamberedRound;
 	bool	m_bCompensateEjectedRoundForFullAmmoSupply;
 	bool	m_bReactivateIronsightAfterBolt;
@@ -104,7 +105,7 @@ LINK_ENTITY_TO_CLASS(weapon_annabelle, CWeaponAnnabelle);
 PRECACHE_WEAPON_REGISTER(weapon_annabelle);
 
 BEGIN_DATADESC(CWeaponAnnabelle)
-
+DEFINE_FIELD(m_bNeedToCloseChamber, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bNeedPump, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire1, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire2, FIELD_BOOLEAN),
@@ -352,6 +353,7 @@ bool CWeaponAnnabelle::StartReload(void)
 	pOwner->m_flNextAttack = gpGlobals->curtime;
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
 
+	m_bNeedToCloseChamber = true;
 	m_bInReload = true;
 	return true;
 }
@@ -428,6 +430,7 @@ void CWeaponAnnabelle::FinishReload(void)
 
 	m_bInReload = false;
 	m_bNeedPump = false;
+	m_bNeedToCloseChamber = false;
 
 	//if (!sde_simple_rifle_bolt.GetInt())
 	pHL2Player->Annabelle_Round_Chamber(); // always chamber the round on finishing reload, to prevent glitch on switching between auto/manual bolt
@@ -701,6 +704,8 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		return;
 	}
 
+	// CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pOwner);
+
 	if (m_bReactivateIronsightAfterBolt && gpGlobals->curtime >= m_flIronsightAfterBoltReactivatingTime)
 	{
 		EnableIronsights();
@@ -728,7 +733,9 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 	}
 
 	if (GetActivity() == ACT_VM_HOLSTER) //new
+	{
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+	}
 
 	if (m_bInReload)
 	{
@@ -767,14 +774,20 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		SetBodygroup(1, 1);
 		HoldIronsight();
 		
+		if (m_iClip1 && m_bNeedToCloseChamber) // for holster in reload + re-equip weapon sequence to handle correctly
+		{
+			FinishReload();
+			return;
+		}
+
 		if (pOwner->m_afButtonPressed & IN_ATTACK2) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
 		{
 			SecondaryAttack();
 		}
 	}
 
-	if (m_bNeedPump && sde_simple_rifle_bolt.GetInt() && (m_flNextPrimaryAttack <= gpGlobals->curtime))
-	{
+	if (m_bNeedPump && m_iClip1 && sde_simple_rifle_bolt.GetInt() && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	{ //m_bNeedPump is only true when m_iClip1 >= 1, but let's keep it here for readability
 		Pump();
 		return;
 	}
@@ -881,13 +894,23 @@ CWeaponAnnabelle::CWeaponAnnabelle(void)
 //-----------------------------------------------------------------------------
 void CWeaponAnnabelle::ItemHolsterFrame(void)
 {
+	CBaseCombatCharacter *pOwner = GetOwner();
+
 	// Must be player held
-	if (GetOwner() && GetOwner()->IsPlayer() == false)
+	if (pOwner && pOwner->IsPlayer() == false)
 		return;
 
 	// We can't be active
-	if (GetOwner()->GetActiveWeapon() == this)
+	if (pOwner->GetActiveWeapon() == this)
 		return;
+
+	/*CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
+	if (m_bInReload && m_iClip1)
+		pHL2Player->Annabelle_Round_Chamber(); // for holster in reload + re-equip weapon sequence to handle correctly
+	*/
 
 	// If it's been longer than three seconds, reload
 	if ((gpGlobals->curtime - m_flHolsterTime) > sk_auto_reload_time.GetFloat())

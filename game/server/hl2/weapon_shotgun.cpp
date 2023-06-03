@@ -391,7 +391,7 @@ void CWeaponShotgun::FinishReload(void)
 	if (m_bBoltRequired)
 	{
 		Pump();
-		m_bBoltRequired = false;
+		// m_bBoltRequired = false; // moved to Pump() for holster in reload + re-equip weapon sequence to handle correctly
 	}
 
 	else
@@ -445,6 +445,8 @@ void CWeaponShotgun::Pump(void)
 
 	m_bNeedPump = false;
 
+	m_bBoltRequired = false; // for holster in reload + re-equip weapon sequence to handle correctly
+
 	WeaponSound(SPECIAL1);
 
 	// Finish reload animation
@@ -487,7 +489,7 @@ void CWeaponShotgun::PrimaryAttack(void)
 		//SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH);
 		//m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
 		Pump();
-		m_bBoltRequired = false;
+		//m_bBoltRequired = false; // moved to Pump() for holster in reload + re-equip weapon sequence to handle correctly
 		m_bInReload = false;
 		return;
 	}
@@ -582,7 +584,7 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 		//SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH);
 		//m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
 		Pump();
-		m_bBoltRequired = false;
+		//m_bBoltRequired = false; // moved to Pump() for holster in reload + re-equip weapon sequence to handle correctly
 		m_bInReload = false;
 		return;
 	}
@@ -624,7 +626,7 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Override so shotgun can do mulitple reloads in a row
+// Purpose: Override so shotgun can do multiple reloads in a row
 //-----------------------------------------------------------------------------
 void CWeaponShotgun::ItemPostFrame(void)
 {
@@ -639,7 +641,10 @@ void CWeaponShotgun::ItemPostFrame(void)
 	}
 
 	if (GetActivity() == ACT_VM_HOLSTER) //new
+	{
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
+	}
+
 
 	//DisplaySDEHudHint(); //added
 	if (m_bInReload)
