@@ -1560,7 +1560,7 @@ private:
 		m_pWeapon->SetWeaponVisible(true);
 		if (m_pWeapon->GetOwner())
 		{
-			CBaseCombatWeapon *pLastWeapon = m_pWeapon->GetOwner()->GetActiveWeapon();
+			//CBaseCombatWeapon *pLastWeapon = m_pWeapon->GetOwner()->GetActiveWeapon();
 			m_pWeapon->GetOwner()->m_hActiveWeapon = m_pWeapon;
 			CBasePlayer *pOwner = ToBasePlayer(m_pWeapon->GetOwner());
 			if (pOwner)
@@ -1570,10 +1570,11 @@ private:
 
 				pOwner->SetNextAttack(gpGlobals->curtime + m_pWeapon->SequenceDuration());
 
-				if (pLastWeapon && pOwner->Weapon_ShouldSetLast(pLastWeapon, m_pWeapon))
+				/*if (pLastWeapon && pOwner->Weapon_ShouldSetLast(pLastWeapon, m_pWeapon))
 				{
 					pOwner->Weapon_SetLast(pLastWeapon->GetLastWeapon());
 				}
+				*/
 
 				CBaseViewModel *pViewModel = pOwner->GetViewModel();
 				Assert(pViewModel);
