@@ -26,6 +26,7 @@
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
 extern ConVar sde_simple_rifle_bolt;
+extern ConVar sde_holster_fixer;
 
 class CWeaponAnnabelle : public CBaseHLCombatWeapon
 {
@@ -711,6 +712,13 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		EnableIronsights();
 		pOwner->ShowCrosshair(false);
 		m_bReactivateIronsightAfterBolt = false;
+	}
+
+	if (sde_holster_fixer.GetInt() == 1)
+	{
+		DevMsg("SDE: holster fixer enabled\n");
+		if (GetActivity() == ACT_VM_IDLE)
+			SetWeaponVisible(true);
 	}
 
 	if (m_bEjectChamberedRound && gpGlobals->curtime >= m_bTimeToSubtractEjectedChamberedRound)

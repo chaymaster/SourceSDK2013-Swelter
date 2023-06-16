@@ -99,6 +99,7 @@ CWeaponMapcase::CWeaponMapcase(void)
 	m_hSporeTrail = NULL;
 }
 ConVar sde_mission_note_status_skin("sde_mission_note_status_skin", "0");
+extern ConVar sde_holster_fixer;
 //ConVar sde_mission_note_bodygroup("sde_mission_note_bodygroup", "0");
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -281,6 +282,14 @@ void CWeaponMapcase::ItemPostFrame(void)
 	}
 	if (!pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(false);
+
+	if (sde_holster_fixer.GetInt() == 1)
+	{
+		DevMsg("SDE: holster fixer enabled\n");
+		if (GetActivity() == ACT_VM_IDLE)
+			SetWeaponVisible(true);
+	}
+
 
 	DevMsg("PDA:	paper group id	%d \n", FindBodygroupByName("paper"));
 	DevMsg("PDA:	badge group id	%d \n", FindBodygroupByName("badge"));

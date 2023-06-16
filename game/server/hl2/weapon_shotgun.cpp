@@ -24,6 +24,7 @@
 
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
+extern ConVar sde_holster_fixer;
 
 class CWeaponShotgun : public CBaseHLCombatWeapon
 {
@@ -645,6 +646,12 @@ void CWeaponShotgun::ItemPostFrame(void)
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 	}
 
+	if (sde_holster_fixer.GetInt() == 1)
+	{
+		DevMsg("SDE: holster fixer enabled\n");
+		if (GetActivity() == ACT_VM_IDLE)
+			SetWeaponVisible(true);
+	}
 
 	//DisplaySDEHudHint(); //added
 	if (m_bInReload)

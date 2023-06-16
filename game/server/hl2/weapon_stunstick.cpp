@@ -20,6 +20,7 @@ ConVar    sk_plr_dmg_stunstick("sk_plr_dmg_stunstick", "0");
 ConVar    sk_npc_dmg_stunstick("sk_npc_dmg_stunstick", "0");
 
 extern ConVar metropolice_move_and_melee;
+extern ConVar sde_holster_fixer;
 
 //-----------------------------------------------------------------------------
 // CWeaponStunStick
@@ -378,6 +379,15 @@ void CWeaponStunStick::ItemPostFrame(void)
 	//	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration(); //new
 
 	SetStunState(true);
+
+
+	if (sde_holster_fixer.GetInt() == 1)
+	{
+		DevMsg("SDE: holster fixer enabled\n");
+		if (GetActivity() == ACT_VM_IDLE)
+			SetWeaponVisible(true);
+	}
+
 
 	if (m_bIsIronsighted)
 	{

@@ -84,6 +84,7 @@ ConVar viewmodel_adjust_yaw("viewmodel_adjust_yaw", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_roll("viewmodel_adjust_roll", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_fov("viewmodel_adjust_fov", "0", FCVAR_REPLICATED, "Note: this feature is not available during any kind of zoom", vm_adjust_fov_callback);
 ConVar viewmodel_adjust_enabled("viewmodel_adjust_enabled", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "enabled viewmodel adjusting", vm_adjust_enable_callback);
+ConVar sde_holster_fixer("sde_holster_fixer", "1", FCVAR_ARCHIVE);
 
 #ifdef CLIENT_DLL
 void RecvProxy_ToggleSights(const CRecvProxyData* pData, void* pStruct, void* pOut)
@@ -1929,6 +1930,13 @@ void CBaseCombatWeapon::ItemPostFrame(void)
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	UpdateAutoFire();
+
+	if (sde_holster_fixer.GetInt() == 1)
+	{
+		DevMsg("SDE: holster fixer enabled\n");
+		if (GetActivity() == ACT_VM_IDLE)
+			SetWeaponVisible(true);
+	}
 
 	//Track the duration of the fire
 	//FIXME: Check for IN_ATTACK2 as well?

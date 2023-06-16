@@ -843,7 +843,7 @@ void CPropAPC::FireMachineGun( void )
 	
 	// Fire the round
 	int	bulletType = GetAmmoDef()->Index("AR2");
-	FireBullets( 1, vecMachineGunShootPos, vecMachineGunDir, VECTOR_CONE_8DEGREES, MAX_TRACE_LENGTH, bulletType, 1 );
+	FireBullets( 1, vecMachineGunShootPos, vecMachineGunDir, VECTOR_CONE_4DEGREES, MAX_TRACE_LENGTH, bulletType, 1 ); //cone was VECTOR_CONE_8DEGREES
 	DoMuzzleFlash();
 
 	EmitSound( "Weapon_AR2.Single" );
