@@ -283,11 +283,14 @@ void CWeaponMapcase::ItemPostFrame(void)
 	if (!pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(false);
 
-	if (sde_holster_fixer.GetInt() == 1)
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
 	{
-		DevMsg("SDE: holster fixer enabled\n");
-		if (GetActivity() == ACT_VM_IDLE)
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
 			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
 	}
 
 
@@ -315,7 +318,8 @@ bool CWeaponMapcase::Deploy(void)
 	m_bRedraw = false;
 	m_bDrawBackFinished = false;
 	SetSkin();
-
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	//CBaseViewModel *pViewModel = pOwner->GetViewModel();
 	//pViewModel->set
 	//

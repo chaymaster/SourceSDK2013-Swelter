@@ -274,6 +274,8 @@ bool CWeaponShotgun::Deploy(void)
 {
 	Msg("SDE_SMG!_deploy\n");
 	m_DoDouble = false;
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -646,11 +648,14 @@ void CWeaponShotgun::ItemPostFrame(void)
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 	}
 
-	if (sde_holster_fixer.GetInt() == 1)
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
 	{
-		DevMsg("SDE: holster fixer enabled\n");
-		if (GetActivity() == ACT_VM_IDLE)
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
 			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
 	}
 
 	//DisplaySDEHudHint(); //added

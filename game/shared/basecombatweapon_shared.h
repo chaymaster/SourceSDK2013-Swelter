@@ -283,7 +283,8 @@ public:
 	// Weapon firing
 	virtual void			PrimaryAttack(void);						// do "+ATTACK"
 	virtual void			SecondaryAttack(void) { return; }			// do "+ATTACK2"
-
+	bool					HolsterFix;			//holster fixer
+	float					HolsterFixTime;		//holster fixer
 
 	//added
 	Vector					GetIronsightPositionOffset(void) const;
@@ -586,7 +587,7 @@ public:
 	bool					m_bInReload;			// Are we in the middle of a reload;
 	bool					m_bInSecondaryReload = false;	// in the middle of a secondary reload, always false except AR1M1 and AR2;
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
-	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;
+	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;		
 	
 	// Weapon art
 	CNetworkVar(int, m_iViewModelIndex);

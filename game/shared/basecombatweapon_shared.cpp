@@ -1660,6 +1660,8 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 	if (!HasAnyAmmo() && AllowsAutoSwitchFrom())
 		return false;
 
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	float flSequenceDuration = 0.0f;
 	if (GetOwner())
 	{
@@ -1711,7 +1713,7 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	// cancel any reload in progress.
 	m_bInReload = false;
 	m_bFiringWholeClip = false;
-
+	//HolsterFix = false;
 	// kill any think functions
 	SetThink(NULL);
 
@@ -1931,11 +1933,14 @@ void CBaseCombatWeapon::ItemPostFrame(void)
 
 	UpdateAutoFire();
 
-	if (sde_holster_fixer.GetInt() == 1)
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
 	{
-		DevMsg("SDE: holster fixer enabled\n");
-		if (GetActivity() == ACT_VM_IDLE)
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
 			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
 	}
 
 	//Track the duration of the fire
