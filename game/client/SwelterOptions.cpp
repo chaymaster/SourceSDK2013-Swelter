@@ -32,6 +32,7 @@ private:
 
 	CheckButton *hintButton;
 	CheckButton *altButton;
+	CheckButton *muzButton;
 	CheckButton *boltButton;
 	CheckButton *ccButton;
 	ComboBox *m_weaponFOV;
@@ -44,6 +45,7 @@ private:
 
 	bool b_hintButton;
 	bool b_altButton;
+	bool b_muzButton;
 	bool b_boltButton;
 	bool b_ccButton;
 };
@@ -156,7 +158,6 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	}
 	b_altButton = altButton->IsSelected();
 
-
 	//close caption old
 	/*
 	ConVarRef var4("closecaption");
@@ -174,6 +175,20 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	}
 	b_ccButton = ccButton->IsSelected();
 	*/
+
+	ConVarRef var8("sde_enable_muzzle_flash_light");
+	muzButton = new CheckButton(this, "muzButton", "Turn on/off the dynamic lighting based muzzleflash.");
+	if (var8.GetInt() == 1)
+	{
+		muzButton->SetSelected(true);
+		b_muzButton = true;
+	}
+	else
+	{
+		muzButton->SetSelected(false);
+		b_muzButton = false;
+	}
+	b_muzButton = muzButton->IsSelected();
 
 	// close captions new
 	ConVarRef closecaption("closecaption");
@@ -236,6 +251,9 @@ void COptionsSwelter::OnApplyChanges()
 
 	ConVarRef var7("sde_simple_rifle_bolt");
 	var7.SetValue(!boltButton->IsSelected());
+
+	ConVarRef var8("sde_enable_muzzle_flash_light");
+	var8.SetValue(muzButton->IsSelected() ? 1 : 0);
 
 
 	/* close caption old
@@ -379,6 +397,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		hintButton->SetSelected(true);
 		altButton->SetSelected(true);
 		boltButton->SetSelected(false);
+		muzButton->SetSelected(true);
 	}
 	if (!Q_stricmp(cmd, "setClassic"))
 	{
@@ -387,6 +406,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		hintButton->SetSelected(true);
 		altButton->SetSelected(false);
 		boltButton->SetSelected(false);
+		muzButton->SetSelected(false);
 	}
 	if (!Q_stricmp(cmd, "setRealism"))
 	{
@@ -395,6 +415,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		hintButton->SetSelected(false);
 		altButton->SetSelected(true);
 		boltButton->SetSelected(true);
+		muzButton->SetSelected(true);
 	}
 	else
 	{

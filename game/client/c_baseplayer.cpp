@@ -112,7 +112,7 @@ ConVar	spec_freeze_distance_min( "spec_freeze_distance_min", "96", FCVAR_CHEAT, 
 ConVar	spec_freeze_distance_max( "spec_freeze_distance_max", "200", FCVAR_CHEAT, "Maximum random distance from the target to stop when framing them in observer freeze cam." );
 #endif
 
-ConVar	sde_enable_muzzle_flash_light("sde_enable_muzzle_flash_light", "1", FCVAR_ARCHIVE, "Enables or disables the dynamic lighting based muzzleflash.");
+extern ConVar sde_enable_muzzle_flash_light;
 
 static ConVar	cl_first_person_uses_world_model ( "cl_first_person_uses_world_model", "0", FCVAR_ARCHIVE, "Causes the third person model to be drawn instead of the view model" );
 
