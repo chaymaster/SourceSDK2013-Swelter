@@ -12,6 +12,8 @@
 #include "IEffects.h"
 #include "beam_shared.h"
 #include "in_buttons.h"
+#include "te_effect_dispatch.h"
+
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -182,6 +184,13 @@ void CWeaponStunStick::ImpactEffect(trace_t &traceHit)
 
 	//FIXME: need new decals
 	UTIL_ImpactTrace(&traceHit, DMG_CLUB);
+
+	CEffectData	data;
+
+	data.m_vNormal = traceHit.plane.normal;
+	data.m_vOrigin = traceHit.endpos + (data.m_vNormal * 4.0f);
+
+	DispatchEffect("StunstickImpact", data);
 }
 
 void CWeaponStunStick::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator)
