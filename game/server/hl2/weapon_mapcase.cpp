@@ -280,8 +280,10 @@ void CWeaponMapcase::ItemPostFrame(void)
 		DisableIronsights();
 		SecondaryAttack();
 	}
-	if (!pOwner->m_bIsCrosshaired)
+	
+	/*if (!pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(false);
+	*/
 
 	if (sde_holster_fixer.GetInt() == 1) //holster fixer
 	{
