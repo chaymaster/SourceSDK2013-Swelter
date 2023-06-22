@@ -70,6 +70,9 @@ public:
 	// Do part of our effect
 	void ClientThink(void)
 	{
+		if (IsEffectActive(EF_NODRAW))
+			return;
+
 		// Update our effects
 		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 		if (pOwner == NULL)

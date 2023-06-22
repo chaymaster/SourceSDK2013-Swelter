@@ -1558,18 +1558,21 @@ private:
 	void ShowWeapon()
 	{
 		Assert(m_pWeapon);
-		m_pWeapon->SetWeaponVisible(true);
 		if (m_pWeapon->GetOwner())
 		{
-			//CBaseCombatWeapon *pLastWeapon = m_pWeapon->GetOwner()->GetActiveWeapon();
+			//CBaseCombatWeapon* pLastWeapon = m_pWeapon->GetOwner()->GetActiveWeapon();
 			m_pWeapon->GetOwner()->m_hActiveWeapon = m_pWeapon;
-			CBasePlayer *pOwner = ToBasePlayer(m_pWeapon->GetOwner());
+			CBasePlayer* pOwner = ToBasePlayer(m_pWeapon->GetOwner());
 			if (pOwner)
 			{
 				m_pWeapon->SetViewModel();
 				m_pWeapon->SendWeaponAnim(m_iActivity);
+				m_pWeapon->SetWeaponVisible(true);
 
 				pOwner->SetNextAttack(gpGlobals->curtime + m_pWeapon->SequenceDuration());
+
+				// Can't shoot again until we've finished deploying
+				m_pWeapon->m_flNextSecondaryAttack = m_pWeapon->m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeapon->SequenceDuration();
 
 				/*if (pLastWeapon && pOwner->Weapon_ShouldSetLast(pLastWeapon, m_pWeapon))
 				{
@@ -1577,16 +1580,13 @@ private:
 				}
 				*/
 
-				CBaseViewModel *pViewModel = pOwner->GetViewModel();
+				CBaseViewModel* pViewModel = pOwner->GetViewModel();
 				Assert(pViewModel);
 				if (pViewModel)
 					pViewModel->RemoveEffects(EF_NODRAW);
 				pOwner->ResetAutoaim();
 			}
 		}
-
-		// Can't shoot again until we've finished deploying
-		m_pWeapon->m_flNextSecondaryAttack = m_pWeapon->m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeapon->SequenceDuration();
 
 		ClearShowWeapon();
 	}
@@ -1676,6 +1676,7 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 		if (pActive && pActive->GetActivity() == ACT_VM_HOLSTER)
 		{
 			flSequenceDuration = pActive->SequenceDuration();
+			pOwner->SetNextAttack( gpGlobals->curtime + SequenceDuration() );
 		}
 	}
 	g_ShowWeapon.SetShowWeapon(this, iActivity, flSequenceDuration);
@@ -1694,6 +1695,7 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 bool CBaseCombatWeapon::Deploy()
 {
 	MDLCACHE_CRITICAL_SECTION();
+
 	return DefaultDeploy((char*)GetViewModel(), (char*)GetWorldModel(), GetDrawActivity(), (char*)GetAnimPrefix());
 }
 
@@ -1740,8 +1742,11 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	}
 	else
 	{
-		// Hide the weapon when the holster animation's finished
-		SetContextThink(&CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT);
+		if (sde_holster_fixer.GetInt() == 0) //holster fixer
+		{
+			// Hide the weapon when the holster animation's finished
+			SetContextThink(&CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT);
+		}
 	}
 
 	Msg("SDE_HOLSTER\n");
