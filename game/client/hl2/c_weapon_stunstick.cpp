@@ -23,6 +23,8 @@ CLIENTEFFECT_REGISTER_BEGIN(PrecacheEffectStunstick)
 CLIENTEFFECT_MATERIAL("effects/stunstick")
 CLIENTEFFECT_REGISTER_END()
 
+bool IsCarriedByLocalPlayer(void);
+
 class C_WeaponStunStick : public C_BaseHLBludgeonWeapon
 {
 	DECLARE_CLASS(C_WeaponStunStick, C_BaseHLBludgeonWeapon);
@@ -42,10 +44,10 @@ public:
 
 			color[0] = color[1] = color[2] = random->RandomFloat(0.1f, 0.2f);
 
-			CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+			CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 			if (pOwner == NULL)
 				return BaseClass::DrawModel(flags);
-			CBaseViewModel *pViewModel = pOwner->GetViewModel();
+			CBaseViewModel* pViewModel = pOwner->GetViewModel();
 			pViewModel->GetAttachment(1, vecOrigin, vecAngles);
 
 			Vector	vForward;
@@ -53,7 +55,7 @@ public:
 
 			Vector vEnd = vecOrigin - vForward * 1.0f;
 
-			IMaterial *pMaterial = materials->FindMaterial("effects/stunstick", NULL, false);
+			IMaterial* pMaterial = materials->FindMaterial("effects/stunstick", NULL, false);
 
 			CMatRenderContextPtr pRenderContext(materials);
 			pRenderContext->Bind(pMaterial);
@@ -74,16 +76,16 @@ public:
 			return;
 
 		// Update our effects
-		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 		if (pOwner == NULL)
 			return;
-		if (m_bActive &&
+		if (m_bActive && (IsCarriedByLocalPlayer() &&
 			gpGlobals->frametime != 0.0f &&
-			(random->RandomInt(0, 5) == 0))
+			(random->RandomInt(0, 5) == 0)) )
 		{
 			Vector	vecOrigin;
 			QAngle	vecAngles;
-			CBaseViewModel *pViewModel = pOwner->GetViewModel();
+			CBaseViewModel* pViewModel = pOwner->GetViewModel();
 			pViewModel->GetAttachment(1, vecOrigin, vecAngles);
 
 			Vector	vForward;
@@ -123,7 +125,6 @@ public:
 			beamInfo.m_nSegments = 8;
 			beamInfo.m_bRenderable = true;
 			beamInfo.m_nFlags = (FBEAM_ONLYNOISEONCE | FBEAM_SHADEOUT);
-
 			beams->CreateBeamPoints(beamInfo);
 		}
 	}
@@ -135,6 +136,23 @@ public:
 		{
 			SetNextClientThink(CLIENT_THINK_ALWAYS);
 		}
+	}
+
+	bool C_WeaponStunStick::IsCarriedByLocalPlayer(void)
+	{
+		CBaseViewModel* vm = NULL;
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		if (pOwner)
+		{
+			if (pOwner->GetActiveWeapon() != this)
+				return false;
+
+			vm = pOwner->GetViewModel(m_nViewModelIndex);
+			if (vm)
+				return (!vm->IsEffectActive(EF_NODRAW));
+		}
+
+		return false;
 	}
 
 	//-----------------------------------------------------------------------------
