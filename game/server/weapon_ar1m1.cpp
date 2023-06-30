@@ -798,11 +798,11 @@ void CWeaponar1m1::PrimaryAttack(void)
 
 	if (m_bIsIronsighted)
 	{
-		fireRate = 0.11f;
+		fireRate = 0.102f;
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
 
-		viewPunch.x = random->RandomFloat(0.3f, 0.7f);
-		viewPunch.y = random->RandomFloat(-0.7f, 0.7f);
+		viewPunch.x = random->RandomFloat(0.5f, 0.9f);
+		viewPunch.y = random->RandomFloat(-0.9f, 0.9f);
 		viewPunch.z = 0.0f;
 	}
 	else
@@ -810,8 +810,8 @@ void CWeaponar1m1::PrimaryAttack(void)
 		fireRate = 0.099f;
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
-		viewPunch.x = random->RandomFloat(0.7f, 1.0f);
-		viewPunch.y = random->RandomFloat(-1.2f, 1.2f);
+		viewPunch.x = random->RandomFloat(0.9f, 1.0f);
+		viewPunch.y = random->RandomFloat(-1.7f, 1.7f);
 		viewPunch.z = 0.0f;
 	}
 

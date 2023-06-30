@@ -455,8 +455,11 @@ void CWeaponShotgun::Pump(void)
 	// Finish reload animation
 	SendWeaponAnim(ACT_SHOTGUN_PUMP);
 
-	pOwner->m_flNextAttack = gpGlobals->curtime + SequenceDuration();
-	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	//pOwner->m_flNextAttack = gpGlobals->curtime + SequenceDuration();
+	//m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	pOwner->m_flNextAttack = gpGlobals->curtime + 0.5;
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.5;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -517,7 +520,8 @@ void CWeaponShotgun::PrimaryAttack(void)
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
 
 	// Don't fire again until fire animation has completed
-	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	//m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.6; //more speed like in hl2 coz in swelter more long anim duration
 	m_iClip1 -= 1;
 
 	Vector	vecSrc = pPlayer->Weapon_ShootPosition();
@@ -614,7 +618,7 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets(sk_plr_num_shotgun_pellets.GetInt(), vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0, -1, -1, 0, NULL, true, true);
-	pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); //удвоено
+	pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-8, 8), 0)); //удвоено
 
 	m_flNextSecondaryAttack = gpGlobals->curtime + 0.2f;
 

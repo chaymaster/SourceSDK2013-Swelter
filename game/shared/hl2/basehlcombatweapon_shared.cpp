@@ -245,7 +245,7 @@ void CBaseHLCombatWeapon::WeaponIdle(void)
 
 	float speed = player->GetLocalVelocity().Length2D();
 
-	if (speed >= 250 && !(player->GetWaterLevel() == 3) && (player->GetFlags() & FL_ONGROUND))
+	if (speed >= 280 && !(player->GetWaterLevel() == 3) && (player->GetFlags() & FL_ONGROUND))
 	{
 		if (GetActivity() != ACT_VM_SPRINT && (GetActivity() == ACT_VM_IDLE || GetActivity() == ACT_VM_IDLE_LOWERED) || GetActivity() == ACT_VM_IDLE_TO_LOWERED || GetActivity() == ACT_VM_LOWERED_TO_IDLE)
 		{

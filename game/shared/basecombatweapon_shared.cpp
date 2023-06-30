@@ -435,7 +435,7 @@ int CBaseCombatWeapon::GetMaxClip1(void)
 	const char* WeaponName = GetName();
 	int return_value;
 
-	if (m_iClip1 > 0 && !m_bBoltRequired && (strcmp(WeaponName, "weapon_pistol") == 0 || // weapons that can have a chambered round while reloading
+	if (m_iClip1 > 0 && !m_bBoltRequired && (strcmp(WeaponName, "weapon_pistol") == 0 || // weapons that can have a chambered round while reloading 222
 		strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 ||
 		strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 ||
 		strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 ||
@@ -1709,7 +1709,7 @@ Activity CBaseCombatWeapon::GetDrawActivity(void)
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
-	DisableIronsights(); //added 228
+	DisableIronsights();
 	MDLCACHE_CRITICAL_SECTION();
 
 	// cancel any reload in progress.
@@ -2293,9 +2293,19 @@ bool CBaseCombatWeapon::DefaultReload(int iClipSize1, int iClipSize2, int iActiv
 		return false;
 
 	// If I don't have any spare ammo, I can't reload
-	if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
+	if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0) //228
 		return false;
 
+	
+	const char* WeaponName = GetName(); //this snippet block reloading after reloading when cartrige chamber is empty
+	if (strcmp(WeaponName, "weapon_pistol") == 0 || strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 || strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 || strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 || strcmp(WeaponName, "weapon_ar2") == 0)
+	{
+		//DevMsg("SDE REL TEST:______ %d,     %d \n", m_iClip1, iClipSize1);
+		if (m_iClip1 + 1 == iClipSize1)
+			return false;
+	}
+	
+	
 	bool bReload = false;
 
 	// If you don't have clips, then don't try to reload them.
@@ -2769,7 +2779,6 @@ static ConCommand crosshair_on("crosshair_on", CC_CrosshairOn);
 
 void CBaseCombatWeapon::EnableIronsights(void)
 {
-	//228
 
 
 	if (!HasIronsights() || m_bIsIronsighted)
