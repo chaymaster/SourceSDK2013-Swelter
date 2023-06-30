@@ -35,6 +35,7 @@ private:
 	CheckButton *muzButton;
 	CheckButton *boltButton;
 	CheckButton *ccButton;
+	CheckButton *crosshairButton;
 	ComboBox *m_weaponFOV;
 	ComboBox *m_ccLang;
 	ComboBox *m_reloadingMag;
@@ -48,6 +49,7 @@ private:
 	bool b_muzButton;
 	bool b_boltButton;
 	bool b_ccButton;
+	bool b_crosshairButton;
 };
 
 COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NULL)
@@ -210,6 +212,20 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	}
 
 
+	ConVarRef var9("sde_swelter_crosshair");
+	crosshairButton = new CheckButton(this, "crosshairButton", "Switch crosshair style");
+	if (var9.GetInt() == 1)
+	{
+		crosshairButton->SetSelected(false);
+		b_crosshairButton = false;
+	}
+	else
+	{
+		crosshairButton->SetSelected(true);
+		b_crosshairButton = true;
+	}
+	b_crosshairButton = crosshairButton->IsSelected();
+
 	//preset buttons
 	m_setDefault = new Button(this, "setDefault", "#pht_option_preset_default", this, "setDefault");
 	m_setClassic = new Button(this, "setClassic", "#pht_option_preset_classic", this, "setClassic");
@@ -255,6 +271,10 @@ void COptionsSwelter::OnApplyChanges()
 	ConVarRef var8("sde_enable_muzzle_flash_light");
 	var8.SetValue(muzButton->IsSelected() ? 1 : 0);
 
+	ConVarRef var9("sde_swelter_crosshair");
+	ConVarRef var10("hud_quickinfo");
+	var9.SetValue(!crosshairButton->IsSelected());
+	var10.SetValue(crosshairButton->IsSelected());
 
 	/* close caption old
 	ConVarRef var3("closecaption");
@@ -350,7 +370,7 @@ private:
 CSwelterMenu::CSwelterMenu(vgui::VPANEL parent) : BaseClass(NULL, "CSwelterMenu")
 {
 	SetDeleteSelfOnClose(true);
-	SetBounds(0, 0, 512, 426);
+	SetBounds(0, 0, 512, 446);
 	SetSizeable(false);
 	MoveToCenterOfScreen();
 	ActivateMinimized();
@@ -398,6 +418,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		altButton->SetSelected(true);
 		boltButton->SetSelected(false);
 		muzButton->SetSelected(true);
+		crosshairButton->SetSelected(false);
 	}
 	if (!Q_stricmp(cmd, "setClassic"))
 	{
@@ -407,6 +428,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		altButton->SetSelected(false);
 		boltButton->SetSelected(false);
 		muzButton->SetSelected(false);
+		crosshairButton->SetSelected(true);
 	}
 	if (!Q_stricmp(cmd, "setRealism"))
 	{
@@ -416,6 +438,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		altButton->SetSelected(true);
 		boltButton->SetSelected(true);
 		muzButton->SetSelected(true);
+		crosshairButton->SetSelected(false);
 	}
 	else
 	{
