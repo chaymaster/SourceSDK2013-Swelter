@@ -20,6 +20,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+ConVar sde_swelter_crosshair("sde_swelter_crosshair", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE);
+
 //-----------------------------------------------------------------------------
 // Purpose: Gets the local client's active weapon, if any.
 //-----------------------------------------------------------------------------
@@ -274,10 +276,14 @@ void C_BaseCombatWeapon::DrawCrosshair()
 
 			crosshair->SetCrosshair( GetWpnData().iconAutoaim, clr );
 		}
-		else if ( GetWpnData().iconCrosshair )
+		else if ( GetWpnData().iconCrosshair && GetWpnData().iconCrosshairSwelter)
 		{
 			clr[3] = 255;
 			crosshair->SetCrosshair( GetWpnData().iconCrosshair, clr );
+			if (sde_swelter_crosshair.GetInt() == 1)
+			{
+				crosshair->SetCrosshair(GetWpnData().iconCrosshairSwelter, clr);
+			}
 		}
 		else
 		{
@@ -289,10 +295,18 @@ void C_BaseCombatWeapon::DrawCrosshair()
 		Color white( 255, 255, 255, 255 );
 
 		// zoomed crosshairs
-		if (bOnTarget && GetWpnData().iconZoomedAutoaim)
+		if (bOnTarget && GetWpnData().iconZoomedAutoaim && GetWpnData().iconZoomedAutoaimSwelter)
 			crosshair->SetCrosshair(GetWpnData().iconZoomedAutoaim, white);
-		else if ( GetWpnData().iconZoomedCrosshair )
+		if (sde_swelter_crosshair.GetInt() == 1)
+		{
+			crosshair->SetCrosshair(GetWpnData().iconZoomedAutoaimSwelter, white);
+		}
+		else if ( GetWpnData().iconZoomedCrosshair && GetWpnData().iconCrosshairSwelter)
 			crosshair->SetCrosshair( GetWpnData().iconZoomedCrosshair, white );
+		if (sde_swelter_crosshair.GetInt() == 1)
+		{
+			crosshair->SetCrosshair(GetWpnData().iconZoomedCrosshairSwelter, white);
+		}
 		else
 			crosshair->ResetCrosshair();
 	}

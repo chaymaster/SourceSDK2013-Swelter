@@ -134,9 +134,12 @@ public:
 	CHudTexture 					*iconAmmo;
 	CHudTexture 					*iconAmmo2;
 	CHudTexture 					*iconCrosshair;
+	CHudTexture						*iconCrosshairSwelter;
 	CHudTexture 					*iconAutoaim;
 	CHudTexture 					*iconZoomedCrosshair;
+	CHudTexture                     *iconZoomedCrosshairSwelter;
 	CHudTexture 					*iconZoomedAutoaim;
+	CHudTexture                     *iconZoomedAutoaimSwelter;
 	CHudTexture						*iconSmall;
 
 	// TF2 specific

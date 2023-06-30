@@ -18,6 +18,8 @@
 
 WeaponsResource gWR;
 
+extern ConVar sde_swelter_crosshair;
+
 void FreeHudTextureList( CUtlDict< CHudTexture *, int >& list );
 
 static CHudTexture *FindHudTextureInDict( CUtlDict< CHudTexture *, int >& list, const char *psz )
@@ -81,16 +83,16 @@ void WeaponsResource::LoadAllWeaponSprites( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo )
+void WeaponsResource::LoadWeaponSprites(WEAPON_FILE_INFO_HANDLE hWeaponFileInfo)
 {
 	// WeaponsResource is a friend of C_BaseCombatWeapon
-	FileWeaponInfo_t *pWeaponInfo = GetFileWeaponInfoFromHandle( hWeaponFileInfo );
+	FileWeaponInfo_t* pWeaponInfo = GetFileWeaponInfoFromHandle(hWeaponFileInfo);
 
-	if ( !pWeaponInfo )
+	if (!pWeaponInfo)
 		return;
 
 	// Already parsed the hud elements?
-	if ( pWeaponInfo->bLoadedHudElements )
+	if (pWeaponInfo->bLoadedHudElements)
 		return;
 
 	pWeaponInfo->bLoadedHudElements = true;
@@ -100,31 +102,39 @@ void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo
 	pWeaponInfo->iconAmmo = NULL;
 	pWeaponInfo->iconAmmo2 = NULL;
 	pWeaponInfo->iconCrosshair = NULL;
+	pWeaponInfo->iconCrosshairSwelter = NULL;
 	pWeaponInfo->iconAutoaim = NULL;
 	pWeaponInfo->iconSmall = NULL;
 
 	char sz[128];
-	Q_snprintf(sz, sizeof( sz ), "scripts/%s", pWeaponInfo->szClassName);
+	Q_snprintf(sz, sizeof(sz), "scripts/%s", pWeaponInfo->szClassName);
 
-	CUtlDict< CHudTexture *, int > tempList;
+	CUtlDict< CHudTexture*, int > tempList;
 
-	LoadHudTextures( tempList, sz, g_pGameRules->GetEncryptionKey() );
+	LoadHudTextures(tempList, sz, g_pGameRules->GetEncryptionKey());
 
-	if ( !tempList.Count() )
+	if (!tempList.Count())
 	{
 		// no sprite description file for weapon, use default small blocks
-		pWeaponInfo->iconActive = gHUD.GetIcon( "selection" );
-		pWeaponInfo->iconInactive = gHUD.GetIcon( "selection" );
-		pWeaponInfo->iconAmmo = gHUD.GetIcon( "bucket1" );
+		pWeaponInfo->iconActive = gHUD.GetIcon("selection");
+		pWeaponInfo->iconInactive = gHUD.GetIcon("selection");
+		pWeaponInfo->iconAmmo = gHUD.GetIcon("bucket1");
 		return;
 	}
 
-	CHudTexture *p;
-	p = FindHudTextureInDict( tempList, "crosshair" );
-	if ( p )
+	CHudTexture* p;
+	p = FindHudTextureInDict(tempList, "crosshair");
+	if (p)
 	{
-		pWeaponInfo->iconCrosshair = gHUD.AddUnsearchableHudIconToList( *p );
+		pWeaponInfo->iconCrosshair = gHUD.AddUnsearchableHudIconToList(*p);
 	}
+
+	p = FindHudTextureInDict(tempList, "crosshair_swelter");
+	if (p)
+	{
+		pWeaponInfo->iconCrosshairSwelter = gHUD.AddUnsearchableHudIconToList(*p);
+	}
+ 
 
 	p = FindHudTextureInDict( tempList, "autoaim" );
 	if ( p )
@@ -142,6 +152,17 @@ void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo
 		pWeaponInfo->iconZoomedCrosshair = pWeaponInfo->iconCrosshair; //default to non-zoomed crosshair
 	}
 
+
+	p = FindHudTextureInDict(tempList, "zoom_swelter");
+	if (p)
+	{
+		pWeaponInfo->iconZoomedCrosshairSwelter = gHUD.AddUnsearchableHudIconToList(*p);
+	}
+	else
+	{
+		pWeaponInfo->iconZoomedCrosshairSwelter = pWeaponInfo->iconCrosshairSwelter; //default to non-zoomed swelter crosshair
+	}
+
 	p = FindHudTextureInDict( tempList, "zoom_autoaim" );
 	if ( p )
 	{
@@ -150,6 +171,16 @@ void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo
 	else
 	{
 		pWeaponInfo->iconZoomedAutoaim = pWeaponInfo->iconZoomedCrosshair;  //default to zoomed crosshair
+	}
+
+	p = FindHudTextureInDict(tempList, "zoom_autoaim_swelter");
+	if (p)
+	{
+		pWeaponInfo->iconZoomedAutoaimSwelter = gHUD.AddUnsearchableHudIconToList(*p);
+	}
+	else
+	{
+		pWeaponInfo->iconZoomedAutoaimSwelter = pWeaponInfo->iconZoomedCrosshairSwelter;  //default to zoomed swelter crosshair
 	}
 
 	CHudHistoryResource *pHudHR = GET_HUDELEMENT( CHudHistoryResource );	
