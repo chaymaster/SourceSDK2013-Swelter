@@ -3196,9 +3196,16 @@ WeaponProficiency_t CNPC_Combine::CalcWeaponProficiency( CBaseCombatWeapon *pWea
 
 		return WEAPON_PROFICIENCY_PERFECT;
 	}
-	else if( FClassnameIs( pWeapon, "weapon_smg1" ) )
+	else if (FClassnameIs(pWeapon, "weapon_smg1"))
 	{
-		return WEAPON_PROFICIENCY_GOOD;
+		if (g_pGameRules->IsSkillLevel(SKILL_HARD))
+		{
+			return WEAPON_PROFICIENCY_VERY_GOOD;
+		}
+		else
+		{
+			return WEAPON_PROFICIENCY_GOOD;
+		}
 	}
 
 	return BaseClass::CalcWeaponProficiency( pWeapon );
