@@ -84,6 +84,7 @@ ConVar viewmodel_adjust_yaw("viewmodel_adjust_yaw", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_roll("viewmodel_adjust_roll", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_fov("viewmodel_adjust_fov", "0", FCVAR_REPLICATED, "Note: this feature is not available during any kind of zoom", vm_adjust_fov_callback);
 ConVar viewmodel_adjust_enabled("viewmodel_adjust_enabled", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "enabled viewmodel adjusting", vm_adjust_enable_callback);
+ConVar sde_holster("sde_holster", "1", FCVAR_ARCHIVE);
 ConVar sde_holster_fixer("sde_holster_fixer", "1", FCVAR_ARCHIVE);
 
 #ifdef CLIENT_DLL
@@ -1567,7 +1568,7 @@ private:
 			{
 				m_pWeapon->SetViewModel();
 				m_pWeapon->SendWeaponAnim(m_iActivity);
-				m_pWeapon->SetWeaponVisible(true);
+				//m_pWeapon->SetWeaponVisible(true);
 
 				pOwner->SetNextAttack(gpGlobals->curtime + m_pWeapon->SequenceDuration());
 
@@ -1663,28 +1664,45 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 	HolsterFix = true;
 	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	float flSequenceDuration = 0.0f;
-	if (GetOwner())
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	if (pOwner)
 	{
 		if (!GetOwner()->IsAlive())
 			return false;
-		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
-		if (pOwner)
+
+		pOwner->SetAnimationExtension(szAnimExt);
+
+		if (sde_holster.GetInt() == 0) 
 		{
-			pOwner->SetAnimationExtension(szAnimExt);
+			SetViewModel();
+			SendWeaponAnim(iActivity);
+			pOwner->SetNextAttack(gpGlobals->curtime + SequenceDuration());
 		}
-		CBaseCombatWeapon *pActive = GetOwner()->GetActiveWeapon();
-		if (pActive && pActive->GetActivity() == ACT_VM_HOLSTER)
+		else
 		{
-			flSequenceDuration = pActive->SequenceDuration();
-			pOwner->SetNextAttack( gpGlobals->curtime + SequenceDuration() );
+			CBaseCombatWeapon* pActive = pOwner->GetActiveWeapon();
+			if (pActive && pActive->GetActivity() == ACT_VM_HOLSTER)
+			{
+				flSequenceDuration = pActive->SequenceDuration();
+			}
+
+			pOwner->SetNextAttack(gpGlobals->curtime + SequenceDuration());
 		}
 	}
 	g_ShowWeapon.SetShowWeapon(this, iActivity, flSequenceDuration);
+
+	// Can't shoot again until we've finished deploying
+	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
 
 #ifndef CLIENT_DLL
 	// Cancel any pending hide events
 	g_EventQueue.CancelEventOn(this, "HideWeapon");
 #endif
+
+	SetWeaponVisible(true);
+
+	SetContextThink(NULL, 0, HIDEWEAPON_THINK_CONTEXT);
 
 	return true;
 }
@@ -1742,11 +1760,9 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	}
 	else
 	{
-		if (sde_holster_fixer.GetInt() == 0) //holster fixer
-		{
-			// Hide the weapon when the holster animation's finished
-			SetContextThink(&CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT);
-		}
+		// Hide the weapon when the holster animation's finished
+		SetContextThink(&CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT);
+	
 	}
 
 	Msg("SDE_HOLSTER\n");
@@ -1771,6 +1787,22 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 
 		if (m_bReloadHudHintDisplayed)
 			RescindReloadHudHint();
+	}
+
+	// turn off ironsights
+	DisableIronsights();
+
+	// holster fixer
+	if (pPlayer)
+	{
+		if (sde_holster_fixer.GetInt() == 1) //holster fixer
+		{
+			CBaseViewModel* pVM = pPlayer->GetViewModel();
+			if (pVM)
+			{
+				SetContextThink(NULL, 0, HIDEWEAPON_THINK_CONTEXT);
+			}
+		}
 	}
 
 	return true;
