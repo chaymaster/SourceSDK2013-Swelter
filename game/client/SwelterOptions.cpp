@@ -36,6 +36,7 @@ private:
 	CheckButton *boltButton;
 	CheckButton *ccButton;
 	CheckButton *crosshairButton;
+	CheckButton *holsterButton;
 	ComboBox *m_weaponFOV;
 	ComboBox *m_ccLang;
 	ComboBox *m_reloadingMag;
@@ -50,6 +51,7 @@ private:
 	bool b_boltButton;
 	bool b_ccButton;
 	bool b_crosshairButton;
+	bool b_holsterButton;
 };
 
 COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NULL)
@@ -226,6 +228,20 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	}
 	b_crosshairButton = crosshairButton->IsSelected();
 
+	ConVarRef var11("sde_holster");
+	holsterButton = new CheckButton(this, "holsterButton", "turn off holstering anim");
+	if (var11.GetInt() == 1)
+	{
+		holsterButton->SetSelected(false);
+		b_holsterButton = false;
+	}
+	else
+	{
+		holsterButton->SetSelected(true);
+		b_holsterButton = true;
+	}
+	b_holsterButton = holsterButton->IsSelected();
+
 	//preset buttons
 	m_setDefault = new Button(this, "setDefault", "#pht_option_preset_default", this, "setDefault");
 	m_setClassic = new Button(this, "setClassic", "#pht_option_preset_classic", this, "setClassic");
@@ -275,6 +291,9 @@ void COptionsSwelter::OnApplyChanges()
 	ConVarRef var10("hud_quickinfo");
 	var9.SetValue(!crosshairButton->IsSelected());
 	var10.SetValue(crosshairButton->IsSelected());
+
+	ConVarRef var11("sde_holster");
+	var11.SetValue(!holsterButton->IsSelected());
 
 	/* close caption old
 	ConVarRef var3("closecaption");
@@ -370,7 +389,7 @@ private:
 CSwelterMenu::CSwelterMenu(vgui::VPANEL parent) : BaseClass(NULL, "CSwelterMenu")
 {
 	SetDeleteSelfOnClose(true);
-	SetBounds(0, 0, 512, 446);
+	SetBounds(0, 0, 512, 476);
 	SetSizeable(false);
 	MoveToCenterOfScreen();
 	ActivateMinimized();
@@ -419,6 +438,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		boltButton->SetSelected(false);
 		muzButton->SetSelected(true);
 		crosshairButton->SetSelected(false);
+		holsterButton->SetSelected(false);
 	}
 	if (!Q_stricmp(cmd, "setClassic"))
 	{
@@ -429,6 +449,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		boltButton->SetSelected(false);
 		muzButton->SetSelected(false);
 		crosshairButton->SetSelected(true);
+		holsterButton->SetSelected(true);
 	}
 	if (!Q_stricmp(cmd, "setRealism"))
 	{
@@ -439,6 +460,7 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		boltButton->SetSelected(true);
 		muzButton->SetSelected(true);
 		crosshairButton->SetSelected(false);
+		holsterButton->SetSelected(false);
 	}
 	else
 	{
