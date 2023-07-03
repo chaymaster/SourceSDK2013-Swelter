@@ -322,6 +322,8 @@ $Project "Server (Episodic)"
 			$File	"hl2\weapon_mapcase.cpp"
 			$File	"hl2\npc_drone.cpp"
 			$File	"hl2\npc_drone.h"
+			$File	"hl2\SwelterModVersionBlockHandler.cpp"
+			$File	"hl2\SwelterModVersionBlockHandler.h"
 			$File	"$SRCDIR\game\shared\episodic\achievements_swelter.cpp"
 		}
 	}
