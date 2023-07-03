@@ -101,7 +101,7 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 bool CWeapon356::Deploy(void)
 {
 
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);

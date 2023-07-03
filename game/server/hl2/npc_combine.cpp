@@ -352,7 +352,7 @@ void CNPC_Combine::Spawn( void )
 
 	NPCInit();
 	if (IsAperture())
-		Msg("SDE: aperture regulator spawned \n");
+		DevMsg("SDE: aperture regulator spawned \n");
 }
 
 //-----------------------------------------------------------------------------

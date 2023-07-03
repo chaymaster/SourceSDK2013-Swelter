@@ -204,7 +204,7 @@ void CWeaponar1m1::Equip(CBaseCombatCharacter *pOwner)
 bool CWeaponar1m1::Deploy(void)
 {
 	m_nShotsFired = 0;
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -336,7 +336,7 @@ bool CWeaponar1m1::Reload(void)
 		pPlayer->ShowCrosshair(true); // show crosshair to fix crosshair for reloading weapons in toggle ironsight
 		if (m_iClip1 < 1)
 		{
-			Msg("SDE_R+ \n");
+			DevMsg("SDE_R+ \n");
 			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
 			if (fRet)
 			{
@@ -350,7 +350,7 @@ bool CWeaponar1m1::Reload(void)
 		}
 		else
 		{
-			Msg("SDE_R- \n");
+			DevMsg("SDE_R- \n");
 			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 			if (fRet)
 			{

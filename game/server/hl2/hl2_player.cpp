@@ -2059,7 +2059,7 @@ bool CHL2_Player::ApplyBattery(float powerMultiplier)
 	const float MAX_NORMAL_BATTERY = 100;
 	if (GetVehicle() != NULL)
 	{
-		Msg("SDE: cant pick up battery coz you in a car \n");  //added vehicle check
+		DevMsg("SDE: cant pick up battery coz you in a car \n");  //added vehicle check
 		return false;
 	}
 	if ((ArmorValue() < MAX_NORMAL_BATTERY) && IsSuitEquipped() && (GetVehicle() == NULL)) //added vehicle check
@@ -2694,7 +2694,7 @@ int CHL2_Player::GiveAmmo(int nCount, int nAmmoIndex, bool bSuppressSound)
 {
 	if (GetVehicle() != NULL)
 	{
-		Msg("SDE: cant pick up ammo coz you in a car \n");  //added vehicle check
+		DevMsg("SDE: cant pick up ammo coz you in a car \n");  //added vehicle check
 		return 0;
 	}
 	// Don't try to give the player invalid ammo indices.

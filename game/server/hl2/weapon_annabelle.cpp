@@ -279,7 +279,7 @@ float CWeaponAnnabelle::GetFireRate()
 }
 bool CWeaponAnnabelle::Deploy(void)
 {
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);

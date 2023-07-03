@@ -177,7 +177,7 @@ void CWeaponGlauncher::Precache( void )
 bool CWeaponGlauncher::Deploy(void)
 {
 
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -369,7 +369,7 @@ bool CWeaponGlauncher::Reload(void)
 			m_flShellEjectTime = gpGlobals->curtime + 1.2f; //new
 			if (m_iClip1 < 1)
 			{
-				Msg("SDE_R+ \n");
+				DevMsg("SDE_R+ \n");
 				bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 				if (fRet)
 				{
@@ -380,7 +380,7 @@ bool CWeaponGlauncher::Reload(void)
 			}
 			else
 			{
-				Msg("SDE_R- \n");
+				DevMsg("SDE_R- \n");
 				bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
 				if (fRet)
 				{

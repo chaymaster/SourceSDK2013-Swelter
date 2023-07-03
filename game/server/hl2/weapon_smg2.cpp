@@ -194,7 +194,7 @@ void CWeaponSMG2::Equip(CBaseCombatCharacter *pOwner)
 bool CWeaponSMG2::Deploy(void)
 {
 	m_nShotsFired = 0;
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);

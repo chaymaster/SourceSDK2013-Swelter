@@ -1765,7 +1765,7 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	
 	}
 
-	Msg("SDE_HOLSTER\n");
+	DevMsg("SDE_HOLSTER\n");
 	//disable attack when holstered 1337
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)

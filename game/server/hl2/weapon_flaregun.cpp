@@ -717,7 +717,7 @@ void CFlaregun::PrimaryAttack(void)
 bool CFlaregun::Deploy(void)
 {
 
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);

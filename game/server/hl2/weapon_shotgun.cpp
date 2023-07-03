@@ -272,7 +272,7 @@ float CWeaponShotgun::GetFireRate()
 }
 bool CWeaponShotgun::Deploy(void)
 {
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	m_DoDouble = false;
 	HolsterFix = true;
 	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
