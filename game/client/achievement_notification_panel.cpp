@@ -27,8 +27,11 @@
 
 using namespace vgui;
 
+#ifdef HL2_EPISODIC
+#define ACHIEVEMENT_NOTIFICATION_DURATION 7.0f
+#else
 #define ACHIEVEMENT_NOTIFICATION_DURATION 10.0f
-
+#endif
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -88,6 +91,11 @@ void CAchievementNotificationPanel::PerformLayout( void )
 	m_pPanelBackground->SetBgColor( Color( 62,70,55, 200 ) );
 }
 
+
+ConVar sde_achievement_notifications( "sde_achievement_notifications", "2", FCVAR_ARCHIVE | FCVAR_DONTRECORD, 
+	"Display on screen achievements.\n"
+	"1 - Only accomplishment notifications are displayed.\n"
+	"2 - Accomplished and progress notifications are displayed" );
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -96,11 +104,15 @@ void CAchievementNotificationPanel::FireGameEvent( IGameEvent * event )
 	const char *name = event->GetName();
 	if ( 0 == Q_strcmp( name, "achievement_event" ) )
 	{
+		if( sde_achievement_notifications.GetInt() == 0 )
+			return;
+
 		const char *pchName = event->GetString( "achievement_name" );
 		int iCur = event->GetInt( "cur_val" );
 		int iMax = event->GetInt( "max_val" );
 		wchar_t szLocalizedName[256]=L"";
 
+#ifndef HL2_EPISODIC
 		if ( IsPC() )
 		{
 			// shouldn't ever get achievement progress if steam not running and user logged in, but check just in case
@@ -114,7 +126,8 @@ void CAchievementNotificationPanel::FireGameEvent( IGameEvent * event )
 				steamapicontext->SteamUserStats()->IndicateAchievementProgress( pchName, iCur, iMax );
 			}
 		}
-		else 
+		else
+#endif
 		{
 			// on X360 we need to show our own achievement progress UI
 
@@ -123,6 +136,18 @@ void CAchievementNotificationPanel::FireGameEvent( IGameEvent * event )
 			if ( !pchLocalizedName || !pchLocalizedName[0] )
 				return;
 			Q_wcsncpy( szLocalizedName, pchLocalizedName, sizeof( szLocalizedName ) );
+
+#ifdef HL2_EPISODIC
+			// have we just unlocked this achievement?
+			if( iCur >= iMax )
+			{
+				AddNotification( pchName, g_pVGuiLocalize->Find( "#GameUI_Achievement_Awarded" ), szLocalizedName );
+				return;
+			}
+
+			if( sde_achievement_notifications.GetInt() < 2 )
+				return;
+#endif
 
 			// this is achievement progress, compose the message of form: "<name> (<#>/<max>)"
 			wchar_t szFmt[128]=L"";
@@ -245,27 +270,27 @@ void CAchievementNotificationPanel::SetXAndWide( Panel *pPanel, int x, int wide 
 	pPanel->SetWide( wide );
 }
 
-CON_COMMAND_F( achievement_notification_test, "Test the hud notification UI", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY )
+CON_COMMAND_F( achievement_notification_test, "Test the hud notification UI", FCVAR_CHEAT )
 {
 	static int iCount=0;
 
+#ifndef HL2_EPISODIC
 	CAchievementNotificationPanel *pPanel = GET_HUDELEMENT( CAchievementNotificationPanel );
 	if ( pPanel )
 	{		
 		pPanel->AddNotification( "HL2_KILL_ODESSAGUNSHIP", L"Achievement Progress", ( 0 == ( iCount % 2 ) ? L"Test Notification Message A (1/10)" :
 			L"Test Message B" ) );
 	}
-
-#if 0
+#else
 	IGameEvent *event = gameeventmanager->CreateEvent( "achievement_event" );
-	if ( event )
+	if( event )
 	{
-		const char *szTestStr[] = { "TF_GET_HEADSHOTS", "TF_PLAY_GAME_EVERYMAP", "TF_PLAY_GAME_EVERYCLASS", "TF_GET_HEALPOINTS" };
-		event->SetString( "achievement_name", szTestStr[iCount%ARRAYSIZE(szTestStr)] );
-		event->SetInt( "cur_val", ( iCount%9 ) + 1 );
+		const char *szTestStr[] = { "ACH_SWELTER_END_ANARCHY", "ACH_SWELTER_END_RESIST", "ACH_SWELTER_RADAR", "ACH_SWELTER_VORT", "ACH_SWELTER_AK", "ACH_SWELTER_SPAWN", "ACH_SWELTER_TURRET", "ACH_SWELTER_HELI", "ACH_SWELTER_APERTURE", "ACH_SWELTER_TEA", "ACH_SWELTER_TRAIN", "ACH_SWELTER_AIR", "ACH_SWELTER_ARSENAL" };
+		event->SetString( "achievement_name", szTestStr[iCount % ARRAYSIZE( szTestStr )] );
+		event->SetInt( "cur_val", (iCount % 9) + 1 );
 		event->SetInt( "max_val", 10 );
 		gameeventmanager->FireEvent( event );
-	}	
+	}
 #endif
 
 	iCount++;

@@ -102,7 +102,7 @@ static void WriteAchievementGlobalState( KeyValues *pKV, bool bPersistToSteamClo
 	}
 	else
 	{
-		Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
+		Q_snprintf( szFilename, sizeof( szFilename ), "gamestate.txt" );
 	}
 
 	// Never call pKV->SaveToFile!!!!
@@ -126,7 +126,7 @@ static void WriteAchievementGlobalState( KeyValues *pKV, bool bPersistToSteamClo
         }
         else
         {
-            Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
+            Q_snprintf( szFilename, sizeof( szFilename ), "gamestate.txt" );
         }
 
         ISteamRemoteStorage *pRemoteStorage = SteamClient()?(ISteamRemoteStorage *)SteamClient()->GetISteamGenericInterface(
@@ -256,7 +256,7 @@ CAchievementMgr::CAchievementMgr( SteamCloudPersisting ePersistToSteamCloud ) : 
 // HPE_END
 //=============================================================================
 
-#if !defined(NO_STEAM)
+#ifndef HL2_EPISODIC
 , m_CallbackUserStatsReceived( this, &CAchievementMgr::Steam_OnUserStatsReceived ),
 m_CallbackUserStatsStored( this, &CAchievementMgr::Steam_OnUserStatsStored )
 #endif
@@ -754,7 +754,7 @@ void CAchievementMgr::LoadGlobalState()
 	}
 	else
 	{
-		Q_snprintf( szFilename, sizeof( szFilename ), "GameState.txt" );
+		Q_snprintf( szFilename, sizeof( szFilename ), "gamestate.txt" );
 	}
 
     //=============================================================================
@@ -951,7 +951,7 @@ void CAchievementMgr::AwardAchievement( int iAchievementID )
 
 	if ( IsPC() )
 	{		
-#ifndef NO_STEAM
+#if !defined(NO_STEAM) && !defined(HL2_EPISODIC)
 		if ( steamapicontext->SteamUserStats() )
 		{
 			VPROF_BUDGET( "AwardAchievement", VPROF_BUDGETGROUP_STEAM );
@@ -1671,7 +1671,7 @@ int CAchievementMgr::GetAchievementCount()
 }
 
 
-#if !defined(NO_STEAM)
+#if 0
 //-----------------------------------------------------------------------------
 // Purpose: called when stat download is complete
 //-----------------------------------------------------------------------------
