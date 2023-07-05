@@ -1911,7 +1911,7 @@ void MsgFunc_AchievementEvent( bf_read &msg )
 }
 
 #if defined( HL2_EPISODIC ) 
-CON_COMMAND_F( achievement_reset_all, "Clears all achievements", FCVAR_CHEAT )
+CON_COMMAND_F( achievement_reset_all, "Clears all achievements", FCVAR_USERINFO | FCVAR_ARCHIVE )
 {
 	CAchievementMgr *pAchievementMgr = dynamic_cast<CAchievementMgr *>( engine->GetAchievementMgr() );
 	if ( !pAchievementMgr )
