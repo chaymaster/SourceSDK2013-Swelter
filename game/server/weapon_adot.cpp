@@ -224,9 +224,11 @@ bool CWeaponAdot::Reload(void)
 	{
 		DisableIronsights();
 	}
-
+	
+/*
 	if (!pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(false);
+*/
 
 	if (!HasPrimaryAmmo())
 		return false;
@@ -348,8 +350,9 @@ void CWeaponAdot::ItemPostFrame(void)
 		DisableIronsights();
 	}
 
-	if (!pOwner->m_bIsCrosshaired)
+/*	if (!pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(false);
+*/
 	
 	if (m_fDrawbackFinished)
 	{

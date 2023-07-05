@@ -24,6 +24,8 @@
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
 
+extern ConVar	sde_drop_mag;
+
 class CWeaponSMG2 : public CHLSelectFireMachineGun
 {
 	DECLARE_DATADESC();
@@ -192,7 +194,7 @@ void CWeaponSMG2::Equip(CBaseCombatCharacter *pOwner)
 bool CWeaponSMG2::Deploy(void)
 {
 	m_nShotsFired = 0;
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -238,7 +240,10 @@ void CWeaponSMG2::SetSkin(int skinNum)
 }
 void CWeaponSMG2::ItemPostFrame(void)
 {
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
+
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
 	if (pOwner == NULL)
@@ -444,7 +449,8 @@ bool CWeaponSMG2::Reload(void)
 					WeaponSound(RELOAD);
 					m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 					dropMagTime = (gpGlobals->curtime + 1.0f); //drop mag
-					shouldDropMag = true; //drop mag
+					if (sde_drop_mag.GetInt())
+						shouldDropMag = true; //drop mag
 				}
 				return fRet;
 			}
@@ -457,7 +463,8 @@ bool CWeaponSMG2::Reload(void)
 					WeaponSound(RELOAD);
 					m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 					dropMagTime = (gpGlobals->curtime + 0.6f); //drop mag
-					shouldDropMag = true; //drop mag
+					if (sde_drop_mag.GetInt())
+						shouldDropMag = true; //drop mag
 				}
 				return fRet;
 			}

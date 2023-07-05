@@ -23,8 +23,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-// extern ConVar	sde_drop_mag;
-
 //-----------------------------------------------------------------------------
 // CWeapon356
 //-----------------------------------------------------------------------------
@@ -39,8 +37,14 @@ public:
 	void	PrimaryAttack( void );
 	void	HoldIronsight(void);
 	virtual void	ItemPostFrame(void);
+	virtual void	ItemBusyFrame(void);
+	virtual bool			Reload(void);
 	bool	Deploy(void);
 	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
+	void	AmmoLoadingCount(void); //ammo_loading_count
+	bool	AmmoLoadingDo;  //ammo_loading_count
+	float	AmmoLoadingTime; //ammo_loading_count
+
 
 	float	WeaponAutoAimScale()	{ return 0.6f; }
 	float	GetFireRate()			{ return 1.5f; }
@@ -59,7 +63,7 @@ END_SEND_TABLE()
 
 BEGIN_DATADESC( CWeapon356 )
 END_DATADESC()
-
+#define BODYGROUP_AMMOLEFT 1 //ammo_loading_count
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
@@ -80,20 +84,18 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 	{
 		case EVENT_WEAPON_RELOAD:
 			{
-				//regardless of sde_drop_mag value, eject only spent casings 
-				//if (sde_drop_mag.GetInt())
-				//{
-					CEffectData data;
-					// Eject (six minus remaining ammo) spent casings (even for realistic mag drop, let the player keep rounds remaining in the drum) 
-					for (int i = 0; i < 6-m_iClip1; i++)
-					{
-						data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector(-4, 4);
-						data.m_vAngles = QAngle(90, random->RandomInt(0, 360), 0);
-						data.m_nEntIndex = entindex();
+				CEffectData data;
 
-						DispatchEffect("ShellEject", data);
-					}
-				//}
+				// Emit six spent shells
+				for ( int i = 0; i < 6; i++ )
+				{
+					data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector( -4, 4 );
+					data.m_vAngles = QAngle( 90, random->RandomInt( 0, 360 ), 0 );
+					data.m_nEntIndex = entindex();
+
+					DispatchEffect( "ShellEject", data );
+				}
+
 				break;
 			}
 	}
@@ -101,7 +103,7 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 bool CWeapon356::Deploy(void)
 {
 
-	DevMsg("SDE_SMG!_deploy\n");
+	Msg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -202,6 +204,81 @@ void CWeapon356::ItemPostFrame(void)
 	if (!m_bInReload)
 		HoldIronsight();
 
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	if (pOwner == NULL)
+		return;
 
 	BaseClass::ItemPostFrame();
+}
+
+void CWeapon356::ItemBusyFrame(void)
+{
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	if (pOwner == NULL)
+		return;
+
+	if ((AmmoLoadingDo) && (gpGlobals->curtime > AmmoLoadingTime)) //ammo_loading_count
+	{
+		DevMsg("SDE: revolver test 5\n");
+		AmmoLoadingCount();
+	}
+
+	BaseClass::ItemBusyFrame();
+}
+
+bool CWeapon356::Reload(void)	//ammo_loading_count
+{
+	DevMsg("SDE: revolver test 1\n");
+	
+	bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
+	if (fRet)
+	{
+		AmmoLoadingTime = (gpGlobals->curtime + 1.7f);
+		AmmoLoadingDo = true;
+		DevMsg("SDE: revolver test 2\n");
+	}
+	return fRet;
+}
+
+void CWeapon356::AmmoLoadingCount(void) //ammo_loading_count
+{
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+
+	if (pOwner == NULL)
+		return;
+
+	CBaseViewModel *pViewModel = pOwner->GetViewModel();
+
+	if (pViewModel == NULL)
+		return;
+
+	//m_iClip1 в оружии
+	//m_iPrimaryAmmoType в кармане
+
+	DevMsg("SDE: revolver test 3\n");
+	switch (pOwner->GetAmmoCount(m_iPrimaryAmmoType + m_iClip1))
+	{
+	case 1:
+		pViewModel->SetBodygroup(BODYGROUP_AMMOLEFT, 5);
+		break;
+	case 2:
+		pViewModel->SetBodygroup(BODYGROUP_AMMOLEFT, 4);
+		break;
+	case 3:
+		pViewModel->SetBodygroup(BODYGROUP_AMMOLEFT, 3);
+		break;
+	case 4:
+		pViewModel->SetBodygroup(BODYGROUP_AMMOLEFT, 2);
+		break;
+	case 5:
+		pViewModel->SetBodygroup(BODYGROUP_AMMOLEFT, 1);
+		break;
+	default:
+		pViewModel->SetBodygroup(BODYGROUP_AMMOLEFT, 0);
+
+		AmmoLoadingDo = false;
+	}
+
 }

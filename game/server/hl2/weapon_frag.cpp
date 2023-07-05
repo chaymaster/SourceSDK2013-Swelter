@@ -125,7 +125,7 @@ bool CWeaponFrag::Deploy( void )
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	//DisplaySDEHudHint();
+	DisplaySDEHudHint();
 	m_bRedraw = false;
 	m_fDrawbackFinished = false;
 
@@ -276,7 +276,6 @@ void CWeaponFrag::SecondaryAttack( void )
 //-----------------------------------------------------------------------------
 void CWeaponFrag::PrimaryAttack( void )
 {
-	//228
 	if ( m_bRedraw )
 		return;
 

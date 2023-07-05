@@ -352,7 +352,7 @@ void CNPC_Combine::Spawn( void )
 
 	NPCInit();
 	if (IsAperture())
-		Msg("SDE: aperture regulator spawned \n");
+		DevMsg("SDE: aperture regulator spawned \n");
 }
 
 //-----------------------------------------------------------------------------
@@ -818,7 +818,7 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 
 					if (!IsAperture())
 						m_Sentences.Speak( "COMBINE_ANNOUNCE", SENTENCE_PRIORITY_HIGH );
-					//else 1337
+					//else (speech control)
 
 					// Wait two seconds
 					SetWait( 2.0 );
@@ -844,7 +844,7 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 			{
 				if (!IsAperture())
 				m_Sentences.Speak( "COMBINE_THROW_GRENADE", SENTENCE_PRIORITY_MEDIUM );
-				//else 1337
+				//else (speech control)
 				SetActivity(ACT_IDLE);
 
 				// Wait two seconds
@@ -982,7 +982,7 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 
 						if (!IsAperture())
 						m_Sentences.Speak( "COMBINE_PLAYERHIT", SENTENCE_PRIORITY_INVALID );
-						//else 1337
+						//else (speech control)
 						JustMadeSound( SENTENCE_PRIORITY_HIGH );
 					}
 					if ( pEntity->MyNPCPointer() )
@@ -1410,7 +1410,7 @@ void CNPC_Combine::AnnounceAssault(void)
 	{
 		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_ASSAULT" );
-		//else 1337
+		//else (speech control)
 	}
 }
 
@@ -1451,7 +1451,7 @@ void CNPC_Combine::AnnounceEnemyType( CBaseEntity *pEnemy )
 
 	if (!IsAperture())
 	m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_HIGH );
-	//else 1337
+	//else (speech control)
 }
 
 void CNPC_Combine::AnnounceEnemyKill( CBaseEntity *pEnemy )
@@ -1490,7 +1490,7 @@ void CNPC_Combine::AnnounceEnemyKill( CBaseEntity *pEnemy )
 
 	if (!IsAperture())
 	m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_HIGH );
-	//else 1337
+	//else (speech control)
 }
 
 //-----------------------------------------------------------------------------
@@ -1810,7 +1810,7 @@ int CNPC_Combine::SelectSchedule( void )
 
 						if (!IsAperture())
 						m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_NORMAL, SENTENCE_CRITERIA_NORMAL );
-						//else 1337
+						//else (speech control)
 
 						// If the sound is approaching danger, I have no enemy, and I don't see it, turn to face.
 						if( !GetEnemy() && pSound->IsSoundType(SOUND_CONTEXT_DANGER_APPROACH) && pSound->m_hOwner && !FInViewCone(pSound->GetSoundReactOrigin()) )
@@ -2078,7 +2078,7 @@ int CNPC_Combine::TranslateSchedule( int scheduleType )
 				{
 					if (!IsAperture())
 					m_Sentences.Speak( "COMBINE_THROW_GRENADE" );
-					//else 1337
+					//else (speech control)
 					return SCHED_COMBINE_TOSS_GRENADE_COVER1;
 				}
 				else
@@ -2485,7 +2485,7 @@ void CNPC_Combine::HandleAnimEvent( animevent_t *pEvent )
 
 				if (!IsAperture())
 				m_Sentences.Speak( "COMBINE_KICK" );
-				//else 1337
+				//else (speech control)
 				handledEvent = true;
 				break;
 			}
@@ -2493,7 +2493,7 @@ void CNPC_Combine::HandleAnimEvent( animevent_t *pEvent )
 		case COMBINE_AE_CAUGHT_ENEMY:
 			if (!IsAperture())
 			m_Sentences.Speak( "COMBINE_ALERT" );
-			//else 1337
+			//else (speech control)
 			handledEvent = true;
 			break;
 
@@ -2582,7 +2582,7 @@ void CNPC_Combine::SpeakSentence( int sentenceType )
 		{
 			if (!IsAperture())
 			m_Sentences.Speak( "COMBINE_FLANK" );
-			//else 1337
+			//else (speech control)
 		}
 		break;
 	}
@@ -2591,7 +2591,7 @@ void CNPC_Combine::SpeakSentence( int sentenceType )
 //=========================================================
 // PainSound
 //=========================================================
-void CNPC_Combine::PainSound ( void )
+void CNPC_Combine::PainSound( const CTakeDamageInfo &info )
 {
 	// NOTE: The response system deals with this at the moment
 	if ( GetFlags() & FL_DISSOLVING )
@@ -2614,7 +2614,7 @@ void CNPC_Combine::PainSound ( void )
 
 		if (!IsAperture())
 		m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS );
-		//else 1337
+		//else (speech control)
 		m_flNextPainSoundTime = gpGlobals->curtime + 1;
 	}
 }
@@ -2656,7 +2656,7 @@ void CNPC_Combine::FoundEnemySound( void)
 {
 	if (!IsAperture())
 	m_Sentences.Speak( "COMBINE_REFIND_ENEMY", SENTENCE_PRIORITY_HIGH );
-	//else 1337
+	//else (speech control)
 }
 
 //-----------------------------------------------------------------------------
@@ -2673,7 +2673,7 @@ void CNPC_Combine::AlertSound( void)
 	{
 		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_GO_ALERT", SENTENCE_PRIORITY_HIGH );
-		//else 1337
+		//else (speech control)
 		m_flNextAlertSoundTime = gpGlobals->curtime + 10.0f;
 	}
 }
@@ -2687,7 +2687,7 @@ void CNPC_Combine::NotifyDeadFriend ( CBaseEntity* pFriend )
 	{
 		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_LAST_OF_SQUAD", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_NORMAL );
-		//else 1337
+		//else (speech control)
 		JustMadeSound();
 		return;
 	}
@@ -2696,7 +2696,7 @@ void CNPC_Combine::NotifyDeadFriend ( CBaseEntity* pFriend )
 	{
 		if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_MAN_DOWN" );
-		//else 1337
+		//else (speech control)
 	}
 	BaseClass::NotifyDeadFriend(pFriend);
 }
@@ -2712,7 +2712,7 @@ void CNPC_Combine::DeathSound ( void )
 
 	if (!IsAperture())
 		m_Sentences.Speak( "COMBINE_DIE", SENTENCE_PRIORITY_INVALID, SENTENCE_CRITERIA_ALWAYS );
-	//else 1337
+	//else (speech control)
 }
 
 //=========================================================
@@ -3196,9 +3196,16 @@ WeaponProficiency_t CNPC_Combine::CalcWeaponProficiency( CBaseCombatWeapon *pWea
 
 		return WEAPON_PROFICIENCY_PERFECT;
 	}
-	else if( FClassnameIs( pWeapon, "weapon_smg1" ) )
+	else if (FClassnameIs(pWeapon, "weapon_smg1"))
 	{
-		return WEAPON_PROFICIENCY_GOOD;
+		if (g_pGameRules->IsSkillLevel(SKILL_HARD))
+		{
+			return WEAPON_PROFICIENCY_VERY_GOOD;
+		}
+		else
+		{
+			return WEAPON_PROFICIENCY_GOOD;
+		}
 	}
 
 	return BaseClass::CalcWeaponProficiency( pWeapon );

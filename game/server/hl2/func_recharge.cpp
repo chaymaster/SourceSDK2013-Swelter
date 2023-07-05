@@ -469,7 +469,7 @@ void CNewRecharge::SetInitialCharge( void )
 		return;
 	}
 
-	if ( HasSpawnFlags( SF_CITADEL_RECHARGER ) ) //228
+	if ( HasSpawnFlags( SF_CITADEL_RECHARGER ) )
 	{
 		m_iMaxJuice =  sk_suitcharger_citadel.GetFloat();
 		return;

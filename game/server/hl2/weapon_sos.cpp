@@ -185,7 +185,7 @@ void CWeaponSOS::FireNPCPrimaryAttack(CBaseCombatCharacter *pOperator, bool bUse
 		vecShootDir = npc->GetActualShootTrajectory(vecShootOrigin);
 	}
 
-	pOperator->FireBullets(8, vecShootOrigin, vecShootDir, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
+	pOperator->FireBullets(18, vecShootOrigin, vecShootDir, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -271,11 +271,11 @@ float CWeaponSOS::GetFireRate()
 bool CWeaponSOS::Deploy(void)
 {
 
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	// DisplaySDEHudHint();
+	DisplaySDEHudHint();
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------

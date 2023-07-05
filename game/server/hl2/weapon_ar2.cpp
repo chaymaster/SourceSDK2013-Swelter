@@ -18,7 +18,7 @@
 #include "in_buttons.h"
 #include "ai_memory.h"
 #include "soundent.h"
-#include "hl2_player.h"
+//#include "hl2_player.h"  // moved to weapon_ar2.h for ChargeEnergySphere()
 #include "EntityFlame.h"
 #include "weapon_flaregun.h"
 #include "te_effect_dispatch.h"
@@ -36,12 +36,15 @@ ConVar sk_weapon_ar2_alt_fire_radius("sk_weapon_ar2_alt_fire_radius", "10");
 ConVar sk_weapon_ar2_alt_fire_duration("sk_weapon_ar2_alt_fire_duration", "2");
 ConVar sk_weapon_ar2_alt_fire_mass("sk_weapon_ar2_alt_fire_mass", "150");
 extern ConVar    sde_simple_alt_reload;
+extern ConVar	sde_drop_mag;
 
 //=========================================================
 //=========================================================
 
 BEGIN_DATADESC(CWeaponAR2)
 
+DEFINE_FIELD(m_flSecondaryReloadActivationTime, FIELD_TIME),
+DEFINE_FIELD(m_flSecondaryReloadDeactivationTime, FIELD_TIME),
 DEFINE_FIELD(m_flDelayedFire, FIELD_TIME),
 DEFINE_FIELD(m_bShotDelayed, FIELD_BOOLEAN),
 //DEFINE_FIELD( m_nVentPose, FIELD_INTEGER ),
@@ -170,34 +173,62 @@ bool CWeaponAR2::Deploy(void)
 }
 void CWeaponAR2::ItemPostFrame(void)
 {
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
-	// Ironsight declare
-	HoldIronsight();
+	if (pOwner == NULL)
+		return;
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pOwner);
+
+	if (pOwner->GetAmmoCount(m_iSecondaryAmmoType) >= 1 && pHL2Player->Get_AR2_GLL() == false &&
+		sde_simple_alt_reload.GetInt() && (m_flNextSecondaryAttack <= gpGlobals->curtime))
+	{
+		ChargeEnergySphere(pHL2Player);
+		return;
+	}
+
+	else
+	{
+		if (gpGlobals->curtime >= m_flSecondaryReloadActivationTime)
+		{
+			m_bInSecondaryReload = true;
+		}
+
+		if (gpGlobals->curtime >= m_flSecondaryReloadDeactivationTime)
+		{
+			m_bInSecondaryReload = false;
+		}
+	}
+	// forbid ironsight if secondary reload has been activated but non deactivated yet
+
+	// Ironsight if not reloading
+	if (!(m_bInReload || m_bInSecondaryReload))
+		HoldIronsight();
 
 	if (m_flNextPrimaryAttack <= gpGlobals->curtime + 0.07)
 		SetSkin(0);
 
 	// See if we need to fire off our secondary round
-	if (m_bShotDelayed && gpGlobals->curtime > m_flDelayedFire)
+	if (m_bShotDelayed && gpGlobals->curtime >= m_flDelayedFire)
 	{
 		DelayedAttack();
 	}
-	if (m_bSecondaryEjectPending && gpGlobals->curtime > m_flSecondaryEjectTime) //new
+	if (m_bSecondaryEjectPending && gpGlobals->curtime >= m_flSecondaryEjectTime) //new
 	{
 		SecondaryEject();
 	}
-	if (m_bSecondaryEjectPending2 && gpGlobals->curtime > m_flSecondaryEjectTime2) //new
+	if (m_bSecondaryEjectPending2 && gpGlobals->curtime >= m_flSecondaryEjectTime2) //new
 	{
 		SecondaryEjectSpawn();
 	}
 
-	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
+	if (shouldDropMag && (gpGlobals->curtime >= dropMagTime)) //drop mag
 	{
 		DropMag();
 	}
 
 	// Update our pose parameter for the vents
-	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+	// CBasePlayer *pOwner = ToBasePlayer(GetOwner()); //moved to start
 
 	if (pOwner)
 	{
@@ -317,6 +348,8 @@ void CWeaponAR2::DelayedAttack(void)
 		m_bSecondaryEjectPending2 = true;
 		m_flSecondaryEjectTime = gpGlobals->curtime + 1.5f; //new
 		m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.5f; //new
+		m_flSecondaryReloadActivationTime = gpGlobals->curtime + 0.1f; // start auto-loading secondary ammo in a small time after secondary fire,
+		// forbidding ironsight
 	}
 	else
 	{
@@ -327,7 +360,8 @@ void CWeaponAR2::DelayedAttack(void)
 
 	m_bShotDelayed = false;
 
-	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration(); //can fire primary or reload secondary after animation
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
+	//can fire primary or reload secondary after animation
 
 	// Register a muzzleflash for the AI
 	pOwner->DoMuzzleFlash();
@@ -368,8 +402,10 @@ void CWeaponAR2::DelayedAttack(void)
 
 	pOwner->ViewPunch(QAngle(random->RandomInt(-6, -10), random->RandomInt(1, 2), 0));
 
-	//Grenade launcher gets unloaded
-	pHL2Player_Owner->AR2_GL_Unload();
+	// Grenade launcher gets unloaded if alt reload is not simple or when firing last secondary round with auto-reload,
+	// to avoid nonsense when you have no rounds but GL is considered loaded
+	if (sde_simple_alt_reload.GetInt() == 0 || pPlayer->GetAmmoCount(m_iSecondaryAmmoType) == 1)
+		pHL2Player_Owner->AR2_GL_Unload();
 
 	// Decrease ammo
 	pOwner->RemoveAmmo(1, m_iSecondaryAmmoType);
@@ -464,15 +500,41 @@ void CWeaponAR2::PrimaryAttack(void)
 	AddViewKick();
 }
 
+void CWeaponAR2::ChargeEnergySphere(CHL2_Player *pHL2Player)
+{
+	if (!pHL2Player)
+		return;
+
+	DisableIronsights();
+	SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
+	//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+	//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+	m_flSecondaryReloadActivationTime = gpGlobals->curtime; // signal the secondary reload to ItemPostFrame() immediately to forbid ironsight
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
+	m_bSecondaryEjectPending = true; //new
+	m_bSecondaryEjectPending2 = true; //new
+	m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
+	m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
+	pHL2Player->AR2_GL_Load();
+	pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+}
+
 void CWeaponAR2::SecondaryAttack(void)
 {
+	if (m_bInReload)
+		return; //prevent interruption of primary reload with secondary attack
+
 	if (sde_simple_alt_reload.GetInt() == 0)
 	{
 		if (m_bShotDelayed)
 			return;
 
 		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+		if (!pPlayer)
+			return;
+
 		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 		if (pHL2Player->Get_AR2_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
 		{
 			// Cannot fire underwater
@@ -507,17 +569,19 @@ void CWeaponAR2::SecondaryAttack(void)
 
 		else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
 		{
-			DisableIronsights();
+			ChargeEnergySphere(pHL2Player);
+			/*DisableIronsights();
 			SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
 			//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
 			//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
-			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
+			m_flSecondaryReloadActivationTime = gpGlobals->curtime; // signal the secondary reload to ItemPostFrame() immediately to forbid ironsight
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
 			m_bSecondaryEjectPending = true; //new
 			m_bSecondaryEjectPending2 = true; //new
 			m_flSecondaryEjectTime = gpGlobals->curtime + 1.0f; //new
 			m_flSecondaryEjectTime2 = gpGlobals->curtime + 2.0f; //new
 			pHL2Player->AR2_GL_Load();
-			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight */
 			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
 
 			//secondary_ammo_recolor_crutch = true;
@@ -541,6 +605,9 @@ void CWeaponAR2::SecondaryAttack(void)
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flDelayedFire = gpGlobals->curtime + 0.5f;
 
 		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+		if (!pPlayer)
+			return;
+
 		if (pPlayer)
 		{
 			pPlayer->RumbleEffect(RUMBLE_AR2_ALT_FIRE, 0, RUMBLE_FLAG_RESTART);
@@ -720,6 +787,9 @@ bool CWeaponAR2::CanHolster(void)
 
 bool CWeaponAR2::Reload(void)
 {
+	if (m_bInSecondaryReload)
+		return false; //prevent interruption of secondary reload with primary reload
+
 	float fCacheTime = m_flNextSecondaryAttack;
 
 	SetSkin(0);
@@ -741,7 +811,8 @@ bool CWeaponAR2::Reload(void)
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -753,7 +824,8 @@ bool CWeaponAR2::Reload(void)
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}

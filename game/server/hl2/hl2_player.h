@@ -242,6 +242,12 @@ public:
 	void				AR2_GL_Load(void);
 	void				AR2_GL_Unload(void);
 	bool				Get_AR2_GLL(void);
+	void				R357_Round_Chamber(void);
+	void				R357_Round_Unchamber(void);
+	bool				Get_R357_Chamber(void);
+	void				Annabelle_Round_Chamber(void);
+	void				Annabelle_Round_Unchamber(void);
+	bool				Get_Annabelle_Chamber(void);
 
 	// Underwater breather device
 	virtual void		SetPlayerUnderwater(bool state);

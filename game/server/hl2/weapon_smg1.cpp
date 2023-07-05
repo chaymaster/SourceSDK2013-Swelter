@@ -24,6 +24,8 @@
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
 
+extern ConVar	sde_drop_mag;
+
 class CWeaponSMG1 : public CHLSelectFireMachineGun
 {
 	DECLARE_DATADESC();
@@ -191,7 +193,7 @@ void CWeaponSMG1::Equip(CBaseCombatCharacter *pOwner)
 bool CWeaponSMG1::Deploy(void)
 {
 	m_nShotsFired = 0;
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -237,7 +239,10 @@ void CWeaponSMG1::SetSkin(int skinNum)
 }
 void CWeaponSMG1::ItemPostFrame(void)
 {
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
+
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
 	if (pOwner == NULL)
@@ -440,7 +445,8 @@ bool CWeaponSMG1::Reload(void)
 					WeaponSound(RELOAD);
 					m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 					dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-					shouldDropMag = true; //drop mag
+					if (sde_drop_mag.GetInt())
+						shouldDropMag = true; //drop mag
 				}
 				return fRet;
 			}
@@ -453,7 +459,8 @@ bool CWeaponSMG1::Reload(void)
 					WeaponSound(RELOAD);
 					m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 					dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-					shouldDropMag = true; //drop mag
+					if (sde_drop_mag.GetInt())
+						shouldDropMag = true; //drop mag
 				}
 				return fRet;
 			}
@@ -756,16 +763,16 @@ void CWeaponSMG1::PrimaryAttack(void)
 	{
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
 
-		viewPunch.x = random->RandomFloat(0.05f, 0.01f);
-		viewPunch.y = random->RandomFloat(-0.01f, 0.01f);
+		viewPunch.x = random->RandomFloat(-0.4f, 0.4f);
+		viewPunch.y = random->RandomFloat(-0.3f, 0.3f);
 		viewPunch.z = 0.0f;
 	}
 	else
 	{
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
-		viewPunch.x = random->RandomFloat(0.1f, 0.1f);
-		viewPunch.y = random->RandomFloat(0.1f, 0.1f);
+		viewPunch.x = random->RandomFloat(-1.2f, 1.2f);
+		viewPunch.y = random->RandomFloat(-1.2f, 0.6f);
 		viewPunch.z = 0.0f;
 	}
 

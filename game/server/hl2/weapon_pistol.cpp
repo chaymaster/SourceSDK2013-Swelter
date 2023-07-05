@@ -29,6 +29,8 @@
 
 ConVar	pistol_use_new_accuracy("pistol_use_new_accuracy", "1");
 
+extern ConVar	sde_drop_mag;
+
 //-----------------------------------------------------------------------------
 // CWeaponPistol
 //-----------------------------------------------------------------------------
@@ -186,7 +188,7 @@ void CWeaponPistol::Precache(void)
 bool CWeaponPistol::Deploy(void)
 {
 
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -330,7 +332,10 @@ void CWeaponPistol::ItemBusyFrame(void)
 void CWeaponPistol::ItemPostFrame(void)
 {
 
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
+
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 	
@@ -393,7 +398,8 @@ bool CWeaponPistol::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				dropMagTime = (gpGlobals->curtime + 0.5f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -405,7 +411,8 @@ bool CWeaponPistol::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				dropMagTime = (gpGlobals->curtime + 0.5f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -444,8 +451,8 @@ void CWeaponPistol::AddViewKick(void)
 
 	QAngle	viewPunch;
 
-	viewPunch.x = random->RandomFloat(0.25f, 0.5f);
-	viewPunch.y = random->RandomFloat(-.6f, .6f);
+	viewPunch.x = random->RandomFloat(0.5f, 1.5f);
+	viewPunch.y = random->RandomFloat(-1.6f, 1.6f);
 	viewPunch.z = 0.0f;
 
 	//Add it to the view punch

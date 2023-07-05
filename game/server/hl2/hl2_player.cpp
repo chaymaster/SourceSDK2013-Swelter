@@ -107,6 +107,8 @@ ConVar autoaim_unlock_target("autoaim_unlock_target", "0.8666");
 
 ConVar sv_stickysprint("sv_stickysprint", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX);
 
+
+
 #define	FLASH_DRAIN_TIME	 1.1111	// 100 units / 90 secs
 #define	FLASH_CHARGE_TIME	 50.0f	// 100 units / 2 secs
 
@@ -1105,6 +1107,10 @@ void CHL2_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 	BaseClass::PlayerRunCommand(ucmd, moveHelper);
 }
 
+ConVar	sde_mod_version("sde_mod_version", "0"); //save_message
+ConVar	sde_mod_version_display("sde_mod_version_display", "0"); //save_message
+ConVar	sde_mod_version_check_enable("sde_mod_version_check_enable", "1", FCVAR_ARCHIVE); //save_message
+
 //-----------------------------------------------------------------------------
 // Purpose: Sets HL2 specific defaults.
 //-----------------------------------------------------------------------------
@@ -1563,6 +1569,34 @@ void				CHL2_Player::AR2_GL_Unload(void)
 bool				CHL2_Player::Get_AR2_GLL(void)
 {
 	return m_HL2Local.m_bAR2_GL_Loaded;
+}
+
+// Bolt-action rifles' statuses
+
+void				CHL2_Player::R357_Round_Chamber(void)
+{
+	m_HL2Local.m_bR357_Round_Chambered = true;
+}
+void				CHL2_Player::R357_Round_Unchamber(void)
+{
+	m_HL2Local.m_bR357_Round_Chambered = false;
+}
+bool				CHL2_Player::Get_R357_Chamber(void)
+{
+	return m_HL2Local.m_bR357_Round_Chambered;
+}
+
+void				CHL2_Player::Annabelle_Round_Chamber(void)
+{
+	m_HL2Local.m_bAnnabelle_Round_Chambered = true;
+}
+void				CHL2_Player::Annabelle_Round_Unchamber(void)
+{
+	m_HL2Local.m_bAnnabelle_Round_Chambered = false;
+}
+bool				CHL2_Player::Get_Annabelle_Chamber(void)
+{
+	return m_HL2Local.m_bAnnabelle_Round_Chambered;
 }
 
 //-----------------------------------------------------------------------------
@@ -2031,7 +2065,7 @@ bool CHL2_Player::ApplyBattery(float powerMultiplier)
 	const float MAX_NORMAL_BATTERY = 100;
 	if (GetVehicle() != NULL)
 	{
-		Msg("SDE: cant pick up battery coz you in a car \n");  //added vehicle check
+		DevMsg("SDE: cant pick up battery coz you in a car \n");  //added vehicle check
 		return false;
 	}
 	if ((ArmorValue() < MAX_NORMAL_BATTERY) && IsSuitEquipped() && (GetVehicle() == NULL)) //added vehicle check
@@ -2666,7 +2700,7 @@ int CHL2_Player::GiveAmmo(int nCount, int nAmmoIndex, bool bSuppressSound)
 {
 	if (GetVehicle() != NULL)
 	{
-		Msg("SDE: cant pick up ammo coz you in a car \n");  //added vehicle check
+		DevMsg("SDE: cant pick up ammo coz you in a car \n");  //added vehicle check
 		return 0;
 	}
 	// Don't try to give the player invalid ammo indices.
@@ -3674,6 +3708,19 @@ void CHL2_Player::PlayUseDenySound()
 void CHL2_Player::ItemPostFrame()
 {
 	BaseClass::ItemPostFrame();
+
+
+	//save_message
+	if (sde_mod_version_check_enable.GetInt() == 1)
+	if (sde_mod_version_display.GetInt() == 1)
+	{
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+		engine->ClientCommand(pPlayer->edict(), "pause;OpenSwelterOutdate\n");
+		//UTIL_CenterPrintAll("SDE_SAVE_TEST_1\n");
+		//sde_mod_version = 0;
+		sde_mod_version_display.SetValue(0);
+	}
+
 
 	if (m_bPlayUseDenySound)
 	{

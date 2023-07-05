@@ -148,12 +148,90 @@ void CHudNumericDisplay::PaintNumbers(HFont font, int xpos, int ypos, int value)
 //-----------------------------------------------------------------------------
 // Purpose: draws the text
 //-----------------------------------------------------------------------------
+ConVar sde_hud_adjustment("sde_hud_adjustment", 0, 0, "sde_hud_adjustment");
 void CHudNumericDisplay::PaintLabel( void )
-{
-	surface()->DrawSetTextFont(m_hTextFont);
-	surface()->DrawSetTextColor(GetFgColor());
-	surface()->DrawSetTextPos(text_xpos, text_ypos);
-	surface()->DrawUnicodeString( m_LabelText );
+{	
+	
+	if ((m_LabelText[0] == L"+"[0]) || ( m_LabelText[0] == L"*"[0])) //health and suit icon instead text
+	{
+		
+		surface()->GetScreenSize(wide, tall);
+		if (sde_hud_adjustment.GetInt() != 0)
+		{
+			posY = sde_hud_adjustment.GetInt();
+			DevMsg("SDE: screen tall: %i \n", tall);
+		}
+		else
+		{
+			switch (tall) //display resolution adjustment.
+			{
+				case 480:
+					posY = -23;
+					break;
+				case 576:
+					posY = -28;
+					break;
+				case 600:
+					posY = -30;
+					break;
+				case 720:
+					posY = -35;
+					break;
+				case 768:
+					posY = -38;
+					break;
+				case 800:
+					posY = -39;
+					break;
+				case 864:
+					posY = -43;
+					break;
+				case 900:
+					posY = -45;
+					break;
+				case 960:
+					posY = -47;
+					break;
+				case 1024:
+					posY = -46;
+					break;
+				case 1050:
+					posY = -44;
+					break;
+				case 1080:
+					posY = -40;
+					break;
+				case 1440:
+					posY = -28;
+					break;
+				case 1600:
+					posY = -22;
+					break;
+				case 2160:
+					posY = 0;
+					break;
+				default:
+				posY = -40;
+				break;
+			}
+		}
+
+
+
+		posX = text_xpos;
+		surface()->DrawSetTextFont(m_hTextFont);
+		surface()->DrawSetTextColor(GetFgColor());
+		surface()->DrawSetTextPos(posX, posY);
+		surface()->DrawUnicodeString(m_LabelText);
+		
+	}
+	else
+	{
+		surface()->DrawSetTextFont(m_hTextFont);
+		surface()->DrawSetTextColor(GetFgColor());
+		surface()->DrawSetTextPos(text_xpos, text_ypos);
+		surface()->DrawUnicodeString(m_LabelText);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +269,7 @@ void CHudNumericDisplay::Paint()
 		surface()->DrawSetTextColor(GetFgColor());
 		PaintNumbers(m_hSmallNumberFont, digit2_xpos, digit2_ypos, m_iSecondaryValue);
 	}
-
+	if (m_LabelText)
 	PaintLabel();
 }
 

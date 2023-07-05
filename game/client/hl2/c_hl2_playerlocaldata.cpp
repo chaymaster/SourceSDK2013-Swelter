@@ -27,6 +27,8 @@ BEGIN_RECV_TABLE_NOBASE( C_HL2PlayerLocalData, DT_HL2Local )
 	RecvPropBool( RECVINFO(m_bAutoAimTarget) ),
 	RecvPropBool( RECVINFO (m_bAR1M1_GL_Loaded) ),
 	RecvPropBool( RECVINFO (m_bAR2_GL_Loaded) ),
+	RecvPropBool( RECVINFO (m_bR357_Round_Chambered)),
+	RecvPropBool(RECVINFO (m_bAnnabelle_Round_Chambered)),
 #ifdef HL2_EPISODIC
 	RecvPropFloat( RECVINFO(m_flFlashBattery) ),
 	RecvPropVector( RECVINFO(m_vecLocatorOrigin) ),
@@ -48,6 +50,8 @@ C_HL2PlayerLocalData::C_HL2PlayerLocalData()
 	m_hLadder = NULL;
 	m_bAR1M1_GL_Loaded = false;
 	m_bAR2_GL_Loaded = false;
+	m_bR357_Round_Chambered = true;
+	m_bAnnabelle_Round_Chambered = true;
 #ifdef HL2_EPISODIC
 	m_flFlashBattery = 0.0f;
 	m_vecLocatorOrigin = vec3_origin;

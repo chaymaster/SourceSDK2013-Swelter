@@ -343,8 +343,10 @@ FileWeaponInfo_t::FileWeaponInfo_t()
 	iconAmmo = 0;
 	iconAmmo2 = 0;
 	iconCrosshair = 0;
+	iconCrosshairSwelter = 0;
 	iconAutoaim = 0;
 	iconZoomedCrosshair = 0;
+	iconZoomedCrosshairSwelter = 0;
 	iconZoomedAutoaim = 0;
 	bShowUsageHint = false;
 	m_bAllowFlipping = true;
@@ -366,6 +368,7 @@ void FileWeaponInfo_t::Parse(KeyValues *pKeyValuesData, const char *szWeaponName
 	if (pSights)
 	{
 		iconCrosshair = 0;
+		iconCrosshairSwelter = 0;
 		vecIronsightPosOffset.x = pSights->GetFloat("forward", 0.0f);
 		vecIronsightPosOffset.y = pSights->GetFloat("right", 0.0f);
 		vecIronsightPosOffset.z = pSights->GetFloat("up", 0.0f);

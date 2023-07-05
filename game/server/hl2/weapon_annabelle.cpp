@@ -13,6 +13,7 @@
 #include "basecombatcharacter.h"
 #include "ai_basenpc.h"
 #include "player.h"
+#include <hl2_player.h>
 #include "gamerules.h"		// For g_pGameRules
 #include "in_buttons.h"
 #include "soundent.h"
@@ -24,6 +25,8 @@
 
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
+extern ConVar sde_simple_rifle_bolt;
+extern ConVar sde_holster_fixer;
 
 class CWeaponAnnabelle : public CBaseHLCombatWeapon
 {
@@ -34,11 +37,15 @@ public:
 	DECLARE_SERVERCLASS();
 
 private:
-	bool	m_bNeedPump;		// When emptied completely
+	bool	m_bNeedPump;		// After shot
 	bool	m_bDelayedFire1;	// Fire primary when finished reloading
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
-	bool	m_BoldRequred;
-	bool	m_snipering;
+	bool	m_bEjectChamberedRound;
+	bool	m_bNeedToCloseChamber;
+	float	m_bTimeToSubtractEjectedChamberedRound;
+	bool	m_bCompensateEjectedRoundForFullAmmoSupply;
+	bool	m_bReactivateIronsightAfterBolt;
+	float	m_flIronsightAfterBoltReactivatingTime;
 
 public:
 	void	Precache(void);
@@ -99,11 +106,10 @@ LINK_ENTITY_TO_CLASS(weapon_annabelle, CWeaponAnnabelle);
 PRECACHE_WEAPON_REGISTER(weapon_annabelle);
 
 BEGIN_DATADESC(CWeaponAnnabelle)
-
+DEFINE_FIELD(m_bNeedToCloseChamber, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bNeedPump, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire1, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire2, FIELD_BOOLEAN),
-
 END_DATADESC()
 
 acttable_t	CWeaponAnnabelle::m_acttable[] =
@@ -273,11 +279,13 @@ float CWeaponAnnabelle::GetFireRate()
 }
 bool CWeaponAnnabelle::Deploy(void)
 {
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
-	m_snipering = false;
+	DisplaySDEHudHint();
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	return BaseClass::Deploy();
 }
 //-----------------------------------------------------------------------------
@@ -298,8 +306,16 @@ bool CWeaponAnnabelle::StartReload(void)
 	if (m_iClip1 >= GetMaxClip1())
 		return false;
 
+	CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	if (!pPlayer)
+	{
+		return false;
+	}
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 	DisableIronsights();
-	m_snipering = false;
 
 	// If shotgun totally emptied then a pump animation is needed
 
@@ -321,14 +337,26 @@ bool CWeaponAnnabelle::StartReload(void)
 	// Make shotgun shell visible
 	SetBodygroup(1, 0);
 
+	m_bEjectChamberedRound = m_bCompensateEjectedRoundForFullAmmoSupply = false; // initialize trigger chain each reload
+
+	if (m_iClip1 >= 1 && (sde_simple_rifle_bolt.GetInt() || (!sde_simple_rifle_bolt.GetInt() && pHL2Player->Get_Annabelle_Chamber())))
+	{ //don't split this trick into eject-catch separated in time if player has maximum spare ammo, not to lose a round 
+		m_bTimeToSubtractEjectedChamberedRound = gpGlobals->curtime + 0.5f;
+		// the ejected round will be caught to the inventory in case of simple bolting or discarded in case of manual bolting
+		m_bEjectChamberedRound = true;
+		if (!sde_simple_rifle_bolt.GetInt())
+			pHL2Player->Annabelle_Round_Unchamber();
+	}
+
 	if (m_iClip1 < 1)
 	{
-		m_BoldRequred = true;
+		m_bBoltRequired = true;
 	}
 
 	pOwner->m_flNextAttack = gpGlobals->curtime;
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
 
+	m_bNeedToCloseChamber = true;
 	m_bInReload = true;
 	return true;
 }
@@ -362,7 +390,6 @@ bool CWeaponAnnabelle::Reload(void)
 		return false;
 
 	DisableIronsights();
-	m_snipering = false;
 
 	int j = MIN(1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
 
@@ -395,10 +422,23 @@ void CWeaponAnnabelle::FinishReload(void)
 	if (pOwner == NULL)
 		return;
 
+	CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	if (!pPlayer)
+	{
+		return;
+	}
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
 	m_bInReload = false;
 	m_bNeedPump = false;
+	m_bNeedToCloseChamber = false;
+
+	//if (!sde_simple_rifle_bolt.GetInt())
+	pHL2Player->Annabelle_Round_Chamber(); // always chamber the round on finishing reload, to prevent glitch on switching between auto/manual bolt
+
 	DisableIronsights();
-	m_snipering = false;
 
 	// Finish reload animation
 	SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH);
@@ -424,7 +464,15 @@ void CWeaponAnnabelle::FillClip(void)
 		if (Clip1() < GetMaxClip1())
 		{
 			m_iClip1++;
-			pOwner->RemoveAmmo(1, m_iPrimaryAmmoType);
+			if (m_bCompensateEjectedRoundForFullAmmoSupply && pOwner->GetAmmoCount(m_iPrimaryAmmoType) >= pOwner->GetMaxCarry(m_iPrimaryAmmoType))
+				// bolt action realism in case of full supply of spare ammo, no place for compensation round - just don't subtract it
+			{
+				m_bCompensateEjectedRoundForFullAmmoSupply = false;
+			}
+			else
+			{
+				pOwner->RemoveAmmo(1, m_iPrimaryAmmoType);
+			}
 		}
 	}
 }
@@ -438,27 +486,36 @@ void CWeaponAnnabelle::Pump(void)
 {
 	//HoldIronsight();
 	CBaseCombatCharacter *pOwner = GetOwner();
-	
+
 	if (pOwner == NULL)
 		return;
+
+	CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	if (!pPlayer)
+	{
+		return;
+	}
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
+	m_bReactivateIronsightAfterBolt = m_bIsIronsighted; // remember ironsight state to restore after bolting
+
 	DisableIronsights();
 	m_bNeedPump = false;
+
+	//if (!sde_simple_rifle_bolt.GetInt())
+	pHL2Player->Annabelle_Round_Chamber();
 
 	WeaponSound(SPECIAL1);
 
 	// Finish reload animation
-	
-	if (m_bIsIronsighted)
-	{
-		SendWeaponAnim(ACT_SHOTGUN_PUMP);
-	}
-	else
-	{
-		SendWeaponAnim(ACT_SHOTGUN_PUMP);
-	}
+
+	SendWeaponAnim(ACT_SHOTGUN_PUMP);
 
 	pOwner->m_flNextAttack = gpGlobals->curtime + SequenceDuration();
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flIronsightAfterBoltReactivatingTime = gpGlobals->curtime + SequenceDuration();
 }
 
 //-----------------------------------------------------------------------------
@@ -489,65 +546,77 @@ void CWeaponAnnabelle::PrimaryAttack(void)
 		return;
 	}
 
-	// MUST call sound before removing a round from the clip of a CMachineGun
-	WeaponSound(SINGLE);
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
-	pPlayer->DoMuzzleFlash();
-
-	if (m_bIsIronsighted)
+	if (!sde_simple_rifle_bolt.GetInt() && !pHL2Player->Get_Annabelle_Chamber())
 	{
-		SendWeaponAnim(ACT_VM_IRONSHOOT);
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
-		//pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); punch off
-		m_snipering = true;
+		Pump();
 	}
+
 	else
 	{
-		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
-		m_snipering = false;
 
+		// MUST call sound before removing a round from the clip of a CMachineGun
+		WeaponSound(SINGLE);
+
+		pPlayer->DoMuzzleFlash();
+
+		if (m_bIsIronsighted)
+		{
+			SendWeaponAnim(ACT_VM_IRONSHOOT);
+			pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
+			//pPlayer->ViewPunch(QAngle(random->RandomFloat(-4, -2), random->RandomFloat(-4, 4), 0)); punch off
+		}
+		else
+		{
+			SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+			pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
+
+		}
+
+		// player "shoot" animation
+		pPlayer->SetAnimation(PLAYER_ATTACK1);
+
+		// Don't fire again until fire animation has completed
+		m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+		m_iClip1 -= 1;
+
+		Vector	vecSrc = pPlayer->Weapon_ShootPosition();
+		Vector	vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
+
+		pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 1.0); //suda posmitret pPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 1.0 );
+
+		// Fire the bullets, and force the first shot to be perfectly accuracy
+		if (m_bIsIronsighted)
+		{
+			pPlayer->FireBullets(1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
+		}
+		else
+		{
+			pPlayer->FireBullets(1, vecSrc, vecAiming, VECTOR_CONE_2DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
+		}
+
+
+		CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2, GetOwner());
+
+		if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
+		{
+			// HEV suit - indicate out of ammo condition
+			pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
+		}
+
+		if (m_iClip1 /*&& sde_simple_rifle_bolt.GetInt()*/)
+		{
+			// pump so long as some rounds are left.
+			m_bNeedPump = true;
+		}
+
+		if (!sde_simple_rifle_bolt.GetInt())
+			pHL2Player->Annabelle_Round_Unchamber(); //even if 0 ammo remains, after shot there is no chambered round
+
+		m_iPrimaryAttacks++;
+		gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
 	}
-
-	// player "shoot" animation
-	pPlayer->SetAnimation(PLAYER_ATTACK1);
-
-	// Don't fire again until fire animation has completed
-	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
-	m_iClip1 -= 1;
-
-	Vector	vecSrc = pPlayer->Weapon_ShootPosition();
-	Vector	vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
-
-	pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 1.0); //suda posmitret pPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 1.0 );
-
-	// Fire the bullets, and force the first shot to be perfectly accuracy
-	if (m_bIsIronsighted)
-	{
-		pPlayer->FireBullets(1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
-	}
-	else
-	{
-		pPlayer->FireBullets(1, vecSrc, vecAiming, VECTOR_CONE_2DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
-	}
-	
-
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2, GetOwner());
-
-	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
-	{
-		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
-	}
-
-	if (m_iClip1)
-	{
-		// pump so long as some rounds are left.
-		m_bNeedPump = true;
-	}
-
-	m_iPrimaryAttacks++;
-	gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
 }
 
 void CWeaponAnnabelle::HoldIronsight(void)
@@ -574,12 +643,15 @@ void CWeaponAnnabelle::HoldIronsight(void)
 void CWeaponAnnabelle::SecondaryAttack(void)
 {
 	//// Only the player fires this way so we can cast
-	//CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-	//
-	//if (!pPlayer)
-	//{
-	return;
-	//}
+	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+	if (!pOwner)
+	{
+		return;
+	}
+	
+	ToggleIronsights();
+	pOwner->ToggleCrosshair();
+
 	//
 	//pPlayer->m_nButtons &= ~IN_ATTACK2;
 	//// MUST call sound before removing a round from the clip of a CMachineGun
@@ -624,32 +696,58 @@ void CWeaponAnnabelle::SecondaryAttack(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Override so shotgun can do mulitple reloads in a row
+// Purpose: Override so shotgun can do multiple reloads in a row
 //-----------------------------------------------------------------------------
 void CWeaponAnnabelle::ItemPostFrame(void)
 {
-	HoldIronsight();
+	// HoldIronsight(); // moved to where the weapon is not in reload
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 	if (!pOwner)
 	{
 		return;
 	}
-	if (m_iClip1 == 0)
-		DisableIronsights();
-	DisplaySDEHudHint(); //added
-	if (GetActivity() == ACT_VM_HOLSTER) //new
-		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
-	if (pOwner->m_afButtonReleased & IN_IRONSIGHT)
-	{
-		m_snipering = false;
-		DisableIronsights();
-	}
+	// CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pOwner);
 
-	if (m_snipering)
+	if (m_bReactivateIronsightAfterBolt && gpGlobals->curtime >= m_flIronsightAfterBoltReactivatingTime)
 	{
 		EnableIronsights();
-		//m_snipering = false;
+		pOwner->ShowCrosshair(false);
+		m_bReactivateIronsightAfterBolt = false;
+	}
+
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
+	{
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
+			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
+	}
+
+	if (m_bEjectChamberedRound && gpGlobals->curtime >= m_bTimeToSubtractEjectedChamberedRound)
+	{
+		m_iClip1--;
+		m_bEjectChamberedRound = false;
+		// the bolt ejects the chambered round even if it's not an empty casing.
+		// In case of simple bolting spare that ejected round to re-insert it later
+		if (sde_simple_rifle_bolt.GetInt())
+		{
+			if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) < pOwner->GetMaxCarry(m_iPrimaryAmmoType))
+			{ // if ammo supply is full, just don't decrease it later when loading the first round
+					pOwner->GiveAmmo(1, m_iPrimaryAmmoType, true); // Realism of bolt-action rifle mechanics: when you start reloading
+			}
+			else
+			{
+				m_bCompensateEjectedRoundForFullAmmoSupply = true;
+			}
+		}
+	}
+
+	if (GetActivity() == ACT_VM_HOLSTER) //new
+	{
+		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 	}
 
 	if (m_bInReload)
@@ -660,13 +758,6 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 			m_bInReload = false;
 			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
-		}
-		// If I'm secondary firing and have one round stop reloading and fire
-		else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_iClip1 >= 2))
-		{
-			m_bInReload = false;
-			m_bNeedPump = false;
-			m_bDelayedFire2 = true;
 		}
 		else if (m_flNextPrimaryAttack <= gpGlobals->curtime)
 		{
@@ -694,56 +785,28 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 	{
 		// Make shotgun shell invisible
 		SetBodygroup(1, 1);
+		HoldIronsight();
+		
+		if (m_iClip1 && m_bNeedToCloseChamber) // for holster in reload + re-equip weapon sequence to handle correctly
+		{
+			FinishReload();
+			return;
+		}
+
+		if (pOwner->m_afButtonPressed & IN_ATTACK2) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
+		{
+			SecondaryAttack();
+		}
 	}
 
-	if ((m_bNeedPump) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
-	{
+	if (m_bNeedPump && m_iClip1 && sde_simple_rifle_bolt.GetInt() && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	{ //m_bNeedPump is only true when m_iClip1 >= 1, but let's keep it here for readability
 		Pump();
 		return;
 	}
 
-	// Shotgun uses same timing and ammo for secondary attack
-	if ((m_bDelayedFire2 || pOwner->m_nButtons & IN_ATTACK2) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
+	if ((m_bDelayedFire1 || pOwner->m_nButtons & IN_ATTACK ) && m_flNextPrimaryAttack <= gpGlobals->curtime)
 	{
-		m_bDelayedFire2 = false;
-
-		if ((m_iClip1 <= 1 && UsesClipsForAmmo1()))
-		{
-			// If only one shell is left, do a single shot instead	
-			if (m_iClip1 == 1)
-			{
-				PrimaryAttack();
-			}
-			else if (!pOwner->GetAmmoCount(m_iPrimaryAmmoType))
-			{
-				DryFire();
-			}
-			else
-			{
-				StartReload();
-			}
-		}
-
-		// Fire underwater?
-		else if (GetOwner()->GetWaterLevel() == 3 && m_bFiresUnderwater == false)
-		{
-			WeaponSound(EMPTY);
-			m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;
-			return;
-		}
-		else
-		{
-			// If the firing button was just pressed, reset the firing time
-			if (pOwner->m_afButtonPressed & IN_ATTACK)
-			{
-				m_flNextPrimaryAttack = gpGlobals->curtime;
-			}
-			SecondaryAttack();
-		}
-	}
-	else if ((m_bDelayedFire1 || pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime)
-	{
-		m_bDelayedFire1 = false;
 		if ((m_iClip1 <= 0 && UsesClipsForAmmo1()) || (!UsesClipsForAmmo1() && !pOwner->GetAmmoCount(m_iPrimaryAmmoType)))
 		{
 			if (!pOwner->GetAmmoCount(m_iPrimaryAmmoType))
@@ -764,13 +827,23 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		}
 		else
 		{
-			// If the firing button was just pressed, reset the firing time
-			CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-			if (pPlayer && pPlayer->m_afButtonPressed & IN_ATTACK)
+			if (m_bDelayedFire1)
+				m_bDelayedFire1 = false;
+			/*if (m_bDelayedFire1)
 			{
-				m_flNextPrimaryAttack = gpGlobals->curtime;
+				m_bDelayedFire1 = false;
+				FinishReload();  // FinishReload() is called on m_bNeedToCloseChamber whem interrupting reload
+				return;
+			} */
+			else
+			{
+				// If the firing button was just pressed, reset the firing time
+				if (pOwner->m_afButtonPressed & IN_ATTACK)
+				{
+					m_flNextPrimaryAttack = gpGlobals->curtime;
+				}
+				PrimaryAttack();
 			}
-			PrimaryAttack();
 		}
 	}
 
@@ -836,13 +909,23 @@ CWeaponAnnabelle::CWeaponAnnabelle(void)
 //-----------------------------------------------------------------------------
 void CWeaponAnnabelle::ItemHolsterFrame(void)
 {
+	CBaseCombatCharacter *pOwner = GetOwner();
+
 	// Must be player held
-	if (GetOwner() && GetOwner()->IsPlayer() == false)
+	if (pOwner && pOwner->IsPlayer() == false)
 		return;
 
 	// We can't be active
-	if (GetOwner()->GetActiveWeapon() == this)
+	if (pOwner->GetActiveWeapon() == this)
 		return;
+
+	/*CBasePlayer *pPlayer = ToBasePlayer(pOwner);
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
+	if (m_bInReload && m_iClip1)
+		pHL2Player->Annabelle_Round_Chamber(); // for holster in reload + re-equip weapon sequence to handle correctly
+	*/
 
 	// If it's been longer than three seconds, reload
 	if ((gpGlobals->curtime - m_flHolsterTime) > sk_auto_reload_time.GetFloat())

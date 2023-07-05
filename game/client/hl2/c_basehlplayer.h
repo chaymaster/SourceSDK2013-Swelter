@@ -59,6 +59,12 @@ public:
 
 	bool				Get_AR2_GLL(void) { return m_HL2Local.m_bAR2_GL_Loaded; }
 
+	// Bolt-action rifles' statuses
+
+	bool				Get_R357_Chamber(void) { return m_HL2Local.m_bR357_Round_Chambered; };
+
+	bool				Get_Annabelle_Chamber(void) { return m_HL2Local.m_bAnnabelle_Round_Chambered; }
+
 public:
 
 	C_HL2PlayerLocalData		m_HL2Local;

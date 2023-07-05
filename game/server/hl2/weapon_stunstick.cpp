@@ -12,6 +12,8 @@
 #include "IEffects.h"
 #include "beam_shared.h"
 #include "in_buttons.h"
+#include "te_effect_dispatch.h"
+
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -20,6 +22,7 @@ ConVar    sk_plr_dmg_stunstick("sk_plr_dmg_stunstick", "0");
 ConVar    sk_npc_dmg_stunstick("sk_npc_dmg_stunstick", "0");
 
 extern ConVar metropolice_move_and_melee;
+extern ConVar sde_holster_fixer;
 
 //-----------------------------------------------------------------------------
 // CWeaponStunStick
@@ -181,6 +184,13 @@ void CWeaponStunStick::ImpactEffect(trace_t &traceHit)
 
 	//FIXME: need new decals
 	UTIL_ImpactTrace(&traceHit, DMG_CLUB);
+
+	CEffectData	data;
+
+	data.m_vNormal = traceHit.plane.normal;
+	data.m_vOrigin = traceHit.endpos + (data.m_vNormal * 4.0f);
+
+	DispatchEffect("StunstickImpact", data);
 }
 
 void CWeaponStunStick::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator)
@@ -352,6 +362,8 @@ bool CWeaponStunStick::Deploy(void)
 	if (pPlayer == NULL)
 		return false;
 	pPlayer->ShowCrosshair(true);
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 
 	return BaseClass::Deploy();
 }
@@ -378,6 +390,18 @@ void CWeaponStunStick::ItemPostFrame(void)
 	//	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration(); //new
 
 	SetStunState(true);
+
+
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
+	{
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
+			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
+	}
+
 
 	if (m_bIsIronsighted)
 	{

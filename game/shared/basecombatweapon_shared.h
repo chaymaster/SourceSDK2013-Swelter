@@ -199,6 +199,7 @@ public:
 	virtual bool			ShouldDisplayAltFireHUDHint();
 	virtual void			DisplayAltFireHudHint();
 	virtual void			DisplaySDEHudHint();
+	virtual void			DisplayCannotReloadHudHint();
 	virtual void			RescindAltFireHudHint(); ///< undisplay the hud hint and pretend it never showed.
 
 	virtual bool			ShouldDisplayReloadHUDHint();
@@ -282,7 +283,8 @@ public:
 	// Weapon firing
 	virtual void			PrimaryAttack(void);						// do "+ATTACK"
 	virtual void			SecondaryAttack(void) { return; }			// do "+ATTACK2"
-
+	bool					HolsterFix;			//holster fixer
+	float					HolsterFixTime;		//holster fixer
 
 	//added
 	Vector					GetIronsightPositionOffset(void) const;
@@ -367,7 +369,7 @@ public:
 	virtual const char		*GetViewModel(int viewmodelindex = 0) const;
 	virtual const char		*GetWorldModel(void) const;
 	virtual const char		*GetAnimPrefix(void) const;
-	virtual int				GetMaxClip1(void) const;
+	virtual int				GetMaxClip1(void);
 	virtual int				GetMaxClip2(void) const;
 	virtual int				GetDefaultClip1(void) const;
 	virtual int				GetDefaultClip2(void) const;
@@ -382,7 +384,7 @@ public:
 	virtual char const		*GetPrintName(void) const;
 	virtual char const		*GetShootSound(int iIndex) const;
 	virtual int				GetRumbleEffect() const;
-	virtual bool			UsesClipsForAmmo1(void) const;
+	virtual bool			UsesClipsForAmmo1(void);
 	virtual bool			UsesClipsForAmmo2(void) const;
 	bool					IsMeleeWeapon() const;
 
@@ -579,10 +581,14 @@ public:
 	CNetworkVar(bool, m_bIsIronsighted);
 	CNetworkVar(bool, m_bCanIronsighted);
 	CNetworkVar(float, m_flIronsightedTime);
+	CNetworkVar(bool, m_bBoltRequired); // Always false for all weapons except the shotgun that, as a one-by-one-shell loaded weapon
+	// capable of chambered round in reload, needs this to keep GetMaxClip1() returning not "clip+1" value when reloading from empty magazine
 	// Weapon state
 	bool					m_bInReload;			// Are we in the middle of a reload;
+	bool					m_bInSecondaryReload = false;	// in the middle of a secondary reload, always false except AR1M1 and AR2;
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
-	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;
+	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;		
+	
 	// Weapon art
 	CNetworkVar(int, m_iViewModelIndex);
 	CNetworkVar(int, m_iWorldModelIndex);
@@ -644,8 +650,10 @@ private:
 
 	int						m_iAltFireHudHintCount;		// How many times has this weapon displayed its alt-fire HUD hint?
 	int						m_iReloadHudHintCount;		// How many times has this weapon displayed its reload HUD hint?
+	int						m_iCannotReloadHudHintCount;// How many times has this weapon displayed its 'cannot reload' HUD hint?
 	bool					m_bAltFireHudHintDisplayed;	// Have we displayed an alt-fire HUD hint since this weapon was deployed?
 	bool					m_bReloadHudHintDisplayed;	// Have we displayed a reload HUD hint since this weapon was deployed?
+	bool					m_bCannotReloadHudHintDisplayed;// Have we displayed a 'cannot reload' HUD hint since this weapon was deployed?
 	float					m_flHudHintPollTime;	// When to poll the weapon again for whether it should display a hud hint.
 	float					m_flHudHintMinDisplayTime; // if the hint is squelched before this, reset my counter so we'll display it again.
 

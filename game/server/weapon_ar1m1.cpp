@@ -26,6 +26,7 @@
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
 extern ConVar    sde_simple_alt_reload;
+extern ConVar	sde_drop_mag;
 
 class CWeaponar1m1 : public CHLSelectFireMachineGun
 {
@@ -40,6 +41,7 @@ public:
 
 	void	Precache(void);
 	void	AddViewKick(void);
+	void	LoadGrenade(CHL2_Player *pHL2Player);
 	void	SecondaryAttack(void);
 	void	HoldIronsight(void);
 	void	PrimaryAttack(void);
@@ -91,6 +93,8 @@ protected:
 
 	Vector	m_vecTossVelocity;
 	float	m_flNextGrenadeCheck;
+	float m_flSecondaryReloadActivationTime; //new
+	float m_flSecondaryReloadDeactivationTime; //new
 };
 
 IMPLEMENT_SERVERCLASS_ST(CWeaponar1m1, DT_Weaponar1m1)
@@ -103,6 +107,8 @@ BEGIN_DATADESC(CWeaponar1m1)
 
 DEFINE_FIELD(m_vecTossVelocity, FIELD_VECTOR),
 DEFINE_FIELD(m_flNextGrenadeCheck, FIELD_TIME),
+DEFINE_FIELD(m_flSecondaryReloadActivationTime, FIELD_TIME),
+DEFINE_FIELD(m_flSecondaryReloadDeactivationTime, FIELD_TIME),
 
 END_DATADESC()
 
@@ -198,7 +204,7 @@ void CWeaponar1m1::Equip(CBaseCombatCharacter *pOwner)
 bool CWeaponar1m1::Deploy(void)
 {
 	m_nShotsFired = 0;
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -318,6 +324,9 @@ Activity CWeaponar1m1::GetPrimaryAttackActivity(void)
 //-----------------------------------------------------------------------------
 bool CWeaponar1m1::Reload(void)
 {
+	if (m_bInSecondaryReload)
+		return false; //prevent interruption of secondary reload with primary reload
+
 	float fCacheTime = m_flNextSecondaryAttack;
 
 
@@ -327,27 +336,29 @@ bool CWeaponar1m1::Reload(void)
 		pPlayer->ShowCrosshair(true); // show crosshair to fix crosshair for reloading weapons in toggle ironsight
 		if (m_iClip1 < 1)
 		{
-			Msg("SDE_R+ \n");
+			DevMsg("SDE_R+ \n");
 			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
 			if (fRet)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
 		else
 		{
-			Msg("SDE_R- \n");
+			DevMsg("SDE_R- \n");
 			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 			if (fRet)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -376,21 +387,39 @@ void CWeaponar1m1::AddViewKick(void)
 	DoMachineGunKick(pPlayer, EASY_DAMPEN, MAX_VERTICAL_KICK, m_fFireDuration, SLIDE_LIMIT);
 }
 
+void CWeaponar1m1::LoadGrenade(CHL2_Player *pHL2Player)
+{
+	if (!pHL2Player)
+		return;
+
+	DisableIronsights();
+	SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
+	//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+	//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+	m_flSecondaryReloadActivationTime = gpGlobals->curtime; // signal the secondary reload to ItemPostFrame() immediately to forbid ironsight
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
+	pHL2Player->AR1M1_GL_Load();
+	pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
 void CWeaponar1m1::SecondaryAttack(void)
 {
+	if (m_bInReload)
+		return; //prevent interruption of primary reload with secondary attack
+
+	// Only the player fires this way so we can cast
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+
+	if (pPlayer == NULL)
+		return;
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
 	if (sde_simple_alt_reload.GetInt() == 0)
 	{
-		// Only the player fires this way so we can cast
-		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-
-		if (pPlayer == NULL)
-			return;
-
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
 		if (pHL2Player->Get_AR1M1_GLL()) // Grenade launcher loading mechanic when the player wants to - HEVcrab
 		{
@@ -473,24 +502,22 @@ void CWeaponar1m1::SecondaryAttack(void)
 
 		else if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) > 0) // If the grenade launcher is not loaded, but player has ammo for it, load it - HEVcrab
 		{
-			DisableIronsights();
+			LoadGrenade(pHL2Player);
+			/*DisableIronsights();
 			SendWeaponAnim(ACT_VM_SECONDARY_RELOAD);
-			m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
-			m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+			//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+			//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+			m_flSecondaryReloadActivationTime = gpGlobals->curtime; // signal the secondary reload to ItemPostFrame() immediately to forbid ironsight
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
 			pHL2Player->AR1M1_GL_Load();
 			pHL2Player->ShowCrosshair(true); //for the case of reloading grenade launcher when in toggle ironsight
 			//engine->ClientCommand(edict(), "testhudanim %s", "AmmoSecondaryIncreased");
 
-			//secondary_ammo_recolor_crutch = true;
+			//secondary_ammo_recolor_crutch = true; */
 		}
 	}
 	else
 	{
-		// Only the player fires this way so we can cast
-		CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
-
-		if (pPlayer == NULL)
-			return;
 
 		//Must have ammo
 		if ((pPlayer->GetAmmoCount(m_iSecondaryAmmoType) <= 0) || (pPlayer->GetWaterLevel() == 3))
@@ -536,14 +563,21 @@ void CWeaponar1m1::SecondaryAttack(void)
 		{
 			DisableIronsights();
 			SendWeaponAnim(ACT_VM_SECONDARYATTACK_RELOAD);
-			m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
-			m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+			//m_flNextPrimaryAttack = gpGlobals->curtime + 2.2f;
+			//m_flNextSecondaryAttack = gpGlobals->curtime + 2.2f;
+			m_flSecondaryReloadActivationTime = gpGlobals->curtime + 0.1f; // start auto-loading secondary ammo in a small time after secondary fire,
+			// forbidding ironsight
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flSecondaryReloadDeactivationTime = gpGlobals->curtime + SequenceDuration();
 		}
 		else
 		{
 			SendWeaponAnim(ACT_VM_SECONDARYATTACK);
 			m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
 			m_flNextSecondaryAttack = gpGlobals->curtime + 0.5f;
+			// Grenade launcher gets unloaded when firing last secondary round with auto-reload,
+			// to avoid nonsense when you have no rounds but GL is considered loaded
+			if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) == 1)
+				pHL2Player->AR1M1_GL_Unload();
 		}
 
 		// Decrease ammo
@@ -581,8 +615,36 @@ void CWeaponar1m1::HoldIronsight(void)
 
 void CWeaponar1m1::ItemPostFrame(void)
 {
-	// Allow  Ironsight
-	HoldIronsight();
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+
+	if (pPlayer == NULL)
+		return;
+
+	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+
+	if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) >= 1 && pHL2Player->Get_AR1M1_GLL() == false &&
+		sde_simple_alt_reload.GetInt() && (m_flNextSecondaryAttack <= gpGlobals->curtime))
+	{
+		LoadGrenade(pHL2Player);
+		return;
+	}
+	else
+	{
+		if (gpGlobals->curtime >= m_flSecondaryReloadActivationTime)
+		{
+			m_bInSecondaryReload = true;
+		}
+
+		if (gpGlobals->curtime >= m_flSecondaryReloadDeactivationTime)
+		{
+			m_bInSecondaryReload = false;
+		}
+	}
+	// forbid ironsight if secondary reload has been activated but non deactivated yet
+
+	// Ironsight if not reloading
+	if (!(m_bInReload || m_bInSecondaryReload))
+		HoldIronsight();
 
 	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
 	{
@@ -736,11 +798,11 @@ void CWeaponar1m1::PrimaryAttack(void)
 
 	if (m_bIsIronsighted)
 	{
-		fireRate = 0.11f;
+		fireRate = 0.102f;
 		SendWeaponAnim(ACT_VM_IRONSHOOT);
 
-		viewPunch.x = random->RandomFloat(0.3f, 0.7f);
-		viewPunch.y = random->RandomFloat(-0.7f, 0.7f);
+		viewPunch.x = random->RandomFloat(0.5f, 0.9f);
+		viewPunch.y = random->RandomFloat(-0.9f, 0.9f);
 		viewPunch.z = 0.0f;
 	}
 	else
@@ -748,8 +810,8 @@ void CWeaponar1m1::PrimaryAttack(void)
 		fireRate = 0.099f;
 		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
-		viewPunch.x = random->RandomFloat(0.7f, 1.0f);
-		viewPunch.y = random->RandomFloat(-1.2f, 1.2f);
+		viewPunch.x = random->RandomFloat(0.9f, 1.0f);
+		viewPunch.y = random->RandomFloat(-1.7f, 1.7f);
 		viewPunch.z = 0.0f;
 	}
 

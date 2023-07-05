@@ -90,6 +90,7 @@ int	g_interactionBullsquidThrow = 0;
 #define		BSQUID_AE_HOP		( 5 )
 #define		BSQUID_AE_THROW		( 6 )
 #define		BSQUID_AE_WHIP_SND	( 7 )
+#define		BSQUID_AE_TAILWHIP	( 8 )
 //#define		AE_NPC_BODYDROP_HEAVY	( 8 )
 
 LINK_ENTITY_TO_CLASS(npc_bullsquid, CNPC_Bullsquid);
@@ -161,10 +162,14 @@ void CNPC_Bullsquid::Precache()
 	PrecacheScriptSound("NPC_Bullsquid.Idle");
 	PrecacheScriptSound("NPC_Bullsquid.Pain");
 	PrecacheScriptSound("NPC_Bullsquid.Alert");
-	PrecacheScriptSound("NPC_Bullsquid.Death");
-	PrecacheScriptSound("NPC_Bullsquid.Attack1");
+	PrecacheScriptSound("NPC_Bullsquid.Die");
+	PrecacheScriptSound("NPC_Bullsquid.Attack");
 	PrecacheScriptSound("NPC_Bullsquid.Growl");
-	PrecacheScriptSound("NPC_Bullsquid.TailWhip");
+	PrecacheScriptSound("NPC_Bullsquid.Bite");
+	PrecacheScriptSound("Zombie.AttackHit");
+	PrecacheScriptSound("Zombie.AttackMiss");
+	PrecacheScriptSound("NPC_Antlion.PoisonShoot");
+	PrecacheScriptSound("NPC_Antlion.PoisonBall");
 
 	BaseClass::Precache();
 }
@@ -208,7 +213,7 @@ void CNPC_Bullsquid::AlertSound(void)
 //=========================================================
 void CNPC_Bullsquid::DeathSound(const CTakeDamageInfo &info)
 {
-	EmitSound("NPC_Bullsquid.Death");
+	EmitSound("NPC_Bullsquid.Die");
 }
 
 //=========================================================
@@ -216,7 +221,7 @@ void CNPC_Bullsquid::DeathSound(const CTakeDamageInfo &info)
 //=========================================================
 void CNPC_Bullsquid::AttackSound(void)
 {
-	EmitSound("NPC_Bullsquid.Attack1");
+	EmitSound("NPC_Bullsquid.Attack");
 }
 
 //=========================================================
@@ -327,10 +332,11 @@ void CNPC_Bullsquid::HandleAnimEvent(animevent_t *pEvent)
 
 	case BSQUID_AE_BITE:
 	{
-						   EmitSound("NPC_Bullsquid.Bite");
 						   CBaseEntity *pHurt = CheckTraceHullAttack(70, Vector(-16, -16, -16), Vector(16, 16, 16), sk_bullsquid_dmg_bite.GetFloat(), DMG_SLASH);
 						   if (pHurt)
 						   {
+							   EmitSound("NPC_Bullsquid.Bite");
+
 							   Vector forward, up;
 							   AngleVectors(GetAbsAngles(), &forward, NULL, &up);
 							   pHurt->ApplyAbsVelocityImpulse(10 * (up - forward));
@@ -341,34 +347,30 @@ void CNPC_Bullsquid::HandleAnimEvent(animevent_t *pEvent)
 
 	case BSQUID_AE_WHIP_SND:
 	{
-							   EmitSound("NPC_Bullsquid.TailWhip"); //типа хвостом
-							   CBaseEntity *pHurt = CheckTraceHullAttack(70, Vector(-16, -16, -16), Vector(16, 16, 16), sk_bullsquid_dmg_whip.GetFloat(), DMG_SLASH);
-							   if (pHurt)
-							   {
-								   Vector forward, up;
-								   AngleVectors(GetAbsAngles(), &forward, NULL, &up);
-								   pHurt->ApplyAbsVelocityImpulse(10 * (up - forward));
-								   pHurt->SetGroundEntity(NULL);
-							   }
-							  
-	}
 		break;
+	}
 
 
-	case AE_NPC_BODYDROP_HEAVY:
+	case BSQUID_AE_TAILWHIP:
 	{
-								  EmitSound("NPC_Bullsquid.TailWhip");
-								  CBaseEntity *pHurt = CheckTraceHullAttack(70, Vector(-16, -16, -16), Vector(16, 16, 16), sk_bullsquid_dmg_whip.GetFloat(), DMG_SLASH);
-								  if (pHurt)
-								  {
-									  Vector forward, up;
-									  AngleVectors(GetAbsAngles(), &forward, NULL, &up);
-									  pHurt->ApplyAbsVelocityImpulse(10 * (up - forward));
-									  pHurt->SetGroundEntity(NULL);
-								  }
+		CBaseEntity* pHurt = CheckTraceHullAttack(70, Vector(-16, -16, -16), Vector(16, 16, 16), sk_bullsquid_dmg_whip.GetFloat(), DMG_SLASH);
+		if (pHurt)
+		{
+			EmitSound("Zombie.AttackHit");
+			Vector right, up;
+			AngleVectors(GetAbsAngles(), NULL, &right, &up);
+
+			if (pHurt->GetFlags() & (FL_NPC | FL_CLIENT))
+				pHurt->ViewPunch(QAngle(20, 0, -20));
+
+			pHurt->ApplyAbsVelocityImpulse(100 * (up + 2 * right));
+		}
+		else
+		{
+			EmitSound("Zombie.AttackMiss");
+		}
 	}
-		break;
-		///sss
+	break;
 
 	case BSQUID_AE_BLINK:
 	{
@@ -399,9 +401,9 @@ void CNPC_Bullsquid::HandleAnimEvent(animevent_t *pEvent)
 							// squid throws its prey IF the prey is a client. 
 							CBaseEntity *pHurt = CheckTraceHullAttack(70, Vector(-16, -16, -16), Vector(16, 16, 16), 0, 0);
 
-
 							if (pHurt)
 							{
+								EmitSound("NPC_Bullsquid.Bite");
 								pHurt->ViewPunch(QAngle(20, 0, -20));
 
 								// screeshake transforms the viewmodel as well as the viewangle. No problems with seeing the ends of the viewmodels.
@@ -428,6 +430,7 @@ void CNPC_Bullsquid::HandleAnimEvent(animevent_t *pEvent)
 										}
 									}
 								}
+								
 							}
 	}
 		break;
@@ -886,6 +889,29 @@ void CNPC_Bullsquid::RunTask(const Task_t *pTask)
 			   break;
 	}
 	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Allows for modification of the interrupt mask for the current schedule.
+//			In the most cases the base implementation should be called first.
+//-----------------------------------------------------------------------------
+void CNPC_Bullsquid::BuildScheduleTestBits(void)
+{
+	// Ignore damage if we were recently damaged or we're attacking.
+	if (GetActivity() == ACT_MELEE_ATTACK1 || ACT_MELEE_ATTACK2)
+	{
+		ClearCustomInterruptCondition(COND_LIGHT_DAMAGE);
+		ClearCustomInterruptCondition(COND_HEAVY_DAMAGE);
+	}
+#ifndef HL2_EPISODIC
+	else if (m_flNextFlinch >= gpGlobals->curtime)
+	{
+		ClearCustomInterruptCondition(COND_LIGHT_DAMAGE);
+		ClearCustomInterruptCondition(COND_HEAVY_DAMAGE);
+	}
+#endif // !HL2_EPISODIC
+
+	BaseClass::BuildScheduleTestBits();
 }
 
 //=========================================================

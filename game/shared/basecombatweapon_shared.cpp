@@ -14,7 +14,7 @@
 #include "physics_saverestore.h"
 #include "datacache/imdlcache.h"
 #include "activitylist.h"
-
+#include <swelter_convars.h>
 //#include "baseviewmodel_shared.h"
 
 // NVNT start extra includes
@@ -54,9 +54,11 @@
 // The minimum time a hud hint for a weapon should be on screen. If we switch away before
 // this, then teh hud hint counter will be deremented so the hint will be shown again, as
 // if it had never been seen. The total display time for a hud hint is specified in client
-// script HudAnimations.txt (which I can't read here). 
+// script HudAnimations.txt (which I can't read here).
+
+//#define MIN_HUDHINT_DISPLAY_TIME 3.0f // original value
 #define MIN_HUDHINT_DISPLAY_TIME 3.0f
-#define SDE_HUDHINT_DISPLAY_TIME 3.5f
+//#define SDE_HUDHINT_DISPLAY_TIME 3.5f // original value
 #define HIDEWEAPON_THINK_CONTEXT			"BaseCombatWeapon_HideThink"
 
 extern bool UTIL_ItemCanBeTouchedByPlayer(CBaseEntity *pItem, CBasePlayer *pPlayer);
@@ -82,8 +84,8 @@ ConVar viewmodel_adjust_yaw("viewmodel_adjust_yaw", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_roll("viewmodel_adjust_roll", "0", FCVAR_REPLICATED);
 ConVar viewmodel_adjust_fov("viewmodel_adjust_fov", "0", FCVAR_REPLICATED, "Note: this feature is not available during any kind of zoom", vm_adjust_fov_callback);
 ConVar viewmodel_adjust_enabled("viewmodel_adjust_enabled", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "enabled viewmodel adjusting", vm_adjust_enable_callback);
-ConVar sde_weaponhint("sde_weaponhint", "0", FCVAR_ARCHIVE);
-
+ConVar sde_holster("sde_holster", "1", FCVAR_ARCHIVE);
+ConVar sde_holster_fixer("sde_holster_fixer", "1", FCVAR_ARCHIVE);
 
 #ifdef CLIENT_DLL
 void RecvProxy_ToggleSights(const CRecvProxyData* pData, void* pStruct, void* pOut)
@@ -154,6 +156,7 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 
 	//added
 	m_bIsIronsighted = false;
+	m_bBoltRequired = false;
 	m_flIronsightedTime = 0.0f;
 
 #if defined( CLIENT_DLL )
@@ -422,7 +425,7 @@ const char *CBaseCombatWeapon::GetPrintName(void) const
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CBaseCombatWeapon::GetMaxClip1(void) const
+int CBaseCombatWeapon::GetMaxClip1(void)
 {
 #if defined ( TF_DLL ) || defined ( TF_CLIENT_DLL )
 	int iModMaxClipOverride = 0;
@@ -430,8 +433,22 @@ int CBaseCombatWeapon::GetMaxClip1(void) const
 	if (iModMaxClipOverride != 0)
 		return iModMaxClipOverride;
 #endif
+	const char* WeaponName = GetName();
+	int return_value;
 
-	return GetWpnData().iMaxClip1;
+	if (m_iClip1 > 0 && !m_bBoltRequired && (strcmp(WeaponName, "weapon_pistol") == 0 || // weapons that can have a chambered round while reloading 222
+		strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 ||
+		strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 ||
+		strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 ||
+		strcmp(WeaponName, "weapon_ar2") == 0 || strcmp(WeaponName, "weapon_shotgun") == 0))
+	{
+		return_value = GetWpnData().iMaxClip1 + 1;
+	}
+	else
+	{
+		return_value = GetWpnData().iMaxClip1;
+	}
+	return return_value;
 }
 
 //-----------------------------------------------------------------------------
@@ -461,7 +478,7 @@ int CBaseCombatWeapon::GetDefaultClip2(void) const
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CBaseCombatWeapon::UsesClipsForAmmo1(void) const
+bool CBaseCombatWeapon::UsesClipsForAmmo1(void) // removed const as GetMaxClip1() is not const anymore
 {
 	return (GetMaxClip1() != WEAPON_NOCLIP);
 }
@@ -987,6 +1004,19 @@ void CBaseCombatWeapon::DisplaySDEHudHint()
 #endif//CLIENT_DLL
 	}
 }
+
+void CBaseCombatWeapon::DisplayCannotReloadHudHint()
+{
+#if !defined( CLIENT_DLL )
+		CFmtStr hint;
+		hint.sprintf("#sde_hint_weapon_cannot_reload");
+		UTIL_HudHintText(GetOwner(), hint.Access());
+		m_iCannotReloadHudHintCount++;
+		m_bCannotReloadHudHintDisplayed = true;
+		m_flHudHintMinDisplayTime = gpGlobals->curtime + MIN_HUDHINT_DISPLAY_TIME;
+#endif//CLIENT_DLL
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::RescindAltFireHudHint()
@@ -1529,34 +1559,35 @@ private:
 	void ShowWeapon()
 	{
 		Assert(m_pWeapon);
-		m_pWeapon->SetWeaponVisible(true);
 		if (m_pWeapon->GetOwner())
 		{
-			CBaseCombatWeapon *pLastWeapon = m_pWeapon->GetOwner()->GetActiveWeapon();
+			//CBaseCombatWeapon* pLastWeapon = m_pWeapon->GetOwner()->GetActiveWeapon();
 			m_pWeapon->GetOwner()->m_hActiveWeapon = m_pWeapon;
-			CBasePlayer *pOwner = ToBasePlayer(m_pWeapon->GetOwner());
+			CBasePlayer* pOwner = ToBasePlayer(m_pWeapon->GetOwner());
 			if (pOwner)
 			{
 				m_pWeapon->SetViewModel();
 				m_pWeapon->SendWeaponAnim(m_iActivity);
+				//m_pWeapon->SetWeaponVisible(true);
 
 				pOwner->SetNextAttack(gpGlobals->curtime + m_pWeapon->SequenceDuration());
 
-				if (pLastWeapon && pOwner->Weapon_ShouldSetLast(pLastWeapon, m_pWeapon))
+				// Can't shoot again until we've finished deploying
+				m_pWeapon->m_flNextSecondaryAttack = m_pWeapon->m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeapon->SequenceDuration();
+
+				/*if (pLastWeapon && pOwner->Weapon_ShouldSetLast(pLastWeapon, m_pWeapon))
 				{
 					pOwner->Weapon_SetLast(pLastWeapon->GetLastWeapon());
 				}
+				*/
 
-				CBaseViewModel *pViewModel = pOwner->GetViewModel();
+				CBaseViewModel* pViewModel = pOwner->GetViewModel();
 				Assert(pViewModel);
 				if (pViewModel)
 					pViewModel->RemoveEffects(EF_NODRAW);
 				pOwner->ResetAutoaim();
 			}
 		}
-
-		// Can't shoot again until we've finished deploying
-		m_pWeapon->m_flNextSecondaryAttack = m_pWeapon->m_flNextPrimaryAttack = gpGlobals->curtime + m_pWeapon->SequenceDuration();
 
 		ClearShowWeapon();
 	}
@@ -1630,28 +1661,48 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 	if (!HasAnyAmmo() && AllowsAutoSwitchFrom())
 		return false;
 
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	float flSequenceDuration = 0.0f;
-	if (GetOwner())
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	if (pOwner)
 	{
 		if (!GetOwner()->IsAlive())
 			return false;
-		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
-		if (pOwner)
+
+		pOwner->SetAnimationExtension(szAnimExt);
+
+		if (sde_holster.GetInt() == 0) 
 		{
-			pOwner->SetAnimationExtension(szAnimExt);
+			SetViewModel();
+			SendWeaponAnim(iActivity);
+			pOwner->SetNextAttack(gpGlobals->curtime + SequenceDuration());
 		}
-		CBaseCombatWeapon *pActive = GetOwner()->GetActiveWeapon();
-		if (pActive && pActive->GetActivity() == ACT_VM_HOLSTER)
+		else
 		{
-			flSequenceDuration = pActive->SequenceDuration();
+			CBaseCombatWeapon* pActive = pOwner->GetActiveWeapon();
+			if (pActive && pActive->GetActivity() == ACT_VM_HOLSTER)
+			{
+				flSequenceDuration = pActive->SequenceDuration();
+			}
+
+			pOwner->SetNextAttack(gpGlobals->curtime + SequenceDuration());
 		}
 	}
 	g_ShowWeapon.SetShowWeapon(this, iActivity, flSequenceDuration);
+
+	// Can't shoot again until we've finished deploying
+	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
 
 #ifndef CLIENT_DLL
 	// Cancel any pending hide events
 	g_EventQueue.CancelEventOn(this, "HideWeapon");
 #endif
+
+	SetWeaponVisible(true);
+
+	SetContextThink(NULL, 0, HIDEWEAPON_THINK_CONTEXT);
 
 	return true;
 }
@@ -1662,6 +1713,7 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 bool CBaseCombatWeapon::Deploy()
 {
 	MDLCACHE_CRITICAL_SECTION();
+
 	return DefaultDeploy((char*)GetViewModel(), (char*)GetWorldModel(), GetDrawActivity(), (char*)GetAnimPrefix());
 }
 
@@ -1675,13 +1727,13 @@ Activity CBaseCombatWeapon::GetDrawActivity(void)
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 {
-	DisableIronsights(); //added 228
+	DisableIronsights();
 	MDLCACHE_CRITICAL_SECTION();
 
 	// cancel any reload in progress.
 	m_bInReload = false;
 	m_bFiringWholeClip = false;
-
+	//HolsterFix = false;
 	// kill any think functions
 	SetThink(NULL);
 
@@ -1710,9 +1762,10 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	{
 		// Hide the weapon when the holster animation's finished
 		SetContextThink(&CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT);
+	
 	}
 
-	Msg("SDE_HOLSTER\n");
+	DevMsg("SDE_HOLSTER\n");
 	//disable attack when holstered 1337
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
@@ -1734,6 +1787,22 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 
 		if (m_bReloadHudHintDisplayed)
 			RescindReloadHudHint();
+	}
+
+	// turn off ironsights
+	DisableIronsights();
+
+	// holster fixer
+	if (pPlayer)
+	{
+		if (sde_holster_fixer.GetInt() == 1) //holster fixer
+		{
+			CBaseViewModel* pVM = pPlayer->GetViewModel();
+			if (pVM)
+			{
+				SetContextThink(NULL, 0, HIDEWEAPON_THINK_CONTEXT);
+			}
+		}
 	}
 
 	return true;
@@ -1900,6 +1969,16 @@ void CBaseCombatWeapon::ItemPostFrame(void)
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	UpdateAutoFire();
+
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
+	{
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
+			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
+	}
 
 	//Track the duration of the fire
 	//FIXME: Check for IN_ATTACK2 as well?
@@ -2246,16 +2325,60 @@ bool CBaseCombatWeapon::DefaultReload(int iClipSize1, int iClipSize2, int iActiv
 		return false;
 
 	// If I don't have any spare ammo, I can't reload
-	if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
+	if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0) //228
 		return false;
 
+	
+	const char* WeaponName = GetName(); //this snippet block reloading after reloading when cartrige chamber is empty
+	if (strcmp(WeaponName, "weapon_pistol") == 0 || strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 || strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 || strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 || strcmp(WeaponName, "weapon_ar2") == 0)
+	{
+		//DevMsg("SDE REL TEST:______ %d,     %d \n", m_iClip1, iClipSize1);
+		if (m_iClip1 + 1 == iClipSize1)
+			return false;
+	}
+	
+	
 	bool bReload = false;
 
 	// If you don't have clips, then don't try to reload them.
 	if (UsesClipsForAmmo1())
 	{
 		// need to reload primary clip?
-		int primary = MIN(iClipSize1 - m_iClip1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
+		const char* WeaponName = GetName();
+		int AmmoPool = pOwner->GetAmmoCount(m_iPrimaryAmmoType);
+		int AmmoToDecreasePool = 0; // shut up with your 'uninitialized variable' warnings treated as errors, compiler
+
+		// don't lose ammo while reloading revolver, as you get all separate rounds/casings unloading the drum
+		if (sde_drop_mag.GetInt() == 2 && (strcmp(WeaponName, "weapon_pistol") == 0 || /*strcmp(WeaponName, "weapon_356") == 0 || */
+			strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 ||
+			strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 || strcmp(WeaponName, "weapon_ar2") == 0))
+			// realistic magazine drop discarding remains of ammo
+		{
+			int ExtraChamberedRound;
+			
+			if (m_iClip1 == 0 /*|| strcmp(WeaponName, "weapon_356") == 0*/)
+				ExtraChamberedRound = 0;
+			else
+				ExtraChamberedRound = 1;
+
+			AmmoToDecreasePool = MIN(iClipSize1 - ExtraChamberedRound, AmmoPool);
+			
+			if (m_iClip1 - ExtraChamberedRound >= AmmoToDecreasePool) // if you have less or equal ammo in ammo pool subtraction than in the magazine		
+			{
+				if (m_iClip1 < iClipSize1) // the case of hitting reload with full clip and any supply still passes condition 1,
+					DisplayCannotReloadHudHint(); // so add the other condition to display the hint: the clip to be non-full
+				return false;
+			}
+			m_iClip1 = ExtraChamberedRound; // chambered round shows up in the HUD until the weapon is reloaded
+
+		}
+		else
+		{
+			AmmoToDecreasePool = MIN(iClipSize1 - m_iClip1, AmmoPool);
+		}
+
+		int primary = AmmoToDecreasePool;
+
 		if (primary != 0)
 		{
 			bReload = true;
@@ -2374,6 +2497,7 @@ char *CBaseCombatWeapon::GetDeathNoticeName(void)
 //====================================================================================
 void CBaseCombatWeapon::CheckReload(void)
 {
+
 	if (m_bReloadsSingly)
 	{
 		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
@@ -2382,6 +2506,7 @@ void CBaseCombatWeapon::CheckReload(void)
 
 		//		if (GetMaxClip1() == 6 && m_iClip1>0)
 		//			return;
+
 
 		if ((m_bInReload) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
 		{
@@ -2432,7 +2557,7 @@ void CBaseCombatWeapon::CheckReload(void)
 //-----------------------------------------------------------------------------
 // Purpose: Reload has finished.
 //-----------------------------------------------------------------------------
-void CBaseCombatWeapon::FinishReload(void)
+void CBaseCombatWeapon::FinishReload ()
 {
 	CBaseCombatCharacter *pOwner = GetOwner();
 
@@ -2686,7 +2811,6 @@ static ConCommand crosshair_on("crosshair_on", CC_CrosshairOn);
 
 void CBaseCombatWeapon::EnableIronsights(void)
 {
-	//228
 
 
 	if (!HasIronsights() || m_bIsIronsighted)
@@ -3005,12 +3129,15 @@ DEFINE_PRED_FIELD(m_iClip2, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD( m_bIsIronsighted, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 DEFINE_PRED_FIELD( m_flIronsightedTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 
+DEFINE_PRED_FIELD( m_bBoltRequired, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+
 DEFINE_PRED_FIELD(m_nViewModelIndex, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 
 // Not networked
 
 DEFINE_PRED_FIELD(m_flTimeWeaponIdle, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 DEFINE_FIELD(m_bInReload, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bInSecondaryReload, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bFireOnEmpty, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bFiringWholeClip, FIELD_BOOLEAN),
 DEFINE_FIELD(m_flNextEmptySoundTime, FIELD_FLOAT),
@@ -3030,6 +3157,7 @@ DEFINE_FIELD(m_iSecondaryAmmoCount, FIELD_INTEGER),
 //added
 DEFINE_FIELD( m_bIsIronsighted, FIELD_BOOLEAN ),
 DEFINE_FIELD( m_flIronsightedTime, FIELD_FLOAT ),
+DEFINE_FIELD( m_bBoltRequired, FIELD_BOOLEAN ),
 
 //DEFINE_PHYSPTR( m_pConstraint ),
 
@@ -3270,6 +3398,7 @@ SendPropInt(SENDINFO(m_iState), 8, SPROP_UNSIGNED),
 SendPropEHandle(SENDINFO(m_hOwner)),
 SendPropBool( SENDINFO( m_bIsIronsighted ) ),
 SendPropFloat( SENDINFO( m_flIronsightedTime ) ),
+SendPropBool(SENDINFO(m_bBoltRequired)),
 #else
 RecvPropDataTable("LocalWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalWeaponData)),
 RecvPropDataTable("LocalActiveWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalActiveWeaponData)),
@@ -3279,5 +3408,6 @@ RecvPropInt(RECVINFO(m_iState)),
 RecvPropEHandle(RECVINFO(m_hOwner)),
 RecvPropInt(RECVINFO(m_bIsIronsighted), 0, RecvProxy_ToggleSights), //note: RecvPropBool is actually RecvPropInt (see its implementation), but we need a proxy
 RecvPropFloat(RECVINFO(m_flIronsightedTime)),
+RecvPropBool(RECVINFO(m_bBoltRequired)),
 #endif
 END_NETWORK_TABLE()

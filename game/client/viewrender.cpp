@@ -962,7 +962,14 @@ bool CViewRender::ShouldDrawViewModel( bool bDrawViewmodel )
 	if ( !r_drawviewmodel.GetBool() )
 		return false;
 
-	if ( C_BasePlayer::ShouldDrawLocalPlayer() )
+	//Vehicle holster fix --AlexEpisode
+	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
+	if (pPlayer->IsInAVehicle())
+	{
+		return false;
+	}
+
+	if (C_BasePlayer::ShouldDrawLocalPlayer())
 		return false;
 
 	if ( !ShouldDrawEntities() )

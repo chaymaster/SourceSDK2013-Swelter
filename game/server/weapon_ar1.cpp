@@ -23,6 +23,8 @@
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
 
+extern ConVar	sde_drop_mag;
+
 class CWeaponar1 : public CHLSelectFireMachineGun
 {
 	DECLARE_DATADESC();
@@ -193,7 +195,7 @@ void CWeaponar1::Equip(CBaseCombatCharacter *pOwner)
 bool CWeaponar1::Deploy(void)
 {
 	m_nShotsFired = 0;
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -322,27 +324,29 @@ bool CWeaponar1::Reload(void)
 		pPlayer->ShowCrosshair(true); // show crosshair to fix crosshair for reloading weapons in toggle ironsight
 		if (m_iClip1 < 1)
 		{
-			Msg("SDE_R+ \n");
+			DevMsg("SDE_R+ \n");
 			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
 			if (fRet)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
 		else
 		{
-			Msg("SDE_R- \n");
+			DevMsg("SDE_R- \n");
 			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 			if (fRet)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 				dropMagTime = (gpGlobals->curtime + 0.7f); //drop mag
-				shouldDropMag = true; //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -464,7 +468,9 @@ void CWeaponar1::HoldIronsight(void)
 void CWeaponar1::ItemPostFrame(void)
 {
 	// Allow  Ironsight
-	HoldIronsight();
+	// Ironsight if not reloading
+	if (!m_bInReload)
+		HoldIronsight();
 
 	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
 	{

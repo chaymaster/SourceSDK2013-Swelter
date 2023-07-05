@@ -13,6 +13,7 @@
 #endif
 
 #include "mapentities.h"
+#include "SwelterModVersionBlockHandler.h"  //save_message
 
 class IReplayFactory;
 

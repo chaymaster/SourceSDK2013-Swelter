@@ -1310,7 +1310,7 @@ static void KillBlockingEnemyNPCs( CBasePlayer *pPlayer, CBaseEntity *pVehicleEn
 
 			CTakeDamageInfo dmgInfo( pVehicleEntity, pVehicleEntity, damageForce, contactList[i], 200.0f, DMG_CRUSH|DMG_VEHICLE );
 			npcList[i]->TakeDamage( dmgInfo );
-			Msg("SDE: if you game not crashed - you fkng lucky \n");
+			DevMsg("SDE: if you game not crashed - you fkng lucky \n");
 			pVehiclePhysics->ApplyForceOffset( vehicleForce, contactList[i] );
 			//PhysCollisionSound( pVehicleEntity, npcList[i]->VPhysicsGetObject(), CHAN_BODY, pVehiclePhysics->GetMaterialIndex(), npcList[i]->VPhysicsGetObject()->GetMaterialIndex(), gpGlobals->frametime, 200.0f ); это делает вылет
 		}

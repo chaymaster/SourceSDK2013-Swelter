@@ -12,12 +12,18 @@
 #include "clienteffectprecachesystem.h"
 #include "beamdraw.h"
 
+#include "c_te_effect_dispatch.h"
+#include "fx_quad.h"
+#include "fx.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 CLIENTEFFECT_REGISTER_BEGIN(PrecacheEffectStunstick)
 CLIENTEFFECT_MATERIAL("effects/stunstick")
 CLIENTEFFECT_REGISTER_END()
+
+bool IsCarriedByLocalPlayer(void);
 
 class C_WeaponStunStick : public C_BaseHLBludgeonWeapon
 {
@@ -38,10 +44,10 @@ public:
 
 			color[0] = color[1] = color[2] = random->RandomFloat(0.1f, 0.2f);
 
-			CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+			CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 			if (pOwner == NULL)
 				return BaseClass::DrawModel(flags);
-			CBaseViewModel *pViewModel = pOwner->GetViewModel();
+			CBaseViewModel* pViewModel = pOwner->GetViewModel();
 			pViewModel->GetAttachment(1, vecOrigin, vecAngles);
 
 			Vector	vForward;
@@ -49,7 +55,7 @@ public:
 
 			Vector vEnd = vecOrigin - vForward * 1.0f;
 
-			IMaterial *pMaterial = materials->FindMaterial("effects/stunstick", NULL, false);
+			IMaterial* pMaterial = materials->FindMaterial("effects/stunstick", NULL, false);
 
 			CMatRenderContextPtr pRenderContext(materials);
 			pRenderContext->Bind(pMaterial);
@@ -66,17 +72,20 @@ public:
 	// Do part of our effect
 	void ClientThink(void)
 	{
+		if (IsEffectActive(EF_NODRAW))
+			return;
+
 		// Update our effects
-		CBasePlayer *pOwner = ToBasePlayer(GetOwner());
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 		if (pOwner == NULL)
 			return;
-		if (m_bActive &&
+		if (m_bActive && (IsCarriedByLocalPlayer() &&
 			gpGlobals->frametime != 0.0f &&
-			(random->RandomInt(0, 5) == 0))
+			(random->RandomInt(0, 5) == 0)) )
 		{
 			Vector	vecOrigin;
 			QAngle	vecAngles;
-			CBaseViewModel *pViewModel = pOwner->GetViewModel();
+			CBaseViewModel* pViewModel = pOwner->GetViewModel();
 			pViewModel->GetAttachment(1, vecOrigin, vecAngles);
 
 			Vector	vForward;
@@ -116,7 +125,6 @@ public:
 			beamInfo.m_nSegments = 8;
 			beamInfo.m_bRenderable = true;
 			beamInfo.m_nFlags = (FBEAM_ONLYNOISEONCE | FBEAM_SHADEOUT);
-
 			beams->CreateBeamPoints(beamInfo);
 		}
 	}
@@ -128,6 +136,23 @@ public:
 		{
 			SetNextClientThink(CLIENT_THINK_ALWAYS);
 		}
+	}
+
+	bool C_WeaponStunStick::IsCarriedByLocalPlayer(void)
+	{
+		CBaseViewModel* vm = NULL;
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		if (pOwner)
+		{
+			if (pOwner->GetActiveWeapon() != this)
+				return false;
+
+			vm = pOwner->GetViewModel(m_nViewModelIndex);
+			if (vm)
+				return (!vm->IsEffectActive(EF_NODRAW));
+		}
+
+		return false;
 	}
 
 	//-----------------------------------------------------------------------------
@@ -186,8 +211,36 @@ void RecvProxy_StunActive(const CRecvProxyData *pData, void *pStruct, void *pOut
 	*(bool *)pOut = state;
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Draw a cheap glow quad at our impact point (with sparks)
+//-----------------------------------------------------------------------------
+void StunstickImpactCallback(const CEffectData& data)
+{
+	float scale = random->RandomFloat(16, 32);
+
+	FX_AddQuad(data.m_vOrigin,
+		data.m_vNormal,
+		scale,
+		scale * 2.0f,
+		1.0f,
+		1.0f,
+		0.0f,
+		0.0f,
+		random->RandomInt(0, 360),
+		0,
+		Vector(1.0f, 1.0f, 1.0f),
+		0.1f,
+		"sprites/light_glow02_add",
+		0);
+
+	FX_Sparks(data.m_vOrigin, 1, 2, data.m_vNormal, 6, 64, 256);
+}
+
+DECLARE_CLIENT_EFFECT("StunstickImpact", StunstickImpactCallback);
+
 STUB_WEAPON_CLASS_IMPLEMENT(weapon_stunstick, C_WeaponStunStick);
 
 IMPLEMENT_CLIENTCLASS_DT(C_WeaponStunStick, DT_WeaponStunStick, CWeaponStunStick)
 RecvPropInt(RECVINFO(m_bActive), 0, RecvProxy_StunActive),
 END_RECV_TABLE()
+

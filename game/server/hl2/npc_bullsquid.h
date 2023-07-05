@@ -57,6 +57,8 @@ public:
 	void StartTask ( const Task_t *pTask );
 	void RunTask ( const Task_t *pTask );
 
+	virtual void BuildScheduleTestBits(void);
+
 	NPC_STATE SelectIdealState ( void );
 
 	DEFINE_CUSTOM_AI;

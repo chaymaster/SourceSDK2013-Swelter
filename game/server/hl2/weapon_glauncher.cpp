@@ -49,7 +49,7 @@ public:
 	virtual void Equip( CBaseCombatCharacter *pOwner );
 	bool	Reload( void );
 
-	float	GetFireRate( void ) { return 1.0f; }	// 13.3hz
+	float	GetFireRate( void ) { return 0.6f; }
 	int		CapabilitiesGet( void ) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
 	int		WeaponRangeAttack2Condition( float flDot, float flDist );
 	Activity	GetPrimaryAttackActivity( void );
@@ -177,7 +177,7 @@ void CWeaponGlauncher::Precache( void )
 bool CWeaponGlauncher::Deploy(void)
 {
 
-	Msg("SDE_SMG!_deploy\n");
+	DevMsg("SDE_SMG!_deploy\n");
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
@@ -369,7 +369,7 @@ bool CWeaponGlauncher::Reload(void)
 			m_flShellEjectTime = gpGlobals->curtime + 1.2f; //new
 			if (m_iClip1 < 1)
 			{
-				Msg("SDE_R+ \n");
+				DevMsg("SDE_R+ \n");
 				bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
 				if (fRet)
 				{
@@ -380,7 +380,7 @@ bool CWeaponGlauncher::Reload(void)
 			}
 			else
 			{
-				Msg("SDE_R- \n");
+				DevMsg("SDE_R- \n");
 				bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
 				if (fRet)
 				{

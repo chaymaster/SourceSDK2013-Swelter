@@ -1752,6 +1752,8 @@ CollideType_t C_BaseAnimating::GetCollideType(void)
 	return BaseClass::GetCollideType();
 }
 
+ConVar ai_death_pose_enabled("ai_death_pose_enabled", "1", FCVAR_NONE, "Toggles the death pose fix code, which cancels sequence transitions while a NPC is ragdolling.");
+
 //-----------------------------------------------------------------------------
 // Purpose: if the active sequence changes, keep track of the previous ones and decay them based on their decay rate
 //-----------------------------------------------------------------------------
@@ -1763,6 +1765,12 @@ void C_BaseAnimating::MaintainSequenceTransitions(IBoneSetup &boneSetup, float f
 		return;
 
 	if (prediction->InPrediction())
+	{
+		m_nPrevNewSequenceParity = m_nNewSequenceParity;
+		return;
+	}
+
+	if (IsAboutToRagdoll() && ai_death_pose_enabled.GetBool())
 	{
 		m_nPrevNewSequenceParity = m_nNewSequenceParity;
 		return;

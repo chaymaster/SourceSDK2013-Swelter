@@ -89,6 +89,7 @@ END_DATADESC()
 #define BODYGROUP_BADGE 1
 #define BODYGROUP_PAPER 3
 #define BODYGROUP_INVITE 2
+#define BODYGROUP_PHOTO 4
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -99,6 +100,7 @@ CWeaponMapcase::CWeaponMapcase(void)
 	m_hSporeTrail = NULL;
 }
 ConVar sde_mission_note_status_skin("sde_mission_note_status_skin", "0");
+extern ConVar sde_holster_fixer;
 //ConVar sde_mission_note_bodygroup("sde_mission_note_bodygroup", "0");
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -134,6 +136,11 @@ void CWeaponMapcase::SetSkin(void)
 		pViewModel->SetBodygroup(BODYGROUP_INVITE, 1);
 	else
 		pViewModel->SetBodygroup(BODYGROUP_INVITE, 0);
+
+	if (sde_mission_note_status_skin.GetInt() >= 32 && sde_mission_note_status_skin.GetInt() <= 56)
+		pViewModel->SetBodygroup(BODYGROUP_PHOTO, 1);
+	else
+		pViewModel->SetBodygroup(BODYGROUP_PHOTO, 0);
 
 
 	pViewModel->m_nSkin = input / 6;
@@ -279,12 +286,26 @@ void CWeaponMapcase::ItemPostFrame(void)
 		DisableIronsights();
 		SecondaryAttack();
 	}
-	if (!pOwner->m_bIsCrosshaired)
+	
+	/*if (!pOwner->m_bIsCrosshaired)
 		pOwner->ShowCrosshair(false);
+	*/
+
+	if (sde_holster_fixer.GetInt() == 1) //holster fixer
+	{
+		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
+		{
+			SetWeaponVisible(true);
+			DevMsg("SDE: holster fixer enabled\n");
+			HolsterFix = false;
+		}
+	}
+
 
 	DevMsg("PDA:	paper group id	%d \n", FindBodygroupByName("paper"));
 	DevMsg("PDA:	badge group id	%d \n", FindBodygroupByName("badge"));
 	DevMsg("PDA:	invite group id	%d \n", FindBodygroupByName("invite"));
+	DevMsg("PDA:	photo group id	%d \n", FindBodygroupByName("photo"));
 
 	SetSkin();
 	WeaponIdle();
@@ -306,7 +327,8 @@ bool CWeaponMapcase::Deploy(void)
 	m_bRedraw = false;
 	m_bDrawBackFinished = false;
 	SetSkin();
-
+	HolsterFix = true;
+	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	//CBaseViewModel *pViewModel = pOwner->GetViewModel();
 	//pViewModel->set
 	//
