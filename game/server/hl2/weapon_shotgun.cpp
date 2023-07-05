@@ -535,7 +535,7 @@ void CWeaponShotgun::PrimaryAttack(void)
 	if (!m_DoDouble)
 		pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
 	else
-		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-10, 10), 0));
+		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-8, 8), 0));
 
 	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2, GetOwner());
 
@@ -603,7 +603,7 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 	pPlayer->DoMuzzleFlash();
 	SendWeaponAnim(ACT_VM_SECONDARYATTACK); // first shot of the burst ejects shell, animations of shots are swapped in the model
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;//SequenceDuration();
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.1;//SequenceDuration();
 	m_iClip1 -= 1;
 
 
@@ -618,7 +618,7 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets(sk_plr_num_shotgun_pellets.GetInt(), vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0, -1, -1, 0, NULL, true, true);
-	pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-8, 8), 0)); //удвоено
+	pPlayer->ViewPunch(QAngle(random->RandomFloat(-1, -1), random->RandomFloat(-1, 1), 0)); //удвоено
 
 	m_flNextSecondaryAttack = gpGlobals->curtime + 0.2f;
 

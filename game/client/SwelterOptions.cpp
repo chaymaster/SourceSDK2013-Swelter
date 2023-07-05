@@ -85,8 +85,8 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	m_ccLang = new ComboBox(this, "ccLang", 6, false);
 	m_ccLang->AddItem("#pht_option_lang_english", NULL);
 	m_ccLang->AddItem("#pht_option_lang_russian", NULL);
+	m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
 	//m_ccLang->AddItem("#pht_option_lang_german", NULL);
-	//m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
 
 
 
@@ -95,9 +95,9 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		m_ccLang->ActivateItem(0);
 	else if (FStrEq(var3.GetString(), "russian"))
 		m_ccLang->ActivateItem(1);
-	else if (FStrEq(var3.GetString(), "german"))
-		m_ccLang->ActivateItem(2);
 	else if (FStrEq(var3.GetString(), "schinese"))
+		m_ccLang->ActivateItem(2);
+	else if (FStrEq(var3.GetString(), "german"))
 		m_ccLang->ActivateItem(3);
 
 
@@ -341,10 +341,10 @@ void COptionsSwelter::OnApplyChanges()
 		engine->ClientCmd("cc_lang russian\n");
 		break;
 	case 2:
-		engine->ClientCmd("cc_lang german\n"); 
+		engine->ClientCmd("cc_lang schinese\n");
 		break;
 	case 3:
-		engine->ClientCmd("cc_lang schinese\n");
+		engine->ClientCmd("cc_lang german\n");
 	}
 
 

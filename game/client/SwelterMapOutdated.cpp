@@ -79,7 +79,7 @@ private:
 CSwelterMenuOutdated::CSwelterMenuOutdated(vgui::VPANEL parent) : BaseClass(NULL, "CSwelterMenuOutdated")
 {
 	SetDeleteSelfOnClose(true);
-	SetBounds(0, 0, 768, 300);
+	SetBounds(0, 0, 640, 512);
 	SetSizeable(false);
 	MoveToCenterOfScreen();
 	ActivateMinimized();
@@ -113,8 +113,7 @@ bool isSwelterOutdateActive = false;
 
 void CSwelterMenuOutdated::OnClose()
 {
-	//CBasePlayer *pPlayer = Get
-	//engine->ClientCommand(pPlayer->edict(), "unpause\n");
+	engine->ClientCmd("unpause\n");
 	BaseClass::OnClose();
 	isSwelterOutdateActive = false;
 }

@@ -89,6 +89,7 @@ END_DATADESC()
 #define BODYGROUP_BADGE 1
 #define BODYGROUP_PAPER 3
 #define BODYGROUP_INVITE 2
+#define BODYGROUP_PHOTO 4
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -135,6 +136,11 @@ void CWeaponMapcase::SetSkin(void)
 		pViewModel->SetBodygroup(BODYGROUP_INVITE, 1);
 	else
 		pViewModel->SetBodygroup(BODYGROUP_INVITE, 0);
+
+	if (sde_mission_note_status_skin.GetInt() >= 32 && sde_mission_note_status_skin.GetInt() <= 56)
+		pViewModel->SetBodygroup(BODYGROUP_PHOTO, 1);
+	else
+		pViewModel->SetBodygroup(BODYGROUP_PHOTO, 0);
 
 
 	pViewModel->m_nSkin = input / 6;
@@ -299,6 +305,7 @@ void CWeaponMapcase::ItemPostFrame(void)
 	DevMsg("PDA:	paper group id	%d \n", FindBodygroupByName("paper"));
 	DevMsg("PDA:	badge group id	%d \n", FindBodygroupByName("badge"));
 	DevMsg("PDA:	invite group id	%d \n", FindBodygroupByName("invite"));
+	DevMsg("PDA:	photo group id	%d \n", FindBodygroupByName("photo"));
 
 	SetSkin();
 	WeaponIdle();
