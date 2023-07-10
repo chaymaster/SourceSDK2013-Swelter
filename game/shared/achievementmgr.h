@@ -110,7 +110,7 @@ public:
 
 	bool WereCheatsEverOn( void ) { return m_bCheatsEverOn; }
 
-#ifndef HL2_EPISODIC
+#if !defined(NO_STEAM)
 	STEAM_CALLBACK( CAchievementMgr, Steam_OnUserStatsReceived, UserStatsReceived_t, m_CallbackUserStatsReceived );
 	STEAM_CALLBACK( CAchievementMgr, Steam_OnUserStatsStored, UserStatsStored_t, m_CallbackUserStatsStored );
 #endif
