@@ -44,6 +44,7 @@ private:
 	Button	*m_setDefault;
 	Button	*m_setClassic;
 	Button	*m_setRealism;
+	Button	*m_resetAchievements;
 
 	bool b_hintButton;
 	bool b_altButton;
@@ -86,6 +87,7 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	m_ccLang->AddItem("#pht_option_lang_english", NULL);
 	m_ccLang->AddItem("#pht_option_lang_russian", NULL);
 	m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
+	//m_ccLang->AddItem("#pht_option_lang_ukrainian", NULL);
 	//m_ccLang->AddItem("#pht_option_lang_german", NULL);
 
 
@@ -97,8 +99,10 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		m_ccLang->ActivateItem(1);
 	else if (FStrEq(var3.GetString(), "schinese"))
 		m_ccLang->ActivateItem(2);
-	else if (FStrEq(var3.GetString(), "german"))
+	else if (FStrEq(var3.GetString(), "ukrainian"))
 		m_ccLang->ActivateItem(3);
+	else if (FStrEq(var3.GetString(), "german"))
+		m_ccLang->ActivateItem(4);
 
 
 	ConVarRef var6("sde_drop_mag");
@@ -247,10 +251,20 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	m_setClassic = new Button(this, "setClassic", "#pht_option_preset_classic", this, "setClassic");
 	m_setRealism = new Button(this, "setRealism", "#pht_option_preset_realism", this, "setRealism");
 
+	//reset achievements button
+	ConVarRef isModDB("sde_ModDB");
+	if (isModDB.GetInt() == 0)
+	{
+		m_resetAchievements = new Button(this, "resetAchievements", "#pht_option_reset", this, "resetAchievements");
+		LoadControlSettings("resource/OptionsSwelter.res");
+	}
+	else
+	{
+		LoadControlSettings("resource/OptionsSwelter_moddb.res");
+	}
 
 
-
-	LoadControlSettings("resource/OptionsSwelter.res");
+	//LoadControlSettings("resource/OptionsSwelter.res");
 }
 
 void ApplyChangesToConVar(const char *pConVarName, int value)
@@ -344,6 +358,9 @@ void COptionsSwelter::OnApplyChanges()
 		engine->ClientCmd("cc_lang schinese\n");
 		break;
 	case 3:
+		engine->ClientCmd("cc_lang ukrainian\n");
+		break;
+	case 4:
 		engine->ClientCmd("cc_lang german\n");
 	}
 
@@ -389,7 +406,11 @@ private:
 CSwelterMenu::CSwelterMenu(vgui::VPANEL parent) : BaseClass(NULL, "CSwelterMenu")
 {
 	SetDeleteSelfOnClose(true);
-	SetBounds(0, 0, 512, 476);
+	ConVarRef isModDB("sde_ModDB");
+	if (isModDB.GetInt() == 0)
+		SetBounds(0, 0, 512, 476);
+	else
+		SetBounds(0, 0, 512, 506);
 	SetSizeable(false);
 	MoveToCenterOfScreen();
 	ActivateMinimized();
@@ -461,6 +482,10 @@ void COptionsSwelter::OnCommand(char const *cmd)
 		muzButton->SetSelected(true);
 		crosshairButton->SetSelected(false);
 		holsterButton->SetSelected(false);
+	}
+	if (!Q_stricmp(cmd, "resetAchievements"))
+	{
+		engine->ClientCmd("OpenSwelterReset\n"); 
 	}
 	else
 	{

@@ -46,6 +46,7 @@
 #include "gamestats.h"
 #include "filters.h"
 #include "tier0/icommandline.h"
+#include "SwelterModVersionBlockHandler.h"
 
 #ifdef HL2_EPISODIC
 #include "npc_alyx_episodic.h"
@@ -1110,6 +1111,9 @@ void CHL2_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 ConVar	sde_mod_version("sde_mod_version", "0"); //save_message
 ConVar	sde_mod_version_display("sde_mod_version_display", "0"); //save_message
 ConVar	sde_mod_version_check_enable("sde_mod_version_check_enable", "1", FCVAR_ARCHIVE); //save_message
+ConVar	sde_mod_version_map_loaded("sde_mod_version_map_loaded", "1"); //save_message
+ConVar	sde_mod_version_map_red("sde_mod_version_map_red", "0"); //save_message
+ConVar	sde_mod_version_map_green("sde_mod_version_map_green", "0"); //save_message
 
 //-----------------------------------------------------------------------------
 // Purpose: Sets HL2 specific defaults.
@@ -3395,10 +3399,25 @@ void CHL2_Player::UpdateClientData(void)
 
 //---------------------------------------------------------
 //---------------------------------------------------------
+bool boolOldSaveLoaded;
 void CHL2_Player::OnRestore()
 {
 	BaseClass::OnRestore();
 	m_pPlayerAISquad = g_AI_SquadManager.FindCreateSquad(AllocPooledString(PLAYER_SQUADNAME));
+
+	if ((gpGlobals->eLoadType != MapLoad_Background) && (gpGlobals->eLoadType == MapLoad_LoadGame))
+	{
+		Color ConsoleColor(100, 100, 250, 255);
+		ConColorMsg(ConsoleColor, (char*)"\n  SDE_MAP_LOADED \n\n");
+	}
+
+	boolOldSaveLoaded = true;
+	if (sde_mod_version_map_loaded.GetInt() == 0 || sde_mod_version_map_green.GetInt() == 1)
+	{
+		//sde_mod_version_map_loaded.SetValue(1);
+		boolOldSaveLoaded = false;
+	}
+		
 }
 
 //---------------------------------------------------------
@@ -3710,24 +3729,25 @@ void CHL2_Player::ItemPostFrame()
 	BaseClass::ItemPostFrame();
 
 
-	//save_message
-	if (sde_mod_version_check_enable.GetInt() == 1)
-	if (sde_mod_version_display.GetInt() == 1)
-	{
-		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-		engine->ClientCommand(pPlayer->edict(), "pause;OpenSwelterOutdate\n");
-		//UTIL_CenterPrintAll("SDE_SAVE_TEST_1\n");
-		//sde_mod_version = 0;
-		sde_mod_version_display.SetValue(0);
-	}
-
-
 	if (m_bPlayUseDenySound)
 	{
 		m_bPlayUseDenySound = false;
 		EmitSound("HL2Player.UseDeny");
 	}
 
+	//save_message
+	if (sde_mod_version_check_enable.GetInt() == 1 && (gpGlobals->eLoadType != MapLoad_Background) && (gpGlobals->eLoadType == MapLoad_LoadGame))
+	if ((sde_mod_version_map_red.GetInt() == 1 && sde_mod_version_map_green.GetInt() == 0) || boolOldSaveLoaded)
+	//if (sde_mod_version_display.GetInt() == 1 || boolOldSaveLoaded)
+	{
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+		engine->ClientCommand(pPlayer->edict(), "pause;OpenSwelterOutdate\n");
+		sde_mod_version_display.SetValue(0);
+		boolOldSaveLoaded = false;
+		sde_mod_version_map_loaded.SetValue(0);
+		sde_mod_version_map_red.SetValue(0);
+		sde_mod_version_map_green.SetValue(0);
+	}
 }
 
 
