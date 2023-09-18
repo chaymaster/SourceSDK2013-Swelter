@@ -87,7 +87,14 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	m_ccLang->AddItem("#pht_option_lang_english", NULL);
 	m_ccLang->AddItem("#pht_option_lang_russian", NULL);
 	m_ccLang->AddItem("#pht_option_lang_schinese", NULL);
-	//m_ccLang->AddItem("#pht_option_lang_ukrainian", NULL);
+	m_ccLang->AddItem("#pht_option_lang_ukrainian", NULL);
+	m_ccLang->AddItem("#pht_option_lang_swedish", NULL);
+	m_ccLang->AddItem("#pht_option_lang_korean", NULL);
+	m_ccLang->AddItem("#pht_option_lang_spanish", NULL);
+	m_ccLang->AddItem("#pht_option_lang_italian", NULL);
+	m_ccLang->AddItem("#pht_option_lang_french", NULL);
+	m_ccLang->AddItem("#pht_option_lang_japanese", NULL);
+	m_ccLang->AddItem("#pht_option_lang_polish", NULL);
 	//m_ccLang->AddItem("#pht_option_lang_german", NULL);
 
 
@@ -101,8 +108,22 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 		m_ccLang->ActivateItem(2);
 	else if (FStrEq(var3.GetString(), "ukrainian"))
 		m_ccLang->ActivateItem(3);
-	else if (FStrEq(var3.GetString(), "german"))
+	else if (FStrEq(var3.GetString(), "swedish"))
 		m_ccLang->ActivateItem(4);
+	else if (FStrEq(var3.GetString(), "korean"))
+		m_ccLang->ActivateItem(5);
+	else if (FStrEq(var3.GetString(), "spanish"))
+		m_ccLang->ActivateItem(6);
+	else if (FStrEq(var3.GetString(), "italian"))
+		m_ccLang->ActivateItem(7);
+	else if (FStrEq(var3.GetString(), "french"))
+		m_ccLang->ActivateItem(8);
+	else if (FStrEq(var3.GetString(), "japanese"))
+		m_ccLang->ActivateItem(9);
+	else if (FStrEq(var3.GetString(), "polish"))
+		m_ccLang->ActivateItem(10);
+	else if (FStrEq(var3.GetString(), "german"))
+		m_ccLang->ActivateItem(110);
 
 
 	ConVarRef var6("sde_drop_mag");
@@ -361,6 +382,27 @@ void COptionsSwelter::OnApplyChanges()
 		engine->ClientCmd("cc_lang ukrainian\n");
 		break;
 	case 4:
+		engine->ClientCmd("cc_lang swedish\n");
+		break;
+	case 5:
+		engine->ClientCmd("cc_lang korean\n");
+		break;
+	case 6:
+		engine->ClientCmd("cc_lang spanish\n");
+		break;
+	case 7:
+		engine->ClientCmd("cc_lang italian\n");
+		break;
+	case 8:
+		engine->ClientCmd("cc_lang french\n");
+		break;
+	case 9:
+		engine->ClientCmd("cc_lang japanese\n");
+		break;
+	case 10:
+		engine->ClientCmd("cc_lang polish\n");
+		break;
+	case 11:
 		engine->ClientCmd("cc_lang german\n");
 	}
 
