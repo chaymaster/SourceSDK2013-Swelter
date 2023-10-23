@@ -2327,16 +2327,6 @@ bool CBaseCombatWeapon::DefaultReload(int iClipSize1, int iClipSize2, int iActiv
 	// If I don't have any spare ammo, I can't reload
 	if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0) //228
 		return false;
-
-	
-	const char* WeaponName = GetName(); //this snippet block reloading after reloading when cartrige chamber is empty
-	if (strcmp(WeaponName, "weapon_pistol") == 0 || strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 || strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 || strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 || strcmp(WeaponName, "weapon_ar2") == 0)
-	{
-		//DevMsg("SDE REL TEST:______ %d,     %d \n", m_iClip1, iClipSize1);
-		if (m_iClip1 + 1 == iClipSize1)
-			return false;
-	}
-	
 	
 	bool bReload = false;
 
