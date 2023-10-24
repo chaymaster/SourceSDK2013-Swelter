@@ -148,7 +148,7 @@ void CWeapon356::PrimaryAttack( void )
 	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //было 0,75
+	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //was 0.75
 	m_flNextSecondaryAttack = gpGlobals->curtime + 1.1;
 
 	m_iClip1--;
@@ -254,8 +254,8 @@ void CWeapon356::AmmoLoadingCount(void) //ammo_loading_count
 	if (pViewModel == NULL)
 		return;
 
-	//m_iClip1 в оружии
-	//m_iPrimaryAmmoType в кармане
+	//m_iClip1 РІ РѕСЂСѓР¶РёРё
+	//m_iPrimaryAmmoType РІ РєР°СЂРјР°РЅРµ
 
 	DevMsg("SDE: revolver test 3\n");
 	switch (pOwner->GetAmmoCount(m_iPrimaryAmmoType + m_iClip1))

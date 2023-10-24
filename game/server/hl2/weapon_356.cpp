@@ -106,6 +106,7 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 			}
 	}
 }
+
 bool CWeapon356::Deploy(void)
 {
 
@@ -154,7 +155,7 @@ void CWeapon356::PrimaryAttack( void )
 	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //áûëî 0,75
+	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //was 0.75
 	m_flNextSecondaryAttack = gpGlobals->curtime + 1.1;
 
 	m_iClip1--;
