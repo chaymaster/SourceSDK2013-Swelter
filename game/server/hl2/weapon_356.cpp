@@ -100,7 +100,7 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 
 						DispatchEffect("ShellEject", data);
 					}
-				        m_iNumberOfRoundsInDrum = MIN(GetWpnData().iMaxClip1, m_iClip1 + BCCOwner.GetAmmoCount(m_iPrimaryAmmoType));
+				        m_iNumberOfRoundsInDrum = MIN(GetWpnData().iMaxClip1, m_iClip1 + BCCOwner->GetAmmoCount(m_iPrimaryAmmoType));
 				//}
 				break;
 			}
