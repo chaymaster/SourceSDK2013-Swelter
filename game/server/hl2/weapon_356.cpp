@@ -48,6 +48,8 @@ public:
 
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
+protected:
+	int m_iNumberOfRoundsInDrum;
 };
 
 LINK_ENTITY_TO_CLASS( weapon_356, CWeapon356 );
@@ -58,6 +60,9 @@ IMPLEMENT_SERVERCLASS_ST( CWeapon356, DT_Weapon356 )
 END_SEND_TABLE()
 
 BEGIN_DATADESC( CWeapon356 )
+
+DEFINE_FIELD (m_iNumberOfRoundsInDrum, FIELD_INTEGER),
+
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
@@ -67,6 +72,7 @@ CWeapon356::CWeapon356( void )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= false;
+	m_iNumberOfRoundsInDrum = 6; //our revolver is found loaded, we're not EZ2 - HEVcrab
 }
 
 //-----------------------------------------------------------------------------
@@ -74,7 +80,8 @@ CWeapon356::CWeapon356( void )
 //-----------------------------------------------------------------------------
 void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator )
 {
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CBaseCombatCharacter *BCCOwner = GetOwner();
+	CBasePlayer *pOwner = ToBasePlayer( BCCOwner );
 
 	switch( pEvent->event )
 	{
@@ -84,8 +91,8 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 				//if (sde_drop_mag.GetInt())
 				//{
 					CEffectData data;
-					// Eject (six minus remaining ammo) spent casings (even for realistic mag drop, let the player keep rounds remaining in the drum) 
-					for (int i = 0; i < 6-m_iClip1; i++)
+					// Eject (how many rounds were loaded previous time minus remaining ammo) spent casings (even for realistic mag drop, let the player keep rounds remaining in the drum) 
+					for (int i = 0; i < m_iNumberOfRoundsInDrum - m_iClip1; i++)
 					{
 						data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector(-4, 4);
 						data.m_vAngles = QAngle(90, random->RandomInt(0, 360), 0);
@@ -93,11 +100,13 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 
 						DispatchEffect("ShellEject", data);
 					}
+				        m_iNumberOfRoundsInDrum = MIN(GetWpnData().iMaxClip1, m_iClip1 + BCCOwner->GetAmmoCount(m_iPrimaryAmmoType));
 				//}
 				break;
 			}
 	}
 }
+
 bool CWeapon356::Deploy(void)
 {
 
@@ -146,7 +155,7 @@ void CWeapon356::PrimaryAttack( void )
 	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //было 0,75
+	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //was 0.75
 	m_flNextSecondaryAttack = gpGlobals->curtime + 1.1;
 
 	m_iClip1--;
