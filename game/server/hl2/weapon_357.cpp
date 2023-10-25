@@ -109,7 +109,7 @@ DEFINE_FIELD(m_bNeedToCloseChamber, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bNeedPump, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire1, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire2, FIELD_BOOLEAN),
-
+DEFINE_FIELD(m_bCompensateEjectedRoundForFullAmmoSupply, FIELD_BOOLEAN),
 END_DATADESC()
 
 acttable_t	CWeapon357::m_acttable[] =
