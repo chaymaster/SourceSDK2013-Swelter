@@ -49,7 +49,7 @@ public:
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 protected:
-	int m_iNumberOfRoundsInDrum;
+	int m_iRoundsLoadedInDrum;
 };
 
 LINK_ENTITY_TO_CLASS( weapon_356, CWeapon356 );
@@ -61,7 +61,7 @@ END_SEND_TABLE()
 
 BEGIN_DATADESC( CWeapon356 )
 
-DEFINE_FIELD (m_iNumberOfRoundsInDrum, FIELD_INTEGER),
+DEFINE_FIELD (m_iRoundsLoadedInDrum, FIELD_INTEGER),
 
 END_DATADESC()
 
@@ -72,7 +72,7 @@ CWeapon356::CWeapon356( void )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= false;
-	m_iNumberOfRoundsInDrum = 6; //our revolver is found loaded, we're not EZ2 - HEVcrab
+	m_iRoundsLoadedInDrum = 6; //our revolver is found loaded, we're not EZ2 - HEVcrab
 }
 
 //-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 				//{
 					CEffectData data;
 					// Eject (how many rounds were loaded previous time minus remaining ammo) spent casings (even for realistic mag drop, let the player keep rounds remaining in the drum) 
-					for (int i = 0; i < m_iNumberOfRoundsInDrum - m_iClip1; i++)
+					for (int i = 0; i < m_iRoundsLoadedInDrum - m_iClip1; i++)
 					{
 						data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector(-4, 4);
 						data.m_vAngles = QAngle(90, random->RandomInt(0, 360), 0);
@@ -100,7 +100,7 @@ void CWeapon356::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatChara
 
 						DispatchEffect("ShellEject", data);
 					}
-				        m_iNumberOfRoundsInDrum = MIN(GetWpnData().iMaxClip1, m_iClip1 + BCCOwner->GetAmmoCount(m_iPrimaryAmmoType));
+				        m_iRoundsLoadedInDrum = MIN(GetWpnData().iMaxClip1, m_iClip1 + BCCOwner->GetAmmoCount(m_iPrimaryAmmoType));
 				//}
 				break;
 			}
