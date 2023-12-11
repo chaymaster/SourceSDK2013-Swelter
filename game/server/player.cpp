@@ -6644,57 +6644,81 @@ bool CBasePlayer::ClientCommand(const CCommand &args)
 	else if (stricmp(cmd, "rifle_chamber") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->R357_Round_Chamber();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->R357_Round_Chamber();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "rifle_unchamber") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->R357_Round_Unchamber();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->R357_Round_Unchamber();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "sniper_chamber") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->Annabelle_Round_Chamber();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->Annabelle_Round_Chamber();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "sniper_unchamber") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->Annabelle_Round_Unchamber();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->Annabelle_Round_Unchamber();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "ar1m1_gl_load") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->AR1M1_GL_Load();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->AR1M1_GL_Load();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "ar1m1_gl_unload") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->AR1M1_GL_Unload();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->AR1M1_GL_Unload();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "ar2_gl_load") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->AR2_GL_Load();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->AR2_GL_Load();
+		}
 		return true;
 	}
 	else if (stricmp(cmd, "ar2_gl_unload") == 0)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
-		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
-		pHL2Player->AR2_GL_Unload();
+		if (pPlayer)
+		{
+			CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
+			pHL2Player->AR2_GL_Unload();
+		}
 		return true;
 	}
 	return false;
