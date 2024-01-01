@@ -787,8 +787,8 @@ bool CWeaponAR2::CanHolster(void)
 
 bool CWeaponAR2::Reload(void)
 {
-	if (m_bInSecondaryReload)
-		return false; //prevent interruption of secondary reload with primary reload
+	if (m_bShotDelayed || m_bInSecondaryReload)
+		return false; //prevent interruption of secondary reload with primary reload and reloading in the middle of secondary fire delay
 
 	float fCacheTime = m_flNextSecondaryAttack;
 
