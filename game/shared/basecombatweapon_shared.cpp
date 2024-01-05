@@ -1732,6 +1732,7 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 
 	// cancel any reload in progress.
 	m_bInReload = false;
+	m_bInSecondaryReload = false;
 	m_bFiringWholeClip = false;
 	//HolsterFix = false;
 	// kill any think functions
@@ -3175,8 +3176,11 @@ DEFINE_FIELD(m_flNextSecondaryAttack, FIELD_TIME),
 DEFINE_FIELD(m_flTimeWeaponIdle, FIELD_TIME),
 
 DEFINE_FIELD(m_bInReload, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bInSecondaryReload, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bFireOnEmpty, FIELD_BOOLEAN),
 DEFINE_FIELD(m_hOwner, FIELD_EHANDLE),
+
+DEFINE_FIELD(m_bBoltRequired, FIELD_BOOLEAN),
 
 DEFINE_FIELD(m_iState, FIELD_INTEGER),
 DEFINE_FIELD(m_iszName, FIELD_STRING),
