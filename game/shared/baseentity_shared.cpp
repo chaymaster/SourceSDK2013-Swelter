@@ -2182,7 +2182,7 @@ void CBaseEntity::ComputeTracerStartPosition( const Vector &vecShotSrc, Vector *
 		CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
 		if ( pWeapon->IsIronsighted())
 		{
-			*pVecTracerStart = vecShotSrc + Vector(0, 0, 0) + right * 0 + forward * 0 + up * -16;
+			*pVecTracerStart = vecShotSrc + Vector(0, 0, 0) + right * -3.5 + forward * 0 + up * -16;
 			DevMsg("SDE: trace test: ironsight on\n");
 		}
 		else
