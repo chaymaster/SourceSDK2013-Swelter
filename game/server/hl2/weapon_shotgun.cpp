@@ -707,8 +707,8 @@ void CWeaponShotgun::ItemPostFrame(void)
 		SetBodygroup(1, 1);
 	}
 
-	if ((m_bNeedPump) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
-	{
+	if (m_bNeedPump && m_iClip1 > 0 && m_flNextPrimaryAttack <= gpGlobals->curtime)
+	{ // prevent pumping if switched to another weapon and back when shotgun is empty 
 		Pump();
 		return;
 	}
