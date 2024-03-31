@@ -774,13 +774,14 @@ void CWeapon357::ItemPostFrame(void)
 		SetBodygroup(1, 1);
 		HoldIronsight();
 
-		if (m_iClip1 && m_bNeedToCloseChamber) // for holster in reload + re-equip weapon sequence to handle correctly
+		if (m_iClip1 && m_bNeedToCloseChamber) // for holster in reload + re-equip weapon sequence to handle correctly and load animations to complete
 		{
-			FinishReload();
+			m_bNeedToCloseChamber = false;
+			m_bDelayedFire1 = true; // triggers finish reload after completing reload animation
 			return;
 		}
 
-		if (pOwner->m_afButtonPressed & IN_ATTACK2)// toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
+		if ((pOwner->m_afButtonPressed & IN_ATTACK2) && (m_flNextPrimaryAttack <= gpGlobals->curtime))// toggle zoom
 		{
 			SecondaryAttack();
 		}
@@ -815,13 +816,11 @@ void CWeapon357::ItemPostFrame(void)
 		else
 		{
 			if (m_bDelayedFire1)
-				m_bDelayedFire1 = false;
-			/*if (m_bDelayedFire1)
 			{
-			m_bDelayedFire1 = false;
-			FinishReload();  // FinishReload() is called on m_bNeedToCloseChamber whem interrupting reload
-			return;
-			} */
+				m_bDelayedFire1 = false;
+				FinishReload();
+				return;
+			}
 			else
 			{
 				// If the firing button was just pressed, reset the firing time
