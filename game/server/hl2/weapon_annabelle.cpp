@@ -42,10 +42,9 @@ private:
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
 	bool	m_bEjectChamberedRound;
 	bool	m_bNeedToCloseChamber;
-	float	m_bTimeToSubtractEjectedChamberedRound;
 	bool	m_bCompensateEjectedRoundForFullAmmoSupply;
-	bool	m_bReactivateIronsightAfterBolt;
-	float	m_flIronsightAfterBoltReactivatingTime;
+	float	m_flTimeToSubtractEjectedChamberedRound;
+	float	m_flReloadEnd;	// when all animations on ending the reload actually end
 
 public:
 	void	Precache(void);
@@ -106,11 +105,14 @@ LINK_ENTITY_TO_CLASS(weapon_annabelle, CWeaponAnnabelle);
 PRECACHE_WEAPON_REGISTER(weapon_annabelle);
 
 BEGIN_DATADESC(CWeaponAnnabelle)
-DEFINE_FIELD(m_bNeedToCloseChamber, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bNeedPump, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire1, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire2, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bEjectChamberedRound, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bNeedToCloseChamber, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bCompensateEjectedRoundForFullAmmoSupply, FIELD_BOOLEAN),
+DEFINE_FIELD(m_flTimeToSubtractEjectedChamberedRound, FIELD_TIME),
+DEFINE_FIELD(m_flReloadEnd, FIELD_TIME),
 END_DATADESC()
 
 acttable_t	CWeaponAnnabelle::m_acttable[] =
@@ -342,7 +344,7 @@ bool CWeaponAnnabelle::StartReload(void)
 
 	if (m_iClip1 >= 1 && (sde_simple_rifle_bolt.GetInt() || (!sde_simple_rifle_bolt.GetInt() && pHL2Player->Get_Annabelle_Chamber())))
 	{ //don't split this trick into eject-catch separated in time if player has maximum spare ammo, not to lose a round 
-		m_bTimeToSubtractEjectedChamberedRound = gpGlobals->curtime + 0.5f;
+		m_flTimeToSubtractEjectedChamberedRound = gpGlobals->curtime + 0.5f;
 		// the ejected round will be caught to the inventory in case of simple bolting or discarded in case of manual bolting
 		m_bEjectChamberedRound = true;
 		if (!sde_simple_rifle_bolt.GetInt())
@@ -356,6 +358,7 @@ bool CWeaponAnnabelle::StartReload(void)
 
 	pOwner->m_flNextAttack = gpGlobals->curtime;
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flReloadEnd = m_flNextPrimaryAttack + 0.1f; // moved a little past primary attack
 
 	m_bNeedToCloseChamber = true;
 	m_bInReload = true;
@@ -404,6 +407,7 @@ bool CWeaponAnnabelle::Reload(void)
 
 	pOwner->m_flNextAttack = gpGlobals->curtime;
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flReloadEnd = m_flNextPrimaryAttack + 0.1f; // moved every loaded round a little past primary attack
 
 	return true;
 }
@@ -432,7 +436,6 @@ void CWeaponAnnabelle::FinishReload(void)
 
 	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
-	m_bInReload = false;
 	m_bNeedPump = false;
 	m_bNeedToCloseChamber = false;
 
@@ -445,6 +448,7 @@ void CWeaponAnnabelle::FinishReload(void)
 	SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH);
 	pOwner->m_flNextAttack = gpGlobals->curtime;
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flReloadEnd = m_flNextPrimaryAttack; // finishing reload precisely as the primary attack is ready
 }
 
 //-----------------------------------------------------------------------------
@@ -500,9 +504,6 @@ void CWeaponAnnabelle::Pump(void)
 
 	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
-	m_bReactivateIronsightAfterBolt = m_bIsIronsighted; // remember ironsight state to restore after bolting
-
-	DisableIronsights();
 	m_bNeedPump = false;
 
 	//if (!sde_simple_rifle_bolt.GetInt())
@@ -516,7 +517,6 @@ void CWeaponAnnabelle::Pump(void)
 
 	pOwner->m_flNextAttack = gpGlobals->curtime + SequenceDuration();
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
-	m_flIronsightAfterBoltReactivatingTime = gpGlobals->curtime + SequenceDuration();
 }
 
 //-----------------------------------------------------------------------------
@@ -710,13 +710,6 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 
 	// CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pOwner);
 
-	if (m_bReactivateIronsightAfterBolt && gpGlobals->curtime >= m_flIronsightAfterBoltReactivatingTime)
-	{
-		EnableIronsights();
-		pOwner->ShowCrosshair(false);
-		m_bReactivateIronsightAfterBolt = false;
-	}
-
 	if (sde_holster_fixer.GetInt() == 1) //holster fixer
 	{
 		if (GetActivity() == ACT_VM_IDLE && HolsterFix && (gpGlobals->curtime > HolsterFixTime))
@@ -727,7 +720,7 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		}
 	}
 
-	if (m_bEjectChamberedRound && gpGlobals->curtime >= m_bTimeToSubtractEjectedChamberedRound)
+	if (m_bEjectChamberedRound && gpGlobals->curtime >= m_flTimeToSubtractEjectedChamberedRound)
 	{
 		m_iClip1--;
 		m_bEjectChamberedRound = false;
@@ -753,14 +746,18 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 
 	if (m_bInReload)
 	{
+		if (m_flReloadEnd <= gpGlobals->curtime)
+		{
+			m_bInReload = false; // moved here to not happen before chamber close animation finishes
+			return;
+		}
 		// If I'm primary firing and have one round stop reloading and fire
 		if ((pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >= 1))
 		{
-			m_bInReload = false;
 			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
 		}
-		else if (m_flNextPrimaryAttack <= gpGlobals->curtime)
+		else if (!m_bDelayedFire1 && m_flNextPrimaryAttack <= gpGlobals->curtime)
 		{
 			// If out of ammo end reload
 			if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
@@ -786,16 +783,18 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 	{
 		// Make shotgun shell invisible
 		SetBodygroup(1, 1);
-		HoldIronsight();
-		
+
 		if (m_iClip1 && m_bNeedToCloseChamber) // for holster in reload + re-equip weapon sequence to handle correctly and load animations to complete
 		{
 			m_bNeedToCloseChamber = false;
-			m_bDelayedFire1 = true; // triggers finish reload after completing reload animation
-			return;
+			m_bDelayedFire1 = true; // triggers finish reload after re-equip
+			m_bInReload = true; // to prevent ironsight in chamber closing sequence
 		}
 
-		if ((pOwner->m_afButtonPressed & IN_ATTACK2) && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
+		if (!m_bInReload)
+			HoldIronsight();
+
+		if ((pOwner->m_afButtonPressed & IN_ATTACK2) && (m_flReloadEnd <= gpGlobals->curtime) && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
 		{
 			SecondaryAttack();
 		}

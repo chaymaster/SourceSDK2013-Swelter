@@ -668,18 +668,16 @@ void CWeaponShotgun::ItemPostFrame(void)
 		// If I'm primary firing and have one round stop reloading and fire
 		if ((pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >= 1))
 		{
-			m_bInReload = false;
 			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
 		}
 		// If I'm secondary firing and have two rounds stop reloading and fire
 		else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_iClip1 >= 2))
 		{
-			m_bInReload = false;
 			m_bNeedPump = false;
 			m_bDelayedFire2 = true;
 		}
-		else if (m_flNextPrimaryAttack <= gpGlobals->curtime)
+		else if (!(m_bDelayedFire1 || m_bDelayedFire2) && m_flNextPrimaryAttack <= gpGlobals->curtime)
 		{
 			// If out of ammo end reload
 			if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
@@ -721,6 +719,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 	if ((m_bDelayedFire2 || pOwner->m_nButtons & IN_ATTACK2) && (m_flNextPrimaryAttack <= gpGlobals->curtime))
 	{
 		m_bDelayedFire2 = false;
+		m_bDelayedFire1 = false; // in case a different attack click happened very soon after interrupting reload
 
 		if ((m_iClip1 <= 1 && UsesClipsForAmmo1()))
 		{
@@ -748,8 +747,9 @@ void CWeaponShotgun::ItemPostFrame(void)
 		}
 		else
 		{
+			m_bInReload = false; // moved here to not happen before last shell loading animation finishes
 			// If the firing button was just pressed, reset the firing time
-			if (pOwner->m_afButtonPressed & IN_ATTACK)
+			if (pOwner->m_afButtonPressed & IN_ATTACK2)
 			{
 				m_flNextPrimaryAttack = gpGlobals->curtime;
 			}
@@ -759,6 +759,8 @@ void CWeaponShotgun::ItemPostFrame(void)
 	else if ((m_bDelayedFire1 || pOwner->m_nButtons & IN_ATTACK) && m_flNextPrimaryAttack <= gpGlobals->curtime)
 	{
 		m_bDelayedFire1 = false;
+		m_bDelayedFire2 = false; // in case a different attack click happened very soon after interrupting reload
+
 		if ((m_iClip1 <= 0 && UsesClipsForAmmo1()) || (!UsesClipsForAmmo1() && !pOwner->GetAmmoCount(m_iPrimaryAmmoType)))
 		{
 			if (!pOwner->GetAmmoCount(m_iPrimaryAmmoType))
@@ -779,6 +781,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 		}
 		else
 		{
+			m_bInReload = false; // moved here to not happen before last shell loading animation finishes
 			// If the firing button was just pressed, reset the firing time
 			if (pOwner->m_afButtonPressed & IN_ATTACK)
 			{
