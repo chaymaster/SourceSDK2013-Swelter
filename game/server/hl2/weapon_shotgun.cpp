@@ -38,7 +38,7 @@ private:
 	bool	m_bNeedPump;		// When emptied completely
 	bool	m_bDelayedFire1;	// Fire primary when finished reloading
 	bool	m_bDelayedFire2;	// Fire secondary when finished reloading
-	bool	m_DoDouble;
+	bool	m_bDoDouble;
 
 public:
 	void	Precache(void);
@@ -100,10 +100,10 @@ PRECACHE_WEAPON_REGISTER(weapon_shotgun);
 
 BEGIN_DATADESC(CWeaponShotgun)
 
-DEFINE_FIELD(m_bBoltRequired, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bNeedPump, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire1, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bDelayedFire2, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bDoDouble, FIELD_BOOLEAN),
 
 END_DATADESC()
 
@@ -273,7 +273,7 @@ float CWeaponShotgun::GetFireRate()
 bool CWeaponShotgun::Deploy(void)
 {
 	DevMsg("SDE_SMG!_deploy\n");
-	m_DoDouble = false;
+	m_bDoDouble = false;
 	HolsterFix = true;
 	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
@@ -501,7 +501,7 @@ void CWeaponShotgun::PrimaryAttack(void)
 	}
 
 	// MUST call sound before removing a round from the clip of a CMachineGun
-	if (!m_DoDouble)
+	if (!m_bDoDouble)
 	{
 		WeaponSound(SINGLE);
 		// SendWeaponAnim(ACT_VM_PRIMARYATTACK);
@@ -532,7 +532,7 @@ void CWeaponShotgun::PrimaryAttack(void)
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets(sk_plr_num_shotgun_pellets.GetInt(), vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0, -1, -1, 0, NULL, true, true);
 
-	if (!m_DoDouble)
+	if (!m_bDoDouble)
 		pPlayer->ViewPunch(QAngle(random->RandomFloat(-8, -4), random->RandomFloat(-6, 6), 0));
 	else
 		pPlayer->ViewPunch(QAngle(random->RandomFloat(-12, -8), random->RandomFloat(-8, 8), 0));
@@ -553,7 +553,7 @@ void CWeaponShotgun::PrimaryAttack(void)
 
 	m_iPrimaryAttacks++;
 	gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
-	m_DoDouble = false;
+	m_bDoDouble = false;
 }
 
 void CWeaponShotgun::HoldIronsight(void)
@@ -607,7 +607,7 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 	m_iClip1 -= 1;
 
 
-	m_DoDouble = true;
+	m_bDoDouble = true;
 	m_bNeedPump = false;
 
 	Vector	vecSrc = pPlayer->Weapon_ShootPosition();
@@ -710,7 +710,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 		Pump();
 		return;
 	}
-	if (m_DoDouble && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // second shot of secondary attack
+	if (m_bDoDouble && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // second shot of secondary attack
 	{
 		PrimaryAttack();
 		m_bDelayedFire2 = false;
