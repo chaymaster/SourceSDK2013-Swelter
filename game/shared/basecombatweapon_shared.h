@@ -581,11 +581,13 @@ public:
 	CNetworkVar(bool, m_bIsIronsighted);
 	CNetworkVar(bool, m_bCanIronsighted);
 	CNetworkVar(float, m_flIronsightedTime);
-	CNetworkVar(bool, m_bBoltRequired); // Always false for all weapons except the shotgun that, as a one-by-one-shell loaded weapon
-	// capable of chambered round in reload, needs this to keep GetMaxClip1() returning not "clip+1" value when reloading from empty magazine
+
 	// Weapon state
+	bool					m_bBoltRequired; // Always false for all weapons except the shotgun that, as a one-by-one-shell loaded weapon
+	// capable of chambered round in reload, needs this to keep GetMaxClip1() returning not "clip+1" value when reloading from empty magazine
 	bool					m_bInReload;			// Are we in the middle of a reload;
 	bool					m_bInSecondaryReload = false;	// in the middle of a secondary reload, always false except AR1M1 and AR2;
+	bool					m_bForbidIronsight; //need another variable forbidding ironsight except the former two, e.g. if weapon bolts in deploy or is with zero ammo and about to reload, exiting ironsights anyway
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
 	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;		
 	

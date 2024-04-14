@@ -289,7 +289,16 @@ bool CWeaponAnnabelle::Deploy(void)
 	DisplaySDEHudHint();
 	HolsterFix = true;
 	HolsterFixTime = (gpGlobals->curtime + 1.5f); //holster fixer
-	return BaseClass::Deploy();
+
+	bool return_value = BaseClass::Deploy();
+
+	if ((!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType)) || m_bNeedToCloseChamber)
+	{
+		m_flReloadEnd = gpGlobals->curtime + SequenceDuration() + 0.1f; // a little past deploy animation as reloading will follow
+		m_bForbidIronsight = true; // to suppress toggle ironsight if reload or chamber closing follows
+	}
+
+	return return_value;
 }
 //-----------------------------------------------------------------------------
 // Purpose: Override so only reload one shell at a time
@@ -752,7 +761,7 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 			return;
 		}
 		// If I'm primary firing and have one round stop reloading and fire
-		if ((pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >= 1))
+		if ((pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >= 1) && m_bNeedToCloseChamber) // to avoid double closing on click during closing
 		{
 			m_bNeedPump = false;
 			m_bDelayedFire1 = true;
@@ -784,6 +793,9 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 		// Make shotgun shell invisible
 		SetBodygroup(1, 1);
 
+		if (m_bForbidIronsight && m_flReloadEnd <= gpGlobals->curtime)
+			m_bForbidIronsight = false;
+
 		if (m_iClip1 && m_bNeedToCloseChamber) // for holster in reload + re-equip weapon sequence to handle correctly and load animations to complete
 		{
 			m_bNeedToCloseChamber = false;
@@ -791,7 +803,7 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 			m_bInReload = true; // to prevent ironsight in chamber closing sequence
 		}
 
-		if (!m_bInReload)
+		if (!(m_bInReload || m_bForbidIronsight))
 			HoldIronsight();
 
 		if ((pOwner->m_afButtonPressed & IN_ATTACK2) && (m_flReloadEnd <= gpGlobals->curtime) && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow
