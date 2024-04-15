@@ -151,7 +151,12 @@ bool CWeaponAlyxGun::Deploy(void)
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
-	return BaseClass::Deploy();
+
+	bool return_value = BaseClass::Deploy();
+
+	m_bForbidIronsight = true; // to suppress ironsight during deploy as the weapon is bolted. Behavior of ironsightable weapons that DO bolt on deploy
+
+	return return_value;
 }
 //-----------------------------------------------------------------------------
 // Purpose: Try to encourage Alyx not to use her weapon at point blank range,
@@ -509,11 +514,20 @@ bool CWeaponAlyxGun::Reload(void)
 
 void CWeaponAlyxGun::ItemPostFrame(void)
 {
-	// Allow zoom toggling & Ironsight
-	// Ironsight if not reloading
-	if (!m_bInReload)
-		HoldIronsight();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
+	if (pOwner == NULL)
+		return;
+
+	if (m_bForbidIronsight && gpGlobals->curtime >= m_flNextPrimaryAttack)
+	{
+		m_bForbidIronsight = false;
+		if (!m_iClip1 && pOwner->GetAmmoCount(m_iPrimaryAmmoType))
+			Reload();
+	}
+	// Allow Ironsight if not reloading or deploying
+	if (!(m_bInReload || m_bForbidIronsight))
+		HoldIronsight();
 
 	BaseClass::ItemPostFrame();
 }

@@ -199,7 +199,15 @@ bool CWeaponSMG1::Deploy(void)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
 	shouldDropMag = false;
-	return BaseClass::Deploy();
+
+	bool return_value = BaseClass::Deploy();
+
+	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
+	{
+		m_bForbidIronsight = true; // to suppress ironsight during deploy in case the weapon is empty and the player has ammo 
+	}							   // -> reload will be forced. Behavior of ironsightable weapons that don't bolt on deploy
+
+	return return_value;
 }
 
 //added
@@ -239,14 +247,21 @@ void CWeaponSMG1::SetSkin(int skinNum)
 }
 void CWeaponSMG1::ItemPostFrame(void)
 {
-	// Ironsight if not reloading
-	if (!m_bInReload)
-		HoldIronsight();
-
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
 
 	if (pOwner == NULL)
 		return;
+
+	if (m_bForbidIronsight && gpGlobals->curtime >= m_flNextPrimaryAttack)
+	{
+		m_bForbidIronsight = false;
+		if (!m_iClip1 && pOwner->GetAmmoCount(m_iPrimaryAmmoType))
+			Reload();
+	}
+
+	// Ironsight if not reloading or deploying before forced reload
+	if (!(m_bInReload || m_bForbidIronsight))
+		HoldIronsight();
 
 	// Debounce the recoiling counter
 	if ((pOwner->m_nButtons & IN_ATTACK) == false)

@@ -115,7 +115,20 @@ bool CWeapon356::Deploy(void)
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
-	return BaseClass::Deploy();
+
+	bool return_value = BaseClass::Deploy();
+
+	m_bForbidIronsight = true; // to suppress ironsight during deploy in case the weapon is empty and the player has ammo 
+	// -> reload will be forced. Behavior of ironsightable weapons that don't bolt on deploy
+
+	if (m_iClip1 || !pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
+	{
+		pPlayer->SetNextAttack(gpGlobals->curtime + 1.0f); // this revolver's deploy animation looks bad first 1 second in ironsight,
+														   // set the moment when calling ItemPostFrame() starts to enable ironsight
+		m_flNextPrimaryAttack -= 0.5; // the deploy animation is a bit too long, and firing after deploy is impossible when the revolver is already aimed
+	}
+
+	return return_value;
 }
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -206,11 +219,22 @@ void CWeapon356::HoldIronsight(void)
 
 void CWeapon356::ItemPostFrame(void)
 {
-	// Allow  Ironsight
-	// Ironsight if not reloading
-	if (!m_bInReload)
-		HoldIronsight();
+	CBaseCombatCharacter *pOwner = GetOwner();
 
+	if (pOwner == NULL)
+		return;
+
+	// Allow  Ironsight immediately as ItemPostFrame() starts
+	if (m_bForbidIronsight)
+	{
+		m_bForbidIronsight = false;
+		if (!m_iClip1 && pOwner->GetAmmoCount(m_iPrimaryAmmoType))
+			Reload();
+	}
+
+	// Ironsight if not reloading or deploying before forced reload
+	if (!(m_bInReload || m_bForbidIronsight))
+		HoldIronsight();
 
 	BaseClass::ItemPostFrame();
 }

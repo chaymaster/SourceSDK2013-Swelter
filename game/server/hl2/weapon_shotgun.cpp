@@ -280,7 +280,15 @@ bool CWeaponShotgun::Deploy(void)
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
-	return BaseClass::Deploy();
+
+	bool return_value = BaseClass::Deploy();
+
+	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
+	{
+		m_bForbidIronsight = true; // to suppress ironsight during deploy in case the weapon is empty and the player has ammo 
+	}							   // -> reload will be forced. Behavior of ironsightable weapons that don't bolt on deploy
+
+	return return_value;
 }
 //-----------------------------------------------------------------------------
 // Purpose: Override so only reload one shell at a time
@@ -637,15 +645,20 @@ void CWeaponShotgun::SecondaryAttack(void) // first shot of the burst, eject she
 //-----------------------------------------------------------------------------
 void CWeaponShotgun::ItemPostFrame(void)
 {
-	// Ironsight if not reloading
-	if (!m_bInReload)
-		HoldIronsight();
-
 	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
-	if (!pOwner)
-	{
+
+	if (pOwner == NULL)
 		return;
+
+	if (m_bForbidIronsight && gpGlobals->curtime >= m_flNextPrimaryAttack)
+	{
+		m_bForbidIronsight = false;
+		if (!m_iClip1 && pOwner->GetAmmoCount(m_iPrimaryAmmoType))
+			StartReload();
 	}
+
+	if (!(m_bInReload || m_bForbidIronsight))
+		HoldIronsight();
 
 	if (GetActivity() == ACT_VM_HOLSTER) //new
 	{

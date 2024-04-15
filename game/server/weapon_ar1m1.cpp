@@ -210,7 +210,15 @@ bool CWeaponar1m1::Deploy(void)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
 	shouldDropMag = false;
-	return BaseClass::Deploy();
+
+	bool return_value = BaseClass::Deploy();
+
+	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
+	{
+		m_bForbidIronsight = true; // to suppress ironsight during deploy in case the weapon is empty and the player has ammo 
+	}							   // -> reload will be forced. Behavior of ironsightable weapons that don't bolt on deploy
+
+	return return_value;
 }
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -620,6 +628,13 @@ void CWeaponar1m1::ItemPostFrame(void)
 	if (pPlayer == NULL)
 		return;
 
+	if (m_bForbidIronsight && gpGlobals->curtime >= m_flNextPrimaryAttack)
+	{
+		m_bForbidIronsight = false;
+		if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
+			Reload();
+	}
+
 	CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
 	if (pPlayer->GetAmmoCount(m_iSecondaryAmmoType) >= 1 && pHL2Player->Get_AR1M1_GLL() == false &&
@@ -642,8 +657,8 @@ void CWeaponar1m1::ItemPostFrame(void)
 	}
 	// forbid ironsight if secondary reload has been activated but non deactivated yet
 
-	// Ironsight if not reloading
-	if (!(m_bInReload || m_bInSecondaryReload))
+	// Ironsight if not reloading or deploying before forced reload
+	if (!(m_bInReload || m_bInSecondaryReload || m_bForbidIronsight))
 		HoldIronsight();
 
 	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
