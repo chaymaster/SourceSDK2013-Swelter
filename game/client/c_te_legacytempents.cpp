@@ -1655,7 +1655,7 @@ void CTempEnts::EjectBrass( const Vector &pos1, const QAngle &angles, const QAng
 		return;
 
 	//Keep track of shell type
-	if (type == 2 || type == 3)
+	if (type == 2)
 	{
 		pTemp->hitSound = BOUNCE_SHOTSHELL;
 	}
