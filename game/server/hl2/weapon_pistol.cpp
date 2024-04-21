@@ -136,6 +136,8 @@ DEFINE_FIELD(m_flSoonestPrimaryAttack, FIELD_TIME),
 DEFINE_FIELD(m_flLastAttackTime, FIELD_TIME),
 DEFINE_FIELD(m_flAccuracyPenalty, FIELD_FLOAT), //NOTENOTE: This is NOT tracking game time
 DEFINE_FIELD(m_nNumShotsFired, FIELD_INTEGER),
+DEFINE_FIELD(shouldDropMag, FIELD_BOOLEAN),
+DEFINE_FIELD(dropMagTime, FIELD_TIME),
 
 END_DATADESC()
 
@@ -481,7 +483,7 @@ void CWeaponPistol::DropMag(void) //drop mag
 		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
 		Vector vecForward, vecRight, vecUp;
 		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
-		Vector vecEject = SpawnHeight + 10 * vecRight - 10 * vecUp;
+		Vector vecEject = SpawnHeight + 6 * vecRight - 10 * vecUp;
 
 		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
 

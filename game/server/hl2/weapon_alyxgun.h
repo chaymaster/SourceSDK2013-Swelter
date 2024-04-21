@@ -56,6 +56,10 @@ public:
 	bool	Reload(void);
 	bool	Deploy(void);
 
+	bool shouldDropMag; //drop mag
+	float dropMagTime; //drop mag
+	void DropMag(void); //drop mag
+
 	virtual void Equip( CBaseCombatCharacter *pOwner );
 
 	float	GetFireRate( void ) { return 0.1f; }

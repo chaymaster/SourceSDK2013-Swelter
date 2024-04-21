@@ -2343,6 +2343,7 @@ bool CBaseCombatWeapon::DefaultReload(int iClipSize1, int iClipSize2, int iActiv
 
 		// don't lose ammo while reloading revolver, as you get all separate rounds/casings unloading the drum
 		if (sde_drop_mag.GetInt() == 2 && (strcmp(WeaponName, "weapon_pistol") == 0 || /*strcmp(WeaponName, "weapon_356") == 0 || */
+			strcmp(WeaponName, "weapon_alyxgun") == 0 || strcmp(WeaponName, "weapon_alyxgun_s") == 0 ||
 			strcmp(WeaponName, "weapon_smg1") == 0 || strcmp(WeaponName, "weapon_smg2") == 0 ||
 			strcmp(WeaponName, "weapon_ar1") == 0 || strcmp(WeaponName, "weapon_ar1m1") == 0 || strcmp(WeaponName, "weapon_ar2") == 0))
 			// realistic magazine drop discarding remains of ammo

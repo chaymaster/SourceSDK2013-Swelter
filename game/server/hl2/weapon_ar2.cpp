@@ -52,6 +52,8 @@ DEFINE_FIELD(m_flSecondaryEjectTime, FIELD_TIME), //new
 DEFINE_FIELD(m_bSecondaryEjectPending, FIELD_BOOLEAN), //new
 DEFINE_FIELD(m_flSecondaryEjectTime2, FIELD_TIME), //new
 DEFINE_FIELD(m_bSecondaryEjectPending2, FIELD_BOOLEAN), //new
+DEFINE_FIELD(shouldDropMag, FIELD_BOOLEAN),
+DEFINE_FIELD(dropMagTime, FIELD_TIME),
 
 END_DATADESC()
 

@@ -109,6 +109,8 @@ DEFINE_FIELD(m_vecTossVelocity, FIELD_VECTOR),
 DEFINE_FIELD(m_flNextGrenadeCheck, FIELD_TIME),
 DEFINE_FIELD(m_flSecondaryReloadActivationTime, FIELD_TIME),
 DEFINE_FIELD(m_flSecondaryReloadDeactivationTime, FIELD_TIME),
+DEFINE_FIELD(shouldDropMag, FIELD_BOOLEAN),
+DEFINE_FIELD(dropMagTime, FIELD_TIME),
 
 END_DATADESC()
 

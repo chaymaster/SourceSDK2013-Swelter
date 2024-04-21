@@ -33,6 +33,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+extern ConVar	sde_drop_mag;
+
 IMPLEMENT_SERVERCLASS_ST(CWeaponAlyxGun_s, DT_WeaponAlyxGun_s)
 END_SEND_TABLE()
 
@@ -40,6 +42,8 @@ LINK_ENTITY_TO_CLASS( weapon_alyxgun_s, CWeaponAlyxGun_s );
 PRECACHE_WEAPON_REGISTER(weapon_alyxgun_s);
 
 BEGIN_DATADESC( CWeaponAlyxGun_s )
+DEFINE_FIELD(shouldDropMag, FIELD_BOOLEAN),
+DEFINE_FIELD(dropMagTime, FIELD_TIME),
 END_DATADESC()
 
 acttable_t	CWeaponAlyxGun_s::m_acttable[] = 
@@ -151,6 +155,7 @@ bool CWeaponAlyxGun_s::Deploy(void)
 	if (pPlayer)
 		pPlayer->ShowCrosshair(true);
 	DisplaySDEHudHint();
+	shouldDropMag = false;
 
 	bool return_value = BaseClass::Deploy();
 
@@ -490,6 +495,9 @@ bool CWeaponAlyxGun_s::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+				dropMagTime = (gpGlobals->curtime + 0.5f); //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -501,6 +509,9 @@ bool CWeaponAlyxGun_s::Reload(void)
 			{
 				WeaponSound(RELOAD);
 				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+				dropMagTime = (gpGlobals->curtime + 0.5f); //drop mag
+				if (sde_drop_mag.GetInt())
+					shouldDropMag = true; //drop mag
 			}
 			return fRet;
 		}
@@ -528,5 +539,43 @@ void CWeaponAlyxGun_s::ItemPostFrame(void)
 	if (!(m_bInReload || m_bForbidIronsight))
 		HoldIronsight();
 
+	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag
+	{
+		DropMag();
+	}
+
 	BaseClass::ItemPostFrame();
+}
+
+void CWeaponAlyxGun_s::DropMag(void) //drop mag
+{
+	shouldDropMag = false;
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		Vector SpawnHeight(0, 0, 36); // высота спауна энергосферного контейнера
+		QAngle ForwardAngles = pPlayer->EyeAngles(); // + pPlayer->GetPunchAngle() математически неправильно так просто прибавлять, да и смысл?
+		Vector vecForward, vecRight, vecUp;
+		AngleVectors(ForwardAngles, &vecForward, &vecRight, &vecUp);
+		Vector vecEject = SpawnHeight - 10 * vecUp;
+
+		CBaseEntity *pEjectProp = (CBaseEntity *)CreateEntityByName("prop_physics_override");
+
+		if (pEjectProp)
+		{
+			Vector vecOrigin = pPlayer->GetAbsOrigin() + vecEject;
+			QAngle vecAngles(0, pPlayer->GetAbsAngles().y - 0.5, 0);
+			pEjectProp->SetAbsOrigin(vecOrigin);
+			pEjectProp->SetAbsAngles(vecAngles);
+			pEjectProp->KeyValue("model", "models/items/empty_mag_pistol.mdl");
+			pEjectProp->KeyValue("solid", "1");
+			pEjectProp->KeyValue("targetname", "EjectProp");
+			pEjectProp->KeyValue("spawnflags", "516");
+			pEjectProp->SetAbsVelocity(vecForward);
+			DispatchSpawn(pEjectProp);
+			pEjectProp->Activate();
+			pEjectProp->Teleport(&vecOrigin, &vecAngles, NULL);
+			pEjectProp->SUB_StartFadeOut(15, false);
+		}
+	}
 }
