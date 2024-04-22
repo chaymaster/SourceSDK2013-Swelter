@@ -235,7 +235,7 @@ void CWeapon356::ItemPostFrame(void)
 	}
 
 	// Ironsight if not reloading or deploying before forced reload
-	if (!(m_bInReload || m_bForbidIronsight))
+	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
 		HoldIronsight();
 
 	BaseClass::ItemPostFrame();

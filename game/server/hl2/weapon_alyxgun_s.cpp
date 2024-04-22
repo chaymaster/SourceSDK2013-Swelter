@@ -536,7 +536,7 @@ void CWeaponAlyxGun_s::ItemPostFrame(void)
 			Reload();
 	}
 	// Allow Ironsight if not reloading or deploying
-	if (!(m_bInReload || m_bForbidIronsight))
+	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
 		HoldIronsight();
 
 	if (shouldDropMag && (gpGlobals->curtime > dropMagTime)) //drop mag

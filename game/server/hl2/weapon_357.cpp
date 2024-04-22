@@ -789,7 +789,7 @@ void CWeapon357::ItemPostFrame(void)
 			m_bInReload = true; // to prevent ironsight in chamber closing sequence
 		}
 
-		if (!(m_bInReload || m_bForbidIronsight))
+		if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
 			HoldIronsight();
 
 		if ((pOwner->m_afButtonPressed & IN_ATTACK2) && (m_flReloadEnd <= gpGlobals->curtime) && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // secondary attack is toggle ironsight like on sniper version and vanilla HL2 crossbow

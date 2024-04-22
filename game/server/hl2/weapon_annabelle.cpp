@@ -803,7 +803,7 @@ void CWeaponAnnabelle::ItemPostFrame(void)
 			m_bInReload = true; // to prevent ironsight in chamber closing sequence
 		}
 
-		if (!(m_bInReload || m_bForbidIronsight))
+		if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
 			HoldIronsight();
 
 		if ((pOwner->m_afButtonPressed & IN_ATTACK2) && (m_flReloadEnd <= gpGlobals->curtime) && (m_flNextPrimaryAttack <= gpGlobals->curtime)) // toggle zoom on mission-critical sniper weapon like vanilla HL2 crossbow

@@ -219,7 +219,7 @@ void CWeaponAR2::ItemPostFrame(void)
 	// forbid ironsight if secondary reload has been activated but non deactivated yet
 
 	// Ironsight if not reloading or deploying before forced reload
-	if (!(m_bInReload || m_bInSecondaryReload || m_bForbidIronsight))
+	if (!(m_bInReload || m_bInSecondaryReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
 		HoldIronsight();
 
 	if (m_flNextPrimaryAttack <= gpGlobals->curtime + 0.07)

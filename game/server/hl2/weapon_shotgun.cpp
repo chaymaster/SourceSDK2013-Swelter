@@ -660,7 +660,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 			StartReload();
 	}
 
-	if (!(m_bInReload || m_bForbidIronsight))
+	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
 		HoldIronsight();
 
 	if (GetActivity() == ACT_VM_HOLSTER) //new
