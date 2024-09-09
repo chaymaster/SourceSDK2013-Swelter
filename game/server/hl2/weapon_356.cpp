@@ -42,6 +42,7 @@ public:
 	void	HoldIronsight(void);
 	virtual void	ItemPostFrame(void);
 	bool	Deploy(void);
+	bool	Reload(void);
 	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 
 	float	WeaponAutoAimScale()	{ return 0.6f; }
@@ -154,7 +155,7 @@ void CWeapon356::PrimaryAttack( void )
 		else
 		{
 			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = 0.15;
+			m_flNextPrimaryAttack = gpGlobals->curtime + 0.15;
 		}
 
 		return;
@@ -167,11 +168,13 @@ void CWeapon356::PrimaryAttack( void )
 	WeaponSound( SINGLE ); //snd1
 	pPlayer->DoMuzzleFlash();
 
-	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pPlayer->SetAnimation(PLAYER_ATTACK1);
+	if (m_iClip1 > 1)
+		SendWeaponAnim( ACT_VM_PRIMARYATTACK ); // Swelter revolver is single-action, cock after shot if there's more ammo in the drum 
+	else // m_iClip == 1 in this case, empty weapon case has been handled above
+		SendWeaponAnim(ACT_VM_PRIMARYATTACK_LASTROUND); // don't cock if the shot emptied the drum
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //was 0.75
-	m_flNextSecondaryAttack = gpGlobals->curtime + 1.1;
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration(); //was +0.75
 
 	m_iClip1--;
 
@@ -200,6 +203,44 @@ void CWeapon356::PrimaryAttack( void )
 	{
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
+	}
+}
+
+bool CWeapon356::Reload(void)
+{
+	float fCacheTime = m_flNextSecondaryAttack;
+
+
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		pPlayer->ShowCrosshair(true); // show crosshair to fix crosshair for reloading weapons in toggle ironsight
+		if (m_iClip1 < 1)
+		{
+			DevMsg("SDE_R+ \n");
+			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
+			if (fRet)
+			{
+				WeaponSound(RELOAD);
+				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+			}
+			return fRet;
+		}
+		else
+		{
+			DevMsg("SDE_R- \n");
+			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
+			if (fRet)
+			{
+				WeaponSound(RELOAD);
+				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+			}
+			return fRet;
+		}
+	}
+	else
+	{
+		return false;
 	}
 }
 
