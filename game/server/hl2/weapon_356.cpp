@@ -121,16 +121,8 @@ bool CWeapon356::Deploy(void)
 
 	bool return_value = BaseClass::Deploy();
 
-	m_bForbidIronsight = true; // to suppress ironsight during deploy in case the weapon is empty and the player has ammo 
-	// -> reload will be forced. Behavior of ironsightable weapons that don't bolt on deploy
-
-	if (m_iClip1 || !pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
-	{
-		pPlayer->SetNextAttack(gpGlobals->curtime + 1.0f); // this revolver's deploy animation looks bad first 1 second in ironsight,
-														   // set the moment when calling ItemPostFrame() starts to enable ironsight
-		m_flNextPrimaryAttack -= 0.5f; // the deploy animation is a bit too long, and firing after deploy is impossible when the revolver is already aimed
-	}
-
+	m_bForbidIronsight = true;  // this revolver's deploy animation (pulling out from left to right) looks bad in ironsight,
+								// so always suppress ironsight during deploy, regardless of the weapon reload going to be forced after deploy
 	return return_value;
 }
 //-----------------------------------------------------------------------------
