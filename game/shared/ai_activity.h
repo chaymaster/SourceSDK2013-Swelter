@@ -217,8 +217,11 @@ typedef enum
 	// viewmodel (weapon) activities
 	// FIXME: move these to the specific viewmodels, no need to make global
 	ACT_VM_DRAW,
+	ACT_VM_DRAW_EMPTY,
 	ACT_VM_HOLSTER,
+	ACT_VM_HOLSTER_EMPTY,
 	ACT_VM_IDLE,
+	ACT_VM_IDLE_EMPTY,
 	ACT_VM_FIDGET,
 	ACT_VM_PULLBACK,
 	ACT_VM_PULLBACK_HIGH,
@@ -681,10 +684,8 @@ typedef enum
 	ACT_VM_DRAW_DEPLOYED,
 
 	//Weapon is , activities
-	ACT_VM_DRAW_EMPTY,
 	ACT_VM_PRIMARYATTACK_EMPTY,
 	ACT_VM_RELOAD_EMPTY,
-	ACT_VM_IDLE_EMPTY,
 	ACT_VM_IDLE_DEPLOYED_EMPTY,
 
 	ACT_VM_IDLE_8,
