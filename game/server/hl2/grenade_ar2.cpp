@@ -245,6 +245,7 @@ void CGrenadeAR2::Precache( void )
 {
 	PrecacheModel("models/Weapons/ar2_grenade.mdl");
 	PrecacheModel("models/items/ar3_grenade_noshell.mdl");
+	PrecacheModel("models/items/ar3_grenade.mdl"); // to throw the launcher grenade by hand as is, with shell
 }
 
 
