@@ -226,7 +226,7 @@ typedef enum
 	ACT_VM_THROW,
 	ACT_VM_PULLPIN,
 	ACT_VM_PRIMARYATTACK,		// fire
-	ACT_VM_IRONSHOOT,		// fire с прицеливанием
+	ACT_VM_IRONSHOOT,		// fire Г± ГЇГ°ГЁГ¶ГҐГ«ГЁГўГ Г­ГЁГҐГ¬
 	ACT_VM_SECONDARYATTACK,		// alt. fire
 	ACT_VM_SECONDARYATTACK_RELOAD,		// alt. fire
 	ACT_VM_SECONDARY_RELOAD,
@@ -259,6 +259,8 @@ typedef enum
 	ACT_VM_RECOIL3,
 	ACT_VM_PICKUP,
 	ACT_VM_RELEASE,
+
+        ACT_VM_INSPECT,
 
 	ACT_VM_ATTACH_SILENCER,
 	ACT_VM_DETACH_SILENCER,
