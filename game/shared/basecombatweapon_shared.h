@@ -585,8 +585,14 @@ public:
 	// Weapon state
 	bool					m_bBoltRequired; // Always false for all weapons except the shotgun that, as a one-by-one-shell loaded weapon
 	// capable of chambered round in reload, needs this to keep GetMaxClip1() returning not "clip+1" value when reloading from empty magazine
+	bool					m_bSpecialDrawAnimation; // when an alternative animation is required to deploy the weapon,
+	                                                 // e.g. bolt-action rifle should be deployed with open bolt after holstering in reload
+	                                                 // or deploy the revolver visibly decocked when the drum is empty.
+	bool					m_bSpecialHolsterAnimation; // when an alternative animation is required to holster the weapon,
+	                                                    // e.g. holster the bolt-action rifle in the middle of a reload
+	                                                    // or holster the revolver visibly decocked when the drum is empty.
 	bool					m_bInReload;			// Are we in the middle of a reload;
-	bool					m_bInSecondaryReload = false;	// in the middle of a secondary reload, always false except AR1M1 and AR2;
+	bool					m_bInSecondaryReload;	// in the middle of a secondary reload;
 	bool					m_bForbidIronsight; //need another variable forbidding ironsight except the former two, e.g. if weapon bolts in deploy or is with zero ammo and about to reload, exiting ironsights anyway
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
 	bool					m_bFiringWholeClip;		// Are we in the middle of firing the whole clip;		

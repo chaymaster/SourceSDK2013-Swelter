@@ -140,6 +140,7 @@ void CWeapon356::PrimaryAttack( void )
 
 	if ( m_iClip1 <= 0 )
 	{
+
 		if ( !m_bFireOnEmpty )
 		{
 			Reload();
@@ -259,6 +260,18 @@ void CWeapon356::ItemPostFrame(void)
 	if (pOwner == NULL)
 		return;
 
+	if (m_iClip1 <= 0 && !(m_bSpecialDrawAnimation || m_bSpecialHolsterAnimation))
+	{
+		m_bSpecialDrawAnimation = true;
+		m_bSpecialHolsterAnimation = true;
+	}
+
+	if (m_iClip1 > 0 && (m_bSpecialDrawAnimation || m_bSpecialHolsterAnimation))
+	{
+		m_bSpecialDrawAnimation = false;
+		m_bSpecialHolsterAnimation = false;
+	}
+
 	// Allow  Ironsight immediately as ItemPostFrame() starts
 	if (m_bForbidIronsight)
 	{
@@ -268,7 +281,7 @@ void CWeapon356::ItemPostFrame(void)
 	}
 
 	// Ironsight if not reloading or deploying before forced reload
-	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
+	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER || GetActivity() == ACT_VM_HOLSTER_EMPTY))
 		HoldIronsight();
 
 	BaseClass::ItemPostFrame();
