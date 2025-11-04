@@ -556,6 +556,8 @@ void CWeaponShotgun::PrimaryAttack(void)
 		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 	}
 
+	m_bBoltRequired = true; // to fix cheating rapid fire by quickly pressing attack-reload-attack-reload...
+
 	if (m_iClip1)
 	{
 		// pump so long as some rounds are left.
@@ -684,13 +686,15 @@ void CWeaponShotgun::ItemPostFrame(void)
 		// If I'm primary firing and have one round stop reloading and fire
 		if ((pOwner->m_nButtons & IN_ATTACK) && (m_iClip1 >= 1))
 		{
-			m_bNeedPump = false;
+			if (!m_bBoltRequired)
+				m_bNeedPump = false;
 			m_bDelayedFire1 = true;
 		}
 		// If I'm secondary firing and have two rounds stop reloading and fire
 		else if ((pOwner->m_nButtons & IN_ATTACK2) && (m_iClip1 >= 2))
 		{
-			m_bNeedPump = false;
+			if (!m_bBoltRequired)
+				m_bNeedPump = false;
 			m_bDelayedFire2 = true;
 		}
 		else if (!(m_bDelayedFire1 || m_bDelayedFire2) && m_flNextPrimaryAttack <= gpGlobals->curtime)
@@ -807,7 +811,7 @@ void CWeaponShotgun::ItemPostFrame(void)
 		}
 	}
 
-	if (pOwner->m_nButtons & IN_RELOAD && UsesClipsForAmmo1() && !m_bInReload)
+	if (pOwner->m_nButtons & IN_RELOAD && UsesClipsForAmmo1() && !m_bInReload && !m_bDoDouble && !m_bNeedPump)
 	{
 		// reload when reload is pressed, or if no buttons are down and weapon is empty.
 		StartReload();
