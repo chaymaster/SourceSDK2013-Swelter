@@ -157,6 +157,8 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 	//added
 	m_bIsIronsighted = false;
 	m_bBoltRequired = false;
+	m_bSpecialDrawAnimation = false;
+	m_bSpecialHolsterAnimation = false;
 	m_bForbidIronsight = false;
 	m_flIronsightedTime = 0.0f;
 
@@ -1682,7 +1684,7 @@ bool CBaseCombatWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, in
 		else
 		{
 			CBaseCombatWeapon* pActive = pOwner->GetActiveWeapon();
-			if (pActive && pActive->GetActivity() == ACT_VM_HOLSTER)
+			if (pActive && (pActive->GetActivity() == ACT_VM_HOLSTER || pActive->GetActivity() == ACT_VM_HOLSTER_EMPTY))
 			{
 				flSequenceDuration = pActive->SequenceDuration();
 			}
@@ -1720,7 +1722,10 @@ bool CBaseCombatWeapon::Deploy()
 
 Activity CBaseCombatWeapon::GetDrawActivity(void)
 {
-	return ACT_VM_DRAW;
+	if (m_bSpecialDrawAnimation)
+		return ACT_VM_DRAW_EMPTY;
+	else
+		return ACT_VM_DRAW;
 }
 
 //-----------------------------------------------------------------------------
@@ -1741,11 +1746,14 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	SetThink(NULL);
 
 	// Send holster animation
-	SendWeaponAnim(ACT_VM_HOLSTER);
+	if (m_bSpecialHolsterAnimation)
+		SendWeaponAnim(ACT_VM_HOLSTER_EMPTY);
+	else
+		SendWeaponAnim(ACT_VM_HOLSTER);
 
 	// Some weapon's don't have holster anims yet, so detect that
 	float flSequenceDuration = 0;
-	if (GetActivity() == ACT_VM_HOLSTER)
+	if (GetActivity() == ACT_VM_HOLSTER || ACT_VM_HOLSTER_EMPTY)
 	{
 		flSequenceDuration = SequenceDuration();
 	}
@@ -1768,7 +1776,10 @@ bool CBaseCombatWeapon::Holster(CBaseCombatWeapon *pSwitchingTo)
 	
 	}
 
-	DevMsg("SDE_HOLSTER\n");
+	if (m_bSpecialHolsterAnimation)
+		DevMsg("SDE_HOLSTER_SPECIAL\n");
+	else
+		DevMsg("SDE_HOLSTER\n");
 	//disable attack when holstered 1337
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
 	if (pPlayer)
@@ -1968,7 +1979,7 @@ void CBaseCombatWeapon::ItemPostFrame(void)
 	if (pOwner->GetMoveType() == MOVETYPE_LADDER) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 0.1f; //new
 
-	if (GetActivity() == ACT_VM_HOLSTER) //new
+	if (GetActivity() == ACT_VM_HOLSTER || GetActivity() == ACT_VM_HOLSTER_EMPTY) //new
 		m_flNextPrimaryAttack = gpGlobals->curtime + 1.25f; //new
 
 	UpdateAutoFire();
@@ -2506,7 +2517,8 @@ void CBaseCombatWeapon::CheckReload(void)
 		{
 			if (pOwner->m_nButtons & (IN_ATTACK | IN_ATTACK2) && m_iClip1 > 0)
 			{
-				m_bInReload = false;
+				m_bInReload = false; // HEVcrab - NOTE TO SELF: when I had put FinishReload(); instead - IT RESULTED IN BUGS! // required separate m_bSpecialDrawAnimation = false;
+				                                                          // and m_bSpecialHolsterAnimation = false;
 				return;
 			}
 
@@ -2543,7 +2555,7 @@ void CBaseCombatWeapon::CheckReload(void)
 			FinishReload();
 			m_flNextPrimaryAttack = gpGlobals->curtime;
 			m_flNextSecondaryAttack = gpGlobals->curtime;
-			m_bInReload = false;
+			m_bInReload = false; // HEVcrab - CHECK: FinishReload() contains this!
 		}
 	}
 }
@@ -2577,6 +2589,9 @@ void CBaseCombatWeapon::FinishReload ()
 		{
 			m_bInReload = false;
 		}
+
+		m_bSpecialDrawAnimation = false;
+		m_bSpecialHolsterAnimation = false;
 	}
 }
 
@@ -2944,7 +2959,7 @@ bool CBaseCombatWeapon::SetIdealActivity(Activity ideal)
 	int nextSequence = FindTransitionSequence(GetSequence(), m_nIdealSequence, NULL);
 
 	// Don't use transitions when we're deploying
-	if (ideal != ACT_VM_DRAW && IsWeaponVisible() && nextSequence != m_nIdealSequence)
+	if (!(ideal == ACT_VM_DRAW || ideal == ACT_VM_DRAW_EMPTY) && IsWeaponVisible() && nextSequence != m_nIdealSequence)
 	{
 		//Set our activity to the next transitional animation
 		SetActivity(ACT_TRANSITION);
@@ -3149,6 +3164,8 @@ DEFINE_FIELD(m_iSecondaryAmmoCount, FIELD_INTEGER),
 DEFINE_FIELD( m_bIsIronsighted, FIELD_BOOLEAN ),
 DEFINE_FIELD( m_flIronsightedTime, FIELD_FLOAT ),
 DEFINE_FIELD( m_bBoltRequired, FIELD_BOOLEAN ),
+DEFINE_FIELD(m_bSpecialDrawAnimation, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bSpecialHolsterAnimation, FIELD_BOOLEAN),
 DEFINE_FIELD( m_bForbidIronsight, FIELD_BOOLEAN ),
 
 //DEFINE_PHYSPTR( m_pConstraint ),
@@ -3182,6 +3199,8 @@ DEFINE_FIELD(m_bFireOnEmpty, FIELD_BOOLEAN),
 DEFINE_FIELD(m_hOwner, FIELD_EHANDLE),
 
 DEFINE_FIELD(m_bBoltRequired, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bSpecialDrawAnimation, FIELD_BOOLEAN),
+DEFINE_FIELD(m_bSpecialHolsterAnimation, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bForbidIronsight, FIELD_BOOLEAN),
 
 DEFINE_FIELD(m_iState, FIELD_INTEGER),

@@ -42,6 +42,7 @@ public:
 	void	HoldIronsight(void);
 	virtual void	ItemPostFrame(void);
 	bool	Deploy(void);
+	bool	Reload(void);
 	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 
 	float	WeaponAutoAimScale()	{ return 0.6f; }
@@ -120,16 +121,8 @@ bool CWeapon356::Deploy(void)
 
 	bool return_value = BaseClass::Deploy();
 
-	m_bForbidIronsight = true; // to suppress ironsight during deploy in case the weapon is empty and the player has ammo 
-	// -> reload will be forced. Behavior of ironsightable weapons that don't bolt on deploy
-
-	if (m_iClip1 || !pPlayer->GetAmmoCount(m_iPrimaryAmmoType))
-	{
-		pPlayer->SetNextAttack(gpGlobals->curtime + 1.0f); // this revolver's deploy animation looks bad first 1 second in ironsight,
-														   // set the moment when calling ItemPostFrame() starts to enable ironsight
-		m_flNextPrimaryAttack -= 0.5f; // the deploy animation is a bit too long, and firing after deploy is impossible when the revolver is already aimed
-	}
-
+	m_bForbidIronsight = true;  // this revolver's deploy animation (pulling out from left to right) looks bad in ironsight,
+								// so always suppress ironsight during deploy, regardless of the weapon reload going to be forced after deploy
 	return return_value;
 }
 //-----------------------------------------------------------------------------
@@ -147,6 +140,7 @@ void CWeapon356::PrimaryAttack( void )
 
 	if ( m_iClip1 <= 0 )
 	{
+
 		if ( !m_bFireOnEmpty )
 		{
 			Reload();
@@ -154,7 +148,7 @@ void CWeapon356::PrimaryAttack( void )
 		else
 		{
 			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = 0.15;
+			m_flNextPrimaryAttack = gpGlobals->curtime + 0.15;
 		}
 
 		return;
@@ -167,11 +161,13 @@ void CWeapon356::PrimaryAttack( void )
 	WeaponSound( SINGLE ); //snd1
 	pPlayer->DoMuzzleFlash();
 
-	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pPlayer->SetAnimation(PLAYER_ATTACK1);
+	if (m_iClip1 > 1)
+		SendWeaponAnim( ACT_VM_PRIMARYATTACK ); // Swelter revolver is single-action, cock after shot if there's more ammo in the drum 
+	else // m_iClip == 1 in this case, empty weapon case has been handled above
+		SendWeaponAnim(ACT_VM_PRIMARYATTACK_LASTROUND); // don't cock if the shot emptied the drum
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 1.1; //was 0.75
-	m_flNextSecondaryAttack = gpGlobals->curtime + 1.1;
+	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration(); //was +0.75
 
 	m_iClip1--;
 
@@ -203,6 +199,44 @@ void CWeapon356::PrimaryAttack( void )
 	}
 }
 
+bool CWeapon356::Reload(void)
+{
+	float fCacheTime = m_flNextSecondaryAttack;
+
+
+	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	if (pPlayer)
+	{
+		pPlayer->ShowCrosshair(true); // show crosshair to fix crosshair for reloading weapons in toggle ironsight
+		if (m_iClip1 < 1)
+		{
+			DevMsg("SDE_R+ \n");
+			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD_NOBOLD);
+			if (fRet)
+			{
+				WeaponSound(RELOAD);
+				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+			}
+			return fRet;
+		}
+		else
+		{
+			DevMsg("SDE_R- \n");
+			bool fRet = DefaultReload(GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD);
+			if (fRet)
+			{
+				WeaponSound(RELOAD);
+				m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
+			}
+			return fRet;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void CWeapon356::HoldIronsight(void)
 {
 	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
@@ -226,6 +260,18 @@ void CWeapon356::ItemPostFrame(void)
 	if (pOwner == NULL)
 		return;
 
+	if (m_iClip1 <= 0 && !(m_bSpecialDrawAnimation || m_bSpecialHolsterAnimation))
+	{
+		m_bSpecialDrawAnimation = true;
+		m_bSpecialHolsterAnimation = true;
+	}
+
+	if (m_iClip1 > 0 && (m_bSpecialDrawAnimation || m_bSpecialHolsterAnimation))
+	{
+		m_bSpecialDrawAnimation = false;
+		m_bSpecialHolsterAnimation = false;
+	}
+
 	// Allow  Ironsight immediately as ItemPostFrame() starts
 	if (m_bForbidIronsight)
 	{
@@ -235,7 +281,7 @@ void CWeapon356::ItemPostFrame(void)
 	}
 
 	// Ironsight if not reloading or deploying before forced reload
-	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER))
+	if (!(m_bInReload || m_bForbidIronsight || GetActivity() == ACT_VM_HOLSTER || GetActivity() == ACT_VM_HOLSTER_EMPTY))
 		HoldIronsight();
 
 	BaseClass::ItemPostFrame();

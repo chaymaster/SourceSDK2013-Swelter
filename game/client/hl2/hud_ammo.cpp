@@ -44,7 +44,7 @@ public:
 
 	bool R357_Round_Chambered;
 
-	void SetAmmo(int ammo, bool playAnimation, const char* ActiveWeaponName);
+	void SetAmmo(int ammo, bool playAnimation, C_BaseCombatWeapon *wpn);
 	void SetAmmo2(int ammo2, bool playAnimation);
 	void SetVehicleAmmo(int ammo, bool playAnimation);
 	void SetVehicleAmmo2(int ammo2, bool playAnimation);
@@ -200,13 +200,13 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 	if (wpn == m_hCurrentActiveWeapon)
 	{
 		// same weapon, just update counts
-		SetAmmo(ammo1, true, ActiveWeaponName);
+		SetAmmo(ammo1, true, wpn);
 		SetAmmo2(ammo2, true);
 	}
 	else
 	{
 		// different weapon, change without triggering
-		SetAmmo(ammo1, false, ActiveWeaponName);
+		SetAmmo(ammo1, false, wpn);
 		SetAmmo2(ammo2, false);
 
 		// update whether or not we show the total ammo display
@@ -227,8 +227,8 @@ void CHudAmmo::UpdatePlayerAmmo( C_BasePlayer *player )
 			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("AmmoEmpty");
 		else if (!Simple_Rifle_Bolt && (strcmp(ActiveWeaponName, "weapon_357") == 0 || strcmp(ActiveWeaponName, "weapon_annabelle") == 0))
 		{
-			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && R357_Round_Chambered == false) ||
-				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && Annabelle_Round_Chambered == false))
+			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && (!R357_Round_Chambered || wpn->m_bSpecialDrawAnimation || wpn->m_bSpecialHolsterAnimation)) ||
+				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && (!Annabelle_Round_Chambered || wpn->m_bSpecialDrawAnimation || wpn->m_bSpecialHolsterAnimation)))
 				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionNoRoundInChamber");
 			else
 				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionRoundChambered");
@@ -328,8 +328,13 @@ void CHudAmmo::UpdateAmmoDisplays()
 //-----------------------------------------------------------------------------
 // Purpose: Updates ammo display
 //-----------------------------------------------------------------------------
-void CHudAmmo::SetAmmo(int ammo, bool playAnimation, const char* ActiveWeaponName)
+void CHudAmmo::SetAmmo(int ammo, bool playAnimation, C_BaseCombatWeapon *wpn)
 {
+	if (!wpn)
+		return;
+
+	const char* ActiveWeaponName = wpn->GetName();
+
 	if (ammo != m_iAmmo || Simple_Rifle_Bolt != m_iSimple_Rifle_Bolt ||
 		Annabelle_Round_Chambered != m_bAnnabelle_Round_Chambered || R357_Round_Chambered != m_bR357_Round_Chambered)
 	{
@@ -339,8 +344,8 @@ void CHudAmmo::SetAmmo(int ammo, bool playAnimation, const char* ActiveWeaponNam
 		}
 		else if (!Simple_Rifle_Bolt && (strcmp(ActiveWeaponName, "weapon_357") == 0 || strcmp(ActiveWeaponName, "weapon_annabelle") == 0))
 		{
-			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && R357_Round_Chambered == false) ||
-				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && Annabelle_Round_Chambered == false))
+			if ((strcmp(ActiveWeaponName, "weapon_357") == 0 && (!R357_Round_Chambered)) ||
+				(strcmp(ActiveWeaponName, "weapon_annabelle") == 0 && (!Annabelle_Round_Chambered)))
 				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionNoRoundInChamber");
 			else
 				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("BoltActionRoundChambered");
