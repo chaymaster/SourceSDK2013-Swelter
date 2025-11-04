@@ -95,7 +95,11 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	m_ccLang->AddItem("#pht_option_lang_french", NULL);
 	m_ccLang->AddItem("#pht_option_lang_japanese", NULL);
 	m_ccLang->AddItem("#pht_option_lang_polish", NULL);
-	//m_ccLang->AddItem("#pht_option_lang_german", NULL);
+	m_ccLang->AddItem("#pht_option_lang_german", NULL);
+	m_ccLang->AddItem("#pht_option_lang_kazakh", NULL);
+	m_ccLang->AddItem("#pht_option_lang_greek", NULL);
+	m_ccLang->AddItem("#pht_option_lang_vietnamese", NULL);
+	m_ccLang->AddItem("#pht_option_lang_turkish", NULL);
 
 
 
@@ -123,7 +127,15 @@ COptionsSwelter::COptionsSwelter(vgui::Panel* parent) : PropertyPage(parent, NUL
 	else if (FStrEq(var3.GetString(), "polish"))
 		m_ccLang->ActivateItem(10);
 	else if (FStrEq(var3.GetString(), "german"))
-		m_ccLang->ActivateItem(110);
+		m_ccLang->ActivateItem(11);
+	else if (FStrEq(var3.GetString(), "kazakh"))
+		m_ccLang->ActivateItem(12);
+	else if (FStrEq(var3.GetString(), "greek"))
+		m_ccLang->ActivateItem(13);
+	else if (FStrEq(var3.GetString(), "vietnamese"))
+		m_ccLang->ActivateItem(14);
+	else if (FStrEq(var3.GetString(), "turkish"))
+		m_ccLang->ActivateItem(15);
 
 
 	ConVarRef var6("sde_drop_mag");
@@ -404,6 +416,18 @@ void COptionsSwelter::OnApplyChanges()
 		break;
 	case 11:
 		engine->ClientCmd("cc_lang german\n");
+		break;
+	case 12:
+		engine->ClientCmd("cc_lang kazakh\n");
+		break;
+	case 13:
+		engine->ClientCmd("cc_lang greek\n");
+		break;
+	case 14:
+		engine->ClientCmd("cc_lang vietnamese\n");
+		break;
+	case 15:
+		engine->ClientCmd("cc_lang turkish\n");
 	}
 
 

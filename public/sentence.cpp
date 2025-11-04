@@ -356,18 +356,19 @@ struct CCLanguage
 
 static CCLanguage g_CCLanguageLookup[] =
 {
-	{ CC_ENGLISH,	"english",		0,		0,		0 },
-	{ CC_FRENCH,	"french",		150,	0,		0 },
-	{ CC_GERMAN,	"german",		0,		150,	0 },
-	{ CC_ITALIAN,	"italian",		0,		150,	150 },
-	{ CC_KOREAN,	"koreana",		150,	0,		150 },
-	{ CC_SCHINESE,	"schinese",		150,	0,		150 },
-	{ CC_SPANISH,	"spanish",		0,		0,		150 },
-	{ CC_TCHINESE,	"tchinese",		150,	0,		150 },
-	{ CC_JAPANESE,	"japanese",		250,	150,	0 },
-	{ CC_RUSSIAN,	"russian",		0,		250,	150 },
-	{ CC_THAI,		"thai",			0 ,		150,	250 },
-	{ CC_PORTUGUESE,"portuguese",	0 ,		0,		150 },	
+	{ CC_ENGLISH,		"english",		0,		0,		0 },
+	{ CC_FRENCH,		"french",		150,	0,		0 },
+	{ CC_GERMAN,		"german",		0,		150,	0 },
+	{ CC_ITALIAN,		"italian",		0,		150,	150 },
+	{ CC_KOREAN,		"koreana",		150,	0,		150 },
+	{ CC_SCHINESE,		"schinese",		150,	0,		150 },
+	{ CC_SPANISH,		"spanish",		0,		0,		150 },
+	{ CC_TCHINESE,		"tchinese",		150,	0,		150 },
+	{ CC_JAPANESE,		"japanese",		250,	150,	0 },
+	{ CC_RUSSIAN,		"russian",		0,		250,	150 },
+	{ CC_THAI,			"thai",			0 ,		150,	250 },
+	{ CC_PORTUGUESE,	"portuguese",	0 ,		0,		150 },	
+	{ CC_VIETNAMESE,	"vietnamese",	0,		150,	250 },
 };
 
 #pragma pack()

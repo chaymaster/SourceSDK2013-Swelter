@@ -5,7 +5,8 @@
 //-----------------------------------------------------------------------------
 
 $Macro OUTBINNAME	"client"
-$Macro OUTBINDIR	"%ProgramFiles(x86)%\Steam\steamapps\sourcemods\Swelter\bin" //"$SRCDIR\..\game\$GAMENAME\bin"
+//$Macro OUTBINDIR	"%ProgramFiles(x86)%\Steam\steamapps\sourcemods\Swelter\bin" //для сборки на C 
+$Macro OUTBINDIR	"D:\SteamLibrary\steamapps\sourcemods\swelter\bin"
 $Macro DEVKITBINDIR	"$GAMENAME\bin"							[$X360]
 // It's important to include $GAMENAME in the generated_proto directory
 // to avoid race conditions when multiple games are in one solution.
