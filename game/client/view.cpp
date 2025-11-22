@@ -84,6 +84,7 @@ extern ConVar sensitivity;
 #endif
 
 ConVar zoom_sensitivity_ratio("zoom_sensitivity_ratio", "1.0", 0, "Additional mouse sensitivity scale factor applied when FOV is zoomed in.");
+ConVar cl_camera_anim_intensity( "cl_camera_anim_intensity", "1.0", FCVAR_ARCHIVE, "Intensity of cambone animations" );
 
 CViewRender g_DefaultViewRender;
 IViewRender *view = NULL;	// set in cldll_client_init.cpp if no mod creates their own
@@ -107,7 +108,7 @@ extern ConVar cl_forwardspeed;
 static ConVar v_centermove("v_centermove", "0.15");
 static ConVar v_centerspeed("v_centerspeed", "500");
 
-ConVar v_viewmodel_fov("viewmodel_fov", "54", FCVAR_ARCHIVE); //áûëî FCVAR_CHEATS
+ConVar v_viewmodel_fov("viewmodel_fov", "54", FCVAR_ARCHIVE); //Ã¡Ã»Ã«Ã® FCVAR_CHEATS
 ConVar mat_viewportscale("mat_viewportscale", "1.0", FCVAR_ARCHIVE, "Scale down the main viewport (to reduce GPU impact on CPU profiling)", true, (1.0f / 640.0f), true, 1.0f);
 ConVar mat_viewportupscale("mat_viewportupscale", "1", FCVAR_ARCHIVE, "Scale the viewport back up");
 ConVar cl_leveloverview("cl_leveloverview", "0", FCVAR_CHEAT);
@@ -1243,10 +1244,38 @@ void CViewRender::Render(vrect_t *rect)
 		}
 		if (eEye == STEREO_EYE_RIGHT)
 		{
-			// we should use the monitor view from the left eye for both eyes
+			// we should use the monitor view from the left eye for both eyes - code by Nbc66 
 			flags |= RENDERVIEW_SUPPRESSMONITORRENDERING;
 		}
+                if (!UseVR() && pPlayer && cl_camera_anim_intensity.GetFloat() > 0)
+		{
+			if (pPlayer->GetViewModel(0))
+			{
+				int attachment = pPlayer->GetViewModel(0)->LookupAttachment("camera");
+				if (attachment != -1)
+				{
 
+
+					int rootBone = pPlayer->GetViewModel(0)->LookupAttachment("camera_root");
+					Vector cameraOrigin = Vector(0, 0, 0);
+					QAngle cameraAngles = QAngle(0, 0, 0);
+					Vector rootOrigin = Vector(0, 0, 0);
+					QAngle rootAngles = QAngle(0, 0, 0);
+
+					pPlayer->GetViewModel(0)->GetAttachmentLocal(attachment, cameraOrigin, cameraAngles);
+					if (rootBone != -1)
+					{
+						pPlayer->GetViewModel(0)->GetAttachmentLocal(rootBone, rootOrigin, rootAngles);
+						cameraOrigin -= rootOrigin;
+						cameraAngles -= rootAngles;
+
+						DevMsg("camera attachment found\n");
+					}
+					view.angles += cameraAngles * cl_camera_anim_intensity.GetFloat();
+					view.origin += cameraOrigin * cl_camera_anim_intensity.GetFloat();
+				}
+			}
+		}
 		RenderView(view, nClearFlags, flags);
 
 		if (UseVR())
